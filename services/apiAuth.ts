@@ -1,6 +1,6 @@
 import { SignUpTypes } from '@/constants/signup'
-const apiUrl: string =
-  'http://[PLACE_YOUR_IP_ADDRESS]/thesis/core/handleForms.php'
+
+export const apiUrl = process.env.EXPO_PUBLIC_DB_URL
 
 export async function registerPatient(data: SignUpTypes) {
   const res = await fetch(`${apiUrl}?action=registerPatient`, {
