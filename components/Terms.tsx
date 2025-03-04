@@ -206,7 +206,6 @@ function Terms() {
     </View>
   )
 }
-export default Terms
 
 const styles = StyleSheet.create({
   container: {
@@ -228,3 +227,5 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 })
+
+export default Terms

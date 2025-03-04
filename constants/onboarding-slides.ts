@@ -1,4 +1,4 @@
-type Slide = {
+type SlideType = {
   id: number
   title: string
   description: string
@@ -7,7 +7,7 @@ type Slide = {
   }
 }
 
-export const slides: Slide[] = [
+export const SLIDES: SlideType[] = [
   {
     id: 1,
     title: 'Monitor Your Blood Pressure',

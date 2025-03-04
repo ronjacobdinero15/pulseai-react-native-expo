@@ -1,7 +1,7 @@
 import ButtonLabel from '@/components/ButtonLabel'
 import MyText from '@/components/MyText'
 import { COLORS } from '@/constants/colors'
-import { slides } from '@/constants/onboarding-slides'
+import { SLIDES } from '@/constants/onboarding-slides'
 import { DIMENSIONS } from '@/constants/sizes'
 import { useRouter } from 'expo-router'
 import React from 'react'
@@ -13,7 +13,7 @@ export default function OnboardingScreen() {
 
   return (
     <AppIntroSlider
-      data={slides}
+      data={SLIDES}
       renderItem={({ item }) => {
         return (
           <View style={styles.container}>

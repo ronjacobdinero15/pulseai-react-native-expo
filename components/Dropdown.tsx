@@ -9,6 +9,7 @@ type DropdownComponentProps = {
   value: string
   onChange: (value: string) => void
   onBlur: () => void
+  backgroundColor?: string
 }
 
 function DropdownComponent({
@@ -17,11 +18,12 @@ function DropdownComponent({
   value,
   onChange,
   onBlur,
+  backgroundColor = COLORS.secondary[100],
 }: DropdownComponentProps) {
   return (
     <View style={styles.container}>
       <Dropdown
-        style={styles.dropdown}
+        style={[styles.dropdown, { backgroundColor }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         data={data}
@@ -43,7 +45,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropdown: {
-    backgroundColor: COLORS.secondary[100],
     height: 44,
     paddingVertical: 10,
     paddingHorizontal: 16,

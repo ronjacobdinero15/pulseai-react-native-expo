@@ -1,24 +1,33 @@
+import MedicationHeader from '@/components/MedicationHeader'
+import MedicationList from '@/components/MedicationList'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 
 export default function MedicationTracker() {
-  return <View></View>
+  return (
+    <FlatList
+      data={[]}
+      renderItem={() => null}
+      style={styles.mainContainer}
+      ListHeaderComponent={
+        <View style={styles.container}>
+          <MedicationHeader />
+          <MedicationList />
+        </View>
+      }
+    />
+  )
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    backgroundColor: 'white',
+  },
   container: {
     flex: 1,
-    marginHorizontal: 16,
-    marginVertical: 32,
-  },
-  section: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  paragraph: {
-    fontSize: 15,
-  },
-  checkbox: {
-    margin: 8,
+    padding: 25,
+    backgroundColor: 'white',
+    height: '100%',
+    marginBottom: 100,
   },
 })

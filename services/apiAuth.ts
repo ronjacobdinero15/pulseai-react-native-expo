@@ -1,14 +1,41 @@
-import { SignUpTypes } from '@/constants/signup'
+import { SignUpType } from '@/constants/signup'
+import { apiUrl } from '@/constants/types'
 
-export const apiUrl = process.env.EXPO_PUBLIC_DB_URL
-
-export async function registerPatient(data: SignUpTypes) {
+export async function registerPatient({
+  firstName,
+  lastName,
+  dateOfBirth,
+  email,
+  password,
+  age,
+  gender,
+  vices,
+  bmiHeightCm,
+  bmiWeightKg,
+  comorbidities,
+  parentalHypertension,
+  lifestyle,
+}: SignUpType) {
   const res = await fetch(`${apiUrl}?action=registerPatient`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      first_name: firstName,
+      last_name: lastName,
+      date_of_birth: dateOfBirth,
+      email,
+      password,
+      age,
+      gender,
+      vices,
+      bmi_height_cm: bmiHeightCm,
+      bmi_weight_kg: bmiWeightKg,
+      comorbidities,
+      parental_hypertension: parentalHypertension,
+      lifestyle,
+    }),
   })
 
   if (!res.ok) throw new Error('Could not register a new user')
@@ -45,7 +72,7 @@ export async function forgotPassword(email: string) {
 }
 
 export async function updatePatientNeedsOnboarding(
-  patient_id: number,
+  patientId: number,
   needsOnboarding: number
 ) {
   await fetch(`${apiUrl}?action=updatePatientNeedsOnboarding`, {
@@ -53,6 +80,9 @@ export async function updatePatientNeedsOnboarding(
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ patient_id, needsOnboarding }),
+    body: JSON.stringify({
+      patient_id: patientId,
+      needs_onboarding: needsOnboarding,
+    }),
   })
 }

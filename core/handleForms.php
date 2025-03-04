@@ -21,6 +21,9 @@ if ($method === 'GET') {
 
 function handleGet($pdo) {
     switch ($_GET['action']) {
+        case 'getMedicationList':
+            echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $_GET['selected_date']));
+            break;
         /* case 'edit':
             echo json_encode(fetchShelf($pdo, $_GET['shelf_id']));
             break;
@@ -55,10 +58,13 @@ function handlePost($pdo) {
             echo json_encode(loginPatient($pdo, $data['email'], $data['password']));
             break;
         case 'registerPatient':
-            echo json_encode(registerPatient($pdo, $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
+            echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['date_of_birth'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
         case 'forgotPassword':
             echo json_encode(forgotPassword($pdo, $data['email']));
+            break;
+        case 'addNewMedication':
+            echo json_encode(addNewMedication($pdo, $data['medication_id'], $data['patient_id'], $data['medication_name'], $data['type'], $data['dosage'], $data['frequency'], $data['start_date'], $data['end_date'], $data['reminder'], $data['dates']));
             break;
         /* case 'insertShelf':
             echo json_encode(insertShelf($pdo, $data['shelf_name'], $data['currentUser']));
@@ -76,7 +82,7 @@ function handlePut($pdo) {
 
     switch ($_GET['action']) {
         case 'updatePatientNeedsOnboarding':
-            echo json_encode(updatePatientNeedsOnboarding($pdo, $data['patient_id'], $data['needsOnboarding']));
+            echo json_encode(updatePatientNeedsOnboarding($pdo, $data['patient_id'], $data['needs_onboarding']));
             break;
         /* case 'updateItem':
             echo json_encode(updateItem($pdo, $data['item_id'], $data['item_name'], $data['price'], $data['updatedBy']));

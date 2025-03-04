@@ -6,7 +6,10 @@
 type ColorKeys = 'primary' | 'secondary'
 
 type ColorsType = {
-  [key in ColorKeys]: Record<number, string>
+  primary: Record<number, string>
+  secondary: Record<number, string>
+  accent: string
+  error: string
 }
 
 export const COLORS: ColorsType = {
@@ -32,4 +35,6 @@ export const COLORS: ColorsType = {
     800: '#2e2e2e',
     900: '#171717',
   },
+  accent: '#c6c9ff',
+  error: '#d71818',
 }

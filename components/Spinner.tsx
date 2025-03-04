@@ -8,7 +8,6 @@ function Spinner() {
     </View>
   )
 }
-export default Spinner
 
 const styles = StyleSheet.create({
   container: {
@@ -16,3 +15,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 })
+
+export default Spinner

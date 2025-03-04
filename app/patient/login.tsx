@@ -3,7 +3,7 @@ import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import Spinner from '@/components/Spinner'
 import { COLORS } from '@/constants/colors'
-import { SignInTypes } from '@/constants/types'
+import { SignInType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { loginPatient, updatePatientNeedsOnboarding } from '@/services/apiAuth'
 import { Link, useRouter } from 'expo-router'
@@ -16,7 +16,7 @@ export default function SignIn() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignInTypes>({
+  } = useForm<SignInType>({
     defaultValues: {
       email: 'ronjacobdinero15@gmail.com',
       password: '12345',
@@ -26,22 +26,33 @@ export default function SignIn() {
   const router = useRouter()
   const { patientSignIn, isLoading, setIsLoading } = useAuth()
 
-  const handleLogin = async ({ email, password }: SignInTypes) => {
+  const handleLogin = async ({ email, password }: SignInType) => {
     setIsLoading(true)
     try {
       const res = await loginPatient(email, password)
 
       if (res.success) {
-        await patientSignIn(String(res.id))
+        await patientSignIn(String(res.id), res.firstName)
 
         if (res.needsOnboarding === 1) {
           await updatePatientNeedsOnboarding(res.id, 0)
-          router.replace('/patient/onboarding-screen')
+          Alert.alert('Success', res.message, [
+            {
+              onPress: () => {
+                router.replace('/patient/onboarding-screen')
+              },
+            },
+          ])
         } else {
-          router.replace('/patient/(tabs)')
+          Alert.alert('Success', res.message, [
+            {
+              text: 'OK',
+              onPress: () => {
+                router.replace('/patient/(tabs)')
+              },
+            },
+          ])
         }
-
-        Alert.alert('Success', res.message)
       } else {
         Alert.alert('Error', res.message)
       }
@@ -199,7 +210,6 @@ const styles = StyleSheet.create({
     marginVertical: 24,
   },
   formFooter: {
-    fontSize: 15,
     color: COLORS.secondary[400],
     textAlign: 'center',
     letterSpacing: 0.15,
@@ -209,7 +219,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   errorLabel: {
-    color: '#d71818',
+    color: COLORS.error,
   },
   icon: {
     width: 100,
@@ -218,11 +228,10 @@ const styles = StyleSheet.create({
   forgotPassword: {
     color: COLORS.secondary[400],
     textAlign: 'right',
-    fontSize: 15,
+    fontSize: 16,
   },
   btn: {
     backgroundColor: COLORS.primary[500],
-    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,3 +1,4 @@
+import DateOfBirth from '@/components/DateOfBirth'
 import Dropdown from '@/components/Dropdown'
 import MultipleSelectListCheckbox from '@/components/MultipleSelectListCheckbox'
 import MyModal from '@/components/MyModal'
@@ -8,11 +9,11 @@ import RadioButton from '@/components/RadioButton'
 import Terms from '@/components/Terms'
 import { COLORS } from '@/constants/colors'
 import {
-  comorbiditiesOptions,
-  genderOptions,
-  lifestyleOptions,
-  SignUpTypes,
-  vicesOptions,
+  COMORBIDITIESOPTIONS,
+  GENDEROPTIONS,
+  LIFESTYLEOPTIONS,
+  SignUpType,
+  VICESOPTIONS,
 } from '@/constants/signup'
 import { useAuth } from '@/contexts/AuthContext'
 import { registerPatient } from '@/services/apiAuth'
@@ -36,20 +37,22 @@ export default function SignUp() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignUpTypes>({
+  } = useForm<SignUpType>({
     defaultValues: {
+      firstName: 'Ron Jacob',
+      lastName: 'Dinero',
+      dateOfBirth: 'Sat Dec 14 2024',
       email: 'ronjacobdinero15@gmail.com',
       password: '12345',
       passwordConfirm: '12345',
       age: '20',
       gender: 'male',
       vices: ['alcohol'],
-      bmi_height_cm: '168',
-      bmi_weight_kg: '60',
+      bmiHeightCm: '168',
+      bmiWeightKg: '60',
       comorbidities: ['diabetes'],
-      parental_hypertension: 'no',
+      parentalHypertension: 'no',
       lifestyle: 'sedentary',
-      needsOnboarding: true,
     },
   })
   const router = useRouter()
@@ -58,20 +61,24 @@ export default function SignUp() {
     useState(false)
   const { isLoading, setIsLoading } = useAuth()
 
-  const handleRegistration = async (data: SignUpTypes) => {
+  const handleRegistration = async (data: SignUpType) => {
     setIsLoading(true)
     const res = await registerPatient(data)
 
     if (res.success) {
-      router.push('/patient/login')
-      Alert.alert('Success', res.message)
-
       setIsLoading(false)
-      reset()
+      Alert.alert('Success', res.message, [
+        {
+          text: 'OK',
+          onPress: () => {
+            router.replace('/patient/login')
+            reset()
+          },
+        },
+      ])
       return
     }
     setIsLoading(false)
-
     Alert.alert('Error', res.message)
   }
 
@@ -132,6 +139,70 @@ export default function SignUp() {
           </MyText>
 
           <MyText>Please register to login.</MyText>
+        </View>
+
+        <View style={styles.inputControl}>
+          <Controller
+            control={control}
+            rules={{
+              required: 'This field is required.',
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <MyTextInput
+                placeholder="First Name"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCorrect={false}
+              />
+            )}
+            name="firstName"
+          />
+          {errors.firstName && (
+            <MyText style={styles.errorLabel}>
+              {errors.firstName.message}
+            </MyText>
+          )}
+        </View>
+
+        <View style={styles.inputControl}>
+          <Controller
+            control={control}
+            rules={{
+              required: 'This field is required.',
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <MyTextInput
+                placeholder="Last Name"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCorrect={false}
+              />
+            )}
+            name="lastName"
+          />
+          {errors.lastName && (
+            <MyText style={styles.errorLabel}>{errors.lastName.message}</MyText>
+          )}
+        </View>
+
+        <View style={styles.inputControl}>
+          <Controller
+            control={control}
+            rules={{
+              required: 'This field is required',
+            }}
+            render={({ field: { onChange, value } }) => (
+              <DateOfBirth value={value} onChange={onChange} />
+            )}
+            name="dateOfBirth"
+          />
+          {errors.dateOfBirth && (
+            <MyText style={styles.errorLabel}>
+              {errors.dateOfBirth.message}
+            </MyText>
+          )}
         </View>
 
         <View style={styles.inputControl}>
@@ -271,9 +342,8 @@ export default function SignUp() {
               rules={{ required: 'Required.' }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <Dropdown
-                  field="gender"
                   label="Gender"
-                  data={genderOptions}
+                  data={GENDEROPTIONS}
                   value={value}
                   onChange={onChange}
                   onBlur={onBlur}
@@ -307,11 +377,11 @@ export default function SignUp() {
                 maxLength={3}
               />
             )}
-            name="bmi_height_cm"
+            name="bmiHeightCm"
           />
-          {errors.bmi_height_cm && (
+          {errors.bmiHeightCm && (
             <MyText style={styles.errorLabel}>
-              {errors.bmi_height_cm.message}
+              {errors.bmiHeightCm.message}
             </MyText>
           )}
         </View>
@@ -336,11 +406,11 @@ export default function SignUp() {
                 maxLength={4}
               />
             )}
-            name="bmi_weight_kg"
+            name="bmiWeightKg"
           />
-          {errors.bmi_weight_kg && (
+          {errors.bmiWeightKg && (
             <MyText style={styles.errorLabel}>
-              {errors.bmi_weight_kg.message}
+              {errors.bmiWeightKg.message}
             </MyText>
           )}
         </View>
@@ -352,7 +422,7 @@ export default function SignUp() {
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Vices"
-                data={vicesOptions}
+                data={VICESOPTIONS}
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
@@ -372,7 +442,7 @@ export default function SignUp() {
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Comorbidities"
-                data={comorbiditiesOptions}
+                data={COMORBIDITIESOPTIONS}
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
@@ -400,11 +470,11 @@ export default function SignUp() {
                 handleRadioPress={onChange}
               />
             )}
-            name="parental_hypertension"
+            name="parentalHypertension"
           />
-          {errors.parental_hypertension && (
+          {errors.parentalHypertension && (
             <MyText style={styles.errorLabel}>
-              {errors.parental_hypertension.message}
+              {errors.parentalHypertension.message}
             </MyText>
           )}
         </View>
@@ -415,9 +485,8 @@ export default function SignUp() {
             rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Dropdown
-                field="lifestyle"
                 label="Lifestyle"
-                data={lifestyleOptions}
+                data={LIFESTYLEOPTIONS}
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
@@ -529,7 +598,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   errorLabel: {
-    color: '#d71818',
+    color: COLORS.error,
   },
   shortContainer: {
     flexDirection: 'row',

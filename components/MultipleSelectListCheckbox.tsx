@@ -5,7 +5,7 @@ import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
 type MultipleSelectListCheckboxProps = {
   label: string
-  data: { key: string; value: string }[]
+  data: string[]
   value: string[]
   onChange: (value: string[]) => void
   onBlur: () => void

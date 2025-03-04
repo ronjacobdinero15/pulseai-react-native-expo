@@ -7,6 +7,7 @@ export default function PatientLayout() {
       <Stack.Screen name="forgot-password" />
       <Stack.Screen name="onboarding-screen" />
       <Stack.Screen name="signUp" />
+      <Stack.Screen name="add-new-medication" />
 
       <Stack.Screen name="(tabs)" />
     </Stack>

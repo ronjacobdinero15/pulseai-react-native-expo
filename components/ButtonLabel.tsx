@@ -3,7 +3,7 @@ import { COLORS } from '@/constants/colors'
 import React from 'react'
 import { View } from 'react-native'
 
-export default function ButtonLabel(label: string) {
+function ButtonLabel(label: string) {
   return (
     <View
       style={{
@@ -21,3 +21,5 @@ export default function ButtonLabel(label: string) {
     </View>
   )
 }
+
+export default ButtonLabel

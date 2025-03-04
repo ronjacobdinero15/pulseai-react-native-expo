@@ -1,4 +1,4 @@
-import HomeScreen from '@/app/patient/(tabs)'
+import HomeScreen from '@/app/patient/(tabs)/index'
 import MedicationTracker from '@/app/patient/(tabs)/medication'
 import MyTabBar from '@/components/MyTabBar'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -13,6 +13,7 @@ export default function TabLayout() {
     <Tab.Navigator
       tabBar={props => <MyTabBar {...props} />}
       screenOptions={{ headerShown: false }}
+      initialRouteName="index"
     >
       <Tab.Screen
         name="index"

@@ -18,7 +18,7 @@ function MyTouchableOpacity({
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[{ height: 50 }, style]}
+      style={[{ height: 50, borderRadius: 8 }, style]}
       disabled={disabled}
       {...rest}
     >

@@ -2,9 +2,10 @@ import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import { COLORS } from '@/constants/colors'
-import { SignInTypes } from '@/constants/types'
+import { SignInType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { forgotPassword } from '@/services/apiAuth'
+import { useRouter } from 'expo-router'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native'
@@ -14,10 +15,11 @@ export default function ForgotPassword() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInTypes>({
+  } = useForm<SignInType>({
     defaultValues: { email: 'ronjacobdinero15@gmail.com' },
   })
   const { isLoading, setIsLoading } = useAuth()
+  const router = useRouter()
 
   const handleResetPassword = async ({ email }: { email: string }) => {
     setIsLoading(true)
@@ -25,7 +27,14 @@ export default function ForgotPassword() {
       const res = await forgotPassword(email)
 
       if (res.success) {
-        Alert.alert('Success', res.message)
+        Alert.alert('Success', res.message, [
+          {
+            text: 'OK',
+            onPress: () => {
+              router.push('/patient/login')
+            },
+          },
+        ])
       } else {
         Alert.alert('Error', res.message)
       }
@@ -122,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   errorLabel: {
-    color: '#d71818',
+    color: COLORS.error,
   },
   btn: {
     backgroundColor: COLORS.primary[500],

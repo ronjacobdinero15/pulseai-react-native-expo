@@ -70,7 +70,7 @@ function MyTabBar({ state, descriptors, navigation }: MyTabBarProps) {
             <Text
               style={{
                 color: isFocused ? COLORS.primary[500] : COLORS.secondary[500],
-                fontSize: 11,
+                fontSize: 12,
               }}
             >
               {label}
@@ -84,8 +84,8 @@ function MyTabBar({ state, descriptors, navigation }: MyTabBarProps) {
 
 const styles = StyleSheet.create({
   tabBar: {
-    position: 'relative',
-    bottom: 25,
+    position: 'absolute',
+    bottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
