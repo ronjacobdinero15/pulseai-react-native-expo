@@ -25,6 +25,4 @@ try {
 }
 
 return $pdo;
-
-
 ?>

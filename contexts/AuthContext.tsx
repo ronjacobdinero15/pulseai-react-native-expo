@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 type CurrentUser = {
   id: string | null
   role: string | null
+  email: string | null
   firstName: string | null
 }
 
@@ -18,7 +19,7 @@ type AuthContextType = {
   setRefresh: React.Dispatch<React.SetStateAction<number>>
   currentUser: CurrentUser | null
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  patientSignIn: (userToken: string, firstName: string) => Promise<void>
+  patientSignIn: (id: string, email: string, firstName: string) => Promise<void>
   patientSignOut: () => Promise<void>
 }
 
@@ -53,15 +54,18 @@ function AuthProvider({ children }: AuthContextProps) {
     loadAuthState()
   }, [])
 
-  const patientSignIn = async (id: string, firstName: string) => {
+  const patientSignIn = async (
+    id: string,
+    email: string,
+    firstName: string
+  ) => {
     try {
       await SecureStore.setItemAsync(
         'currentUser',
-        JSON.stringify({ id, role: 'patient', firstName })
+        JSON.stringify({ id, email, role: 'patient', firstName })
       )
-      setCurrentUser({ id, role: 'patient', firstName })
+      setCurrentUser({ id, email, role: 'patient', firstName })
 
-      console.log('LOGGED IN')
       router.replace('/patient/(tabs)')
     } catch (error) {
       console.error('Failed to sign in:', error)
@@ -73,7 +77,6 @@ function AuthProvider({ children }: AuthContextProps) {
       await SecureStore.deleteItemAsync('currentUser')
       setCurrentUser(null)
 
-      console.log('LOGGED OUT')
       router.replace('/patient/login')
     } catch (error) {
       console.error('Failed to sign out:', error)

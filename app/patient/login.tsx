@@ -32,7 +32,7 @@ export default function SignIn() {
       const res = await loginPatient(email, password)
 
       if (res.success) {
-        await patientSignIn(String(res.id), res.firstName)
+        await patientSignIn(String(res.id), email, res.firstName)
 
         if (res.needsOnboarding === 1) {
           await updatePatientNeedsOnboarding(res.id, 0)

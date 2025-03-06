@@ -10,7 +10,7 @@ import { getPreviousDateRangeToDisplay } from '@/utils/helpers'
 import { useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { FlatList, Image, StyleSheet, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 
 export default function History() {
   const [medList, setMedList] = useState<Medication[]>([])
@@ -54,11 +54,9 @@ export default function History() {
       style={styles.mainContainer}
       ListHeaderComponent={
         <View style={styles.container}>
-          <Image
-            source={require('@/assets/images/med-history.png')}
-            style={styles.imgBanner}
-          />
-          <MyText size="h2">Medication History</MyText>
+          <MyText size="h3" style={{ color: COLORS.primary[500], height: 50 }}>
+            Medication History
+          </MyText>
 
           <FlatList
             data={dateRange}
@@ -162,6 +160,7 @@ const styles = StyleSheet.create({
     padding: 25,
     backgroundColor: 'white',
     marginBottom: 100,
+    justifyContent: 'center',
   },
   imgBanner: {
     width: '100%',
