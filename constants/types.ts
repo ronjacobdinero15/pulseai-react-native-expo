@@ -3,8 +3,4 @@ export type SignInType = {
   password: string
 }
 
-// NOTE: WORKING UNCOMMENT LATER
-// export const apiUrl = process.env.EXPO_PUBLIC_DB_URL
-
-export const apiUrl: string =
-  'http://[YOUR_IP_ADDRESS_HERE]/thesis/core/handleForms.php'
+export const apiUrl = process.env.EXPO_PUBLIC_DB_URL

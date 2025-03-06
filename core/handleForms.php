@@ -64,7 +64,10 @@ function handlePost($pdo) {
             echo json_encode(forgotPassword($pdo, $data['email']));
             break;
         case 'addNewMedication':
-            echo json_encode(addNewMedication($pdo, $data['medication_id'], $data['patient_id'], $data['medication_name'], $data['type'], $data['dosage'], $data['frequency'], $data['start_date'], $data['end_date'], $data['reminder'], $data['dates']));
+            echo json_encode(addNewMedication($pdo, $data['medication_id'], $data['patient_id'], $data['medication_name'], $data['type'], $data['dosage'], $data['frequency'], $data['start_date'], $data['end_date'], $data['reminder'], $data['dates'], $data['actions']));
+            break;
+        case 'addNewMedicationStatus':
+            echo json_encode(addNewMedicationStatus($pdo, $data['medication_id'], $data['date'], $data['status'], $data['time']));
             break;
         /* case 'insertShelf':
             echo json_encode(insertShelf($pdo, $data['shelf_name'], $data['currentUser']));

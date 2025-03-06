@@ -8,6 +8,7 @@ import { Medication } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
 import { getMedicationList } from '@/services/apiMedication'
 import { getDatesRangeToDisplay } from '@/utils/helpers'
+import { useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
@@ -20,6 +21,7 @@ function MedicationList() {
   )
   const { currentUser, isLoading, setIsLoading } = useAuth()
   const { refresh, setRefresh } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     getDateRangeList()
@@ -49,11 +51,6 @@ function MedicationList() {
 
   return (
     <View style={styles.container}>
-      {/* <Image
-        source={require('@/assets/images/medication.jpeg')}
-        style={styles.backgroundImg}
-      /> */}
-
       <FlatList
         data={dateRange}
         horizontal
@@ -109,7 +106,21 @@ function MedicationList() {
           onRefresh={() => fetchMedicationList(currentUser?.id!)}
           refreshing={isLoading}
           renderItem={({ item, index }) => (
-            <MedicationCardItem medicine={item} />
+            <MyTouchableOpacity
+              style={{ height: 'auto' }}
+              onPress={() => {
+                router.push({
+                  pathname: '/patient/action-modal',
+                  params: {
+                    ...item,
+                    selectedDate,
+                    actions: JSON.stringify(item.actions || []),
+                  },
+                })
+              }}
+            >
+              <MedicationCardItem medicine={item} selectedDate={selectedDate} />
+            </MyTouchableOpacity>
           )}
         />
       ) : (
@@ -123,7 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    // marginTop: 25,
   },
   backgroundImg: {
     width: '100%',

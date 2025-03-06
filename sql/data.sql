@@ -30,6 +30,7 @@ CREATE TABLE medications (
     end_date DATE,
     reminder VARCHAR(200),
     dates JSON,
+    actions JSON,
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 );

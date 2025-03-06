@@ -64,6 +64,7 @@ function AddMedicationForm() {
       medicationId: generateUniqueId(),
       dates: getDatesRange(data?.startDate, data?.endDate),
       reminder: formatTime(data.reminder),
+      actions: [],
     })
 
     if (res.success) {

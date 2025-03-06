@@ -118,23 +118,24 @@ END;
     ];
 }
 
-function addNewMedication($pdo,$medication_id,$patient_id,$medication_name,$type,$dosage,$frequency,$start_date,$end_date, $reminder,$dates) {
-    $sql = "INSERT INTO medications (medication_id,patient_id, medication_name,type,dosage,frequency,start_date,end_date, reminder,dates) VALUES (?,?,?,?,?,?,?,?,?,?)";
+function addNewMedication($pdo, $medication_id, $patient_id, $medication_name, $type, $dosage, $frequency, $start_date, $end_date, $reminder, $dates, $actions) {
+    $sql = "INSERT INTO medications (medication_id, patient_id, medication_name, type, dosage, frequency, start_date, end_date, reminder, dates, actions) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
     $stmt = $pdo->prepare($sql);
 
     $dates_json = json_encode($dates);
+    $actions_json = json_encode($actions);
 
-    $executeQuery = $stmt->execute([$medication_id,$patient_id, $medication_name,$type, $dosage, $frequency, $start_date, $end_date, $reminder, $dates_json]);
+    $executeQuery = $stmt->execute([$medication_id, $patient_id, $medication_name, $type, $dosage, $frequency, $start_date, $end_date, $reminder, $dates_json, $actions_json]);
 
     if ($executeQuery) {
         return [
-            "success" => true, 
-            "message" => "New medication set!" 
+            "success" => true,
+            "message" => "New medication set!"
         ];
     } else {
         return [
-            "success" => false, 
-            "message" => "An error occurred from the query" 
+            "success" => false,
+            "message" => "An error occurred from the query"
         ];
     }
 }
@@ -163,6 +164,7 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
                 "endDate" => $medication["end_date"],
                 "reminder" => $medication["reminder"],
                 "dates" => $medication["dates"],
+                "actions" => $medication["actions"]
             ];
         }, $medications);
 
@@ -174,6 +176,49 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
         return [
             "success" => false,
             "message" => "No medications found."
+        ];
+    }
+}
+
+function addNewMedicationStatus($pdo, $medication_id, $date, $status, $time) {
+    // Fetch the current actions array
+    $sql = "SELECT actions FROM medications WHERE medication_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$medication_id]);
+
+    if ($stmt->rowCount() > 0) {
+        $medication = $stmt->fetch(PDO::FETCH_ASSOC);
+        $actions = json_decode($medication['actions'], true);
+
+        // Append the new status object to the actions array
+        $newAction = [
+            'date' => $date,
+            'status' => $status,
+            'time' => $time,
+        ];
+        $actions[] = $newAction;
+
+        // Update the actions column with the modified array
+        $actions_json = json_encode($actions);
+        $updateSql = "UPDATE medications SET actions = ? WHERE medication_id = ?";
+        $updateStmt = $pdo->prepare($updateSql);
+        $executeQuery = $updateStmt->execute([$actions_json, $medication_id]);
+
+        if ($executeQuery) {
+            return [
+                "success" => true,
+                "message" => "New medication status added!"
+            ];
+        } else {
+            return [
+                "success" => false,
+                "message" => "An error occurred while updating the medication status"
+            ];
+        }
+    } else {
+        return [
+            "success" => false,
+            "message" => "Medication not found"
         ];
     }
 }

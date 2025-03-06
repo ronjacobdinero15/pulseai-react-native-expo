@@ -1,11 +1,40 @@
 import MyText from '@/components/MyText'
 import { COLORS } from '@/constants/colors'
-import { Medication, MEDICINES } from '@/constants/medication'
+import {
+  addNewMedicationStatusType,
+  Medication,
+  MEDICINES,
+} from '@/constants/medication'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
-function MedicationCardItem({ medicine }: { medicine: Medication }) {
+type MedicationCardItemProps = {
+  medicine: Medication
+  selectedDate: string
+}
+
+function MedicationCardItem({
+  medicine,
+  selectedDate,
+}: MedicationCardItemProps) {
+  const [status, setStatus] = useState<addNewMedicationStatusType>()
+
+  useEffect(() => {
+    checkStatus()
+  }, [medicine])
+
+  const checkStatus = () => {
+    const actionsArray =
+      typeof medicine.actions === 'string'
+        ? JSON.parse(medicine.actions)
+        : medicine.actions || []
+    const foundAction = actionsArray.find(
+      (item: addNewMedicationStatusType) => item.date === selectedDate
+    )
+    setStatus(foundAction)
+  }
+
   const medicineImg = MEDICINES.find(
     m => m.name.toLowerCase() === medicine.type.toLowerCase()
   )
@@ -38,6 +67,22 @@ function MedicationCardItem({ medicine }: { medicine: Medication }) {
             {medicine?.reminder}
           </MyText>
         </View>
+
+        {status?.date && status?.status === 'Taken' && (
+          <View style={styles.statusContainer}>
+            <Ionicons
+              name="checkmark-circle"
+              size={30}
+              color={COLORS.success}
+            />
+          </View>
+        )}
+
+        {status?.date && status?.status === 'Missed' && (
+          <View style={styles.statusContainer}>
+            <Ionicons name="close-circle" size={30} color={COLORS.error} />
+          </View>
+        )}
       </View>
     </View>
   )
@@ -45,7 +90,6 @@ function MedicationCardItem({ medicine }: { medicine: Medication }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -59,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     marginBottom: 10,
+    maxHeight: 100,
   },
   imgContainer: {
     backgroundColor: 'white',
@@ -82,6 +127,11 @@ const styles = StyleSheet.create({
     height: '100%',
     gap: 5,
     minWidth: 100,
+  },
+  statusContainer: {
+    position: 'absolute',
+    top: 5,
+    padding: 7,
   },
 })
 

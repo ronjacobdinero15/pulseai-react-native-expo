@@ -38,6 +38,6 @@ yarn-error.*
 *.tsbuildinfo
 
 #sql
-sql
+sql/
 
 app-example

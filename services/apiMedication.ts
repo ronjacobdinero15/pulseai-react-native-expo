@@ -1,4 +1,4 @@
-import { Medication } from '@/constants/medication'
+import { addNewMedicationStatusType, Medication } from '@/constants/medication'
 import { apiUrl } from '@/constants/types'
 
 export async function addNewMedication({
@@ -12,6 +12,7 @@ export async function addNewMedication({
   endDate,
   reminder,
   dates,
+  actions,
 }: Medication) {
   const res = await fetch(`${apiUrl}?action=addNewMedication`, {
     method: 'POST',
@@ -29,6 +30,7 @@ export async function addNewMedication({
       end_date: endDate,
       reminder,
       dates,
+      actions,
     }),
   })
 
@@ -52,6 +54,31 @@ export async function getMedicationList(
   )
 
   if (!res.ok) throw new Error('Error occurred getting medication list')
+
+  return await res.json()
+}
+
+export async function addNewMedicationStatus({
+  medicationId,
+  date,
+  status,
+  time,
+}: addNewMedicationStatusType) {
+  console.log('BEFORE')
+  const res = await fetch(`${apiUrl}?action=addNewMedicationStatus`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      medication_id: medicationId,
+      date,
+      status,
+      time,
+    }),
+  })
+  console.log('AFTER')
+  if (!res.ok) throw new Error('Error occurred updating medication status')
 
   return await res.json()
 }

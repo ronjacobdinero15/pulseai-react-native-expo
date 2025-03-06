@@ -3,12 +3,11 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-type ColorKeys = 'primary' | 'secondary'
-
 type ColorsType = {
   primary: Record<number, string>
   secondary: Record<number, string>
   accent: string
+  success: string
   error: string
 }
 
@@ -36,5 +35,6 @@ export const COLORS: ColorsType = {
     900: '#171717',
   },
   accent: '#c6c9ff',
+  success: '#4caf50',
   error: '#d71818',
 }
