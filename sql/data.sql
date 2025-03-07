@@ -2,6 +2,7 @@ CREATE TABLE patients (
     patient_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
+    full_name VARCHAR(200),
     date_of_birth VARCHAR(50),
     email VARCHAR(50),
 	password VARCHAR(256),
@@ -32,5 +33,14 @@ CREATE TABLE medications (
     dates JSON,
     actions JSON,
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+);
+
+CREATE TABLE bp_readings (
+    reading_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    systolic INT,
+    diastolic INT,
+    date_taken VARCHAR(200),
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 );

@@ -1,30 +1,22 @@
 import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import { COLORS } from '@/constants/colors'
-import { useAuth } from '@/contexts/AuthContext'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useRouter } from 'expo-router'
-import { Image, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 function MedicationHeader() {
-  const { currentUser } = useAuth()
   const router = useRouter()
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={require('@/assets/images/smiley.png')}
-            style={{ width: 45, height: 45 }}
-          />
-          <MyText style={{ color: COLORS.primary[500] }} size="h3">
-            Hello {currentUser?.firstName}
-          </MyText>
-        </View>
-
+        <MyText style={{ color: COLORS.primary[500] }} size="h3">
+          Medications
+        </MyText>
         <MyTouchableOpacity
           onPress={() => router.push('/patient/add-new-medication')}
+          style={styles.btn}
         >
           <Ionicons
             name="add-circle-outline"
@@ -44,10 +36,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    height: 50,
   },
-  welcomeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+  btn: {
+    justifyContent: 'center',
   },
 })

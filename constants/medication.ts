@@ -22,6 +22,13 @@ export type addNewMedicationStatusType = {
   time: string
 }
 
+export type AddNewBpForTodayType = {
+  currentUserId: string
+  systolic?: string
+  diastolic?: string
+  dateTaken: string
+}
+
 type MedicineType = {
   name: string
   icon: ImageSourcePropType
@@ -59,4 +66,10 @@ export const FREQUENCY: { label: string; value: string }[] = [
   { label: 'Before dinner', value: 'Before dinner' },
   { label: 'After dinner', value: 'After dinner' },
   { label: 'Before sleeping', value: 'Before sleeping' },
+]
+
+export const BP_OPTIONS: { category: string; range: string }[] = [
+  { category: 'Normal BP', range: '< 120/80 mmHg' },
+  { category: 'Borderline BP', range: '120-139/ 80-89 mmHg' },
+  { category: 'Hypertension', range: '> 140/90 mmHg' },
 ]

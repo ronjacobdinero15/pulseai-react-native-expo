@@ -24,6 +24,7 @@ export async function registerPatient({
     body: JSON.stringify({
       first_name: firstName,
       last_name: lastName,
+      full_name: `${firstName} ${lastName}`,
       date_of_birth: dateOfBirth,
       email,
       password,

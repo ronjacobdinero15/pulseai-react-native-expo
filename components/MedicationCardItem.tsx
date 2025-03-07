@@ -7,7 +7,7 @@ import {
 } from '@/constants/medication'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 type MedicationCardItemProps = {
   medicine: Medication
@@ -43,9 +43,9 @@ function MedicationCardItem({
     <View style={styles.container}>
       <View style={styles.subContainer}>
         <View style={{ flexDirection: 'row', maxWidth: '70%' }}>
-          <View style={styles.imgContainer}>
+          {/* <View style={styles.imgContainer}>
             <Image source={medicineImg?.icon} style={styles.icon} />
-          </View>
+          </View> */}
           <View>
             <MyText size="h2">{medicine?.medicationName}</MyText>
             <MyText style={{ color: COLORS.secondary[500], flexWrap: 'wrap' }}>
@@ -130,7 +130,8 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     position: 'absolute',
-    top: 5,
+    top: -15,
+    left: -15,
     padding: 7,
   },
 })

@@ -142,7 +142,8 @@ function AddMedicationForm() {
                   >
                     <MyText
                       style={{
-                        color: item.name === value ? 'white' : 'black',
+                        color:
+                          item.name === value ? 'white' : COLORS.primary[900],
                       }}
                     >
                       {item.name}

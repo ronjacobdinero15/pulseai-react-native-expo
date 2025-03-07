@@ -38,7 +38,7 @@ export default function History() {
     )
     setIsLoading(true)
     const res = await getMedicationList(patientId, formattedDate)
-    console.log(JSON.stringify(medList, null, 2))
+
     if (res.success) {
       setMedList(res.medications)
     } else {
@@ -54,9 +54,11 @@ export default function History() {
       style={styles.mainContainer}
       ListHeaderComponent={
         <View style={styles.container}>
-          <MyText size="h3" style={{ color: COLORS.primary[500], height: 50 }}>
-            Medication History
-          </MyText>
+          <View style={styles.headerContainer}>
+            <MyText size="h3" style={{ color: COLORS.primary[500] }}>
+              History of Medications
+            </MyText>
+          </View>
 
           <FlatList
             data={dateRange}
@@ -117,7 +119,7 @@ export default function History() {
                   style={{ height: 'auto' }}
                   onPress={() => {
                     router.push({
-                      pathname: '/patient/action-modal',
+                      pathname: '/patient/(action-modal)/index',
                       params: {
                         ...item,
                         selectedDate,
@@ -160,6 +162,10 @@ const styles = StyleSheet.create({
     padding: 25,
     backgroundColor: 'white',
     marginBottom: 100,
+    justifyContent: 'center',
+  },
+  headerContainer: {
+    height: 50,
     justifyContent: 'center',
   },
   imgBanner: {

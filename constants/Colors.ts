@@ -9,6 +9,7 @@ type ColorsType = {
   accent: string
   success: string
   error: string
+  warning: string
 }
 
 export const COLORS: ColorsType = {
@@ -23,6 +24,7 @@ export const COLORS: ColorsType = {
     800: '#033a47',
     900: '#021d24', // text
   },
+  // #0074fd
   secondary: {
     100: '#f3f3f3', // inputs
     200: '#e6e6e6', // Health information
@@ -35,6 +37,7 @@ export const COLORS: ColorsType = {
     900: '#171717',
   },
   accent: '#c6c9ff',
-  success: '#4caf50',
+  success: '#0adb70',
   error: '#d71818',
+  warning: '#f5d224',
 }

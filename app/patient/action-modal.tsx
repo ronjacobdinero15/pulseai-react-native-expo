@@ -28,9 +28,19 @@ export default function MedicationActionModal() {
     endDate: params.endDate as string,
     reminder: params.reminder as string,
     dates: JSON.parse(params.dates as string),
-    actions: params.actions ? JSON.parse(params.actions as string) : [],
+    actions: JSON.parse(params.actions as string),
     selectedDate: params.selectedDate as string,
   }
+
+  // const actionExists = (medicine.actions ?? []).some(
+  //   (action: { date: string; status: string; time: string }) => {
+  //     console.log(action.date)
+  //     console.log(params.selectedDate)
+  //     return action.date === params.selectedDate
+  //   }
+  // )
+
+  // console.log(actionExists)
 
   const handleAddNewMedicationStatus = async (status: string) => {
     const res = await addNewMedicationStatus({

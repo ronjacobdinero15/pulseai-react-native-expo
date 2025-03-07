@@ -2,13 +2,13 @@
 
 require_once 'dbConfig.php';
 
-function registerPatient($pdo, $first_name, $last_name, $date_of_birth, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
     $checkUserSql = "SELECT * FROM patients WHERE email = ?";
     $checkUserSqlStmt = $pdo->prepare($checkUserSql);
     $checkUserSqlStmt->execute([$email]);
 
     if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO patients (first_name,last_name,date_of_birth,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO patients (first_name,last_name,full_name,date_of_birth,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt = $pdo->prepare($sql);
 
         // Encode JSON fields since they can contain arrays
@@ -17,7 +17,7 @@ function registerPatient($pdo, $first_name, $last_name, $date_of_birth, $email, 
         
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        $executeQuery = $stmt->execute([$first_name, $last_name, $date_of_birth, $email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle]);
+        $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle]);
 
         if ($executeQuery) {
             return [
@@ -223,6 +223,45 @@ function addNewMedicationStatus($pdo, $medication_id, $date, $status, $time) {
     }
 }
 
+function addNewBpForToday ($pdo, $patient_id, $systolic, $diastolic, $date_taken) {
+    $sql = "INSERT INTO bp_readings (patient_id, systolic, diastolic, date_taken) VALUES (?,?,?,?)";
+    $stmt = $pdo->prepare($sql);
+    $executeQuery = $stmt->execute([$patient_id, $systolic, $diastolic, $date_taken]);
+
+    if ($executeQuery) {
+        return [
+            "success" => true,
+            "message" => "New blood pressure record added!"
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "An error occurred while adding the blood pressure record"
+        ];
+    }
+}
+
+function checkIfUserHasAlreadyBpToday($pdo, $patient_id, $date_taken) {
+    $sql = "SELECT * FROM bp_readings WHERE patient_id = ? AND date_taken = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$patient_id, $date_taken]);
+
+    if ($stmt->rowCount() > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            "success" => true,
+            "message" => "User already has a blood pressure record for today",
+            "systolic" => $row['systolic'],
+            "diastolic" => $row['diastolic']
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "User does not have a blood pressure record for today"
+        ];
+    }
+}
 
 
 /* function updateShelf($pdo, $shelf_id, $shelf_name, $updatedBy) {

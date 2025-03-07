@@ -1,4 +1,8 @@
-import { addNewMedicationStatusType, Medication } from '@/constants/medication'
+import {
+  AddNewBpForTodayType,
+  addNewMedicationStatusType,
+  Medication,
+} from '@/constants/medication'
 import { apiUrl } from '@/constants/types'
 
 export async function addNewMedication({
@@ -64,7 +68,6 @@ export async function addNewMedicationStatus({
   status,
   time,
 }: addNewMedicationStatusType) {
-  console.log('BEFORE')
   const res = await fetch(`${apiUrl}?action=addNewMedicationStatus`, {
     method: 'POST',
     headers: {
@@ -77,8 +80,51 @@ export async function addNewMedicationStatus({
       time,
     }),
   })
-  console.log('AFTER')
+
   if (!res.ok) throw new Error('Error occurred updating medication status')
+
+  return await res.json()
+}
+
+export async function addNewBpForToday({
+  currentUserId,
+  systolic,
+  diastolic,
+  dateTaken,
+}: AddNewBpForTodayType) {
+  const res = await fetch(`${apiUrl}?action=addNewBpForToday`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      patient_id: currentUserId,
+      systolic,
+      diastolic,
+      date_taken: dateTaken,
+    }),
+  })
+
+  if (!res.ok) throw new Error('Error occurred adding new BP for today')
+
+  return await res.json()
+}
+
+export async function checkIfUserHasAlreadyBpToday({
+  currentUserId,
+  dateTaken,
+}: AddNewBpForTodayType) {
+  const res = await fetch(
+    `${apiUrl}?action=checkIfUserHasAlreadyBpToday&patient_id=${currentUserId}&date_taken=${dateTaken}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+
+  if (!res.ok) throw new Error('Error occurred fetching BP for today')
 
   return await res.json()
 }

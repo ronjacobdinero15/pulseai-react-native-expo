@@ -24,6 +24,9 @@ function handleGet($pdo) {
         case 'getMedicationList':
             echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $_GET['selected_date']));
             break;
+        case 'checkIfUserHasAlreadyBpToday':
+            echo json_encode(checkIfUserHasAlreadyBpToday($pdo, $_GET['patient_id'], $_GET['date_taken']));
+            break;
         /* case 'edit':
             echo json_encode(fetchShelf($pdo, $_GET['shelf_id']));
             break;
@@ -58,7 +61,7 @@ function handlePost($pdo) {
             echo json_encode(loginPatient($pdo, $data['email'], $data['password']));
             break;
         case 'registerPatient':
-            echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['date_of_birth'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
+            echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
         case 'forgotPassword':
             echo json_encode(forgotPassword($pdo, $data['email']));
@@ -68,6 +71,9 @@ function handlePost($pdo) {
             break;
         case 'addNewMedicationStatus':
             echo json_encode(addNewMedicationStatus($pdo, $data['medication_id'], $data['date'], $data['status'], $data['time']));
+            break;
+        case 'addNewBpForToday':
+            echo json_encode(addNewBpForToday($pdo, $data['patient_id'], $data['systolic'], $data['diastolic'], $data['date_taken']));
             break;
         /* case 'insertShelf':
             echo json_encode(insertShelf($pdo, $data['shelf_name'], $data['currentUser']));
