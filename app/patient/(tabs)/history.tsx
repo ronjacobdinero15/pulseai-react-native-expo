@@ -119,11 +119,12 @@ export default function History() {
                   style={{ height: 'auto' }}
                   onPress={() => {
                     router.push({
-                      pathname: '/patient/(action-modal)/index',
+                      pathname: '/patient/action-modal',
                       params: {
                         ...item,
                         selectedDate,
                         actions: JSON.stringify(item.actions || []),
+                        dates: JSON.stringify(item.dates || []),
                       },
                     })
                   }}

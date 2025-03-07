@@ -39,6 +39,7 @@ function MedicationList() {
     setIsLoading(true)
     const res = await getMedicationList(patientId, formattedDate)
     if (res.success) {
+      // console.log(JSON.stringify(res.medications, null, 2))
       setMedList(res.medications)
     }
     setIsLoading(false)
@@ -105,7 +106,7 @@ function MedicationList() {
           data={medList}
           onRefresh={() => fetchMedicationList(currentUser?.id!)}
           refreshing={isLoading}
-          renderItem={({ item, index }) => (
+          renderItem={({ item }) => (
             <MyTouchableOpacity
               style={{ height: 'auto' }}
               onPress={() => {
@@ -115,6 +116,7 @@ function MedicationList() {
                     ...item,
                     selectedDate,
                     actions: JSON.stringify(item.actions || []),
+                    dates: JSON.stringify(item.dates || []),
                   },
                 })
               }}

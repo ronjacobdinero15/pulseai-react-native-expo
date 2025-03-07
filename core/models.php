@@ -163,8 +163,8 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
                 "startDate" => $medication["start_date"],
                 "endDate" => $medication["end_date"],
                 "reminder" => $medication["reminder"],
-                "dates" => $medication["dates"],
-                "actions" => $medication["actions"]
+                "dates"   => json_decode($medication["dates"]),
+                "actions" => json_decode($medication["actions"])
             ];
         }, $medications);
 

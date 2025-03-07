@@ -9,13 +9,17 @@ import { formatDate } from '@/utils/helpers'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import moment from 'moment'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Alert, Image, StyleSheet, View } from 'react-native'
 
 export default function MedicationActionModal() {
   const params = useLocalSearchParams()
   const router = useRouter()
   const { setRefresh } = useAuth()
+
+  useEffect(() => {}, [params.selectedDate])
+
+  const isToday = moment().format('MM/DD/YYYY') === params.selectedDate
 
   const medicine: Medication = {
     medicationId: params.medicationId as string,
@@ -32,15 +36,11 @@ export default function MedicationActionModal() {
     selectedDate: params.selectedDate as string,
   }
 
-  // const actionExists = (medicine.actions ?? []).some(
-  //   (action: { date: string; status: string; time: string }) => {
-  //     console.log(action.date)
-  //     console.log(params.selectedDate)
-  //     return action.date === params.selectedDate
-  //   }
-  // )
-
-  // console.log(actionExists)
+  const actionExists = (medicine.actions ?? []).some(
+    (action: { date: string; status: string; time: string }) => {
+      return action.date === params.selectedDate
+    }
+  )
 
   const handleAddNewMedicationStatus = async (status: string) => {
     const res = await addNewMedicationStatus({
@@ -92,26 +92,28 @@ export default function MedicationActionModal() {
         selectedDate={medicine?.selectedDate!}
       />
 
-      <View style={styles.btnContainer}>
-        <MyTouchableOpacity
-          style={styles.closeBtn}
-          onPress={() => handleAddNewMedicationStatus('Missed')}
-        >
-          <Ionicons name="close-outline" size={30} color={COLORS.error} />
-          <MyText size="h4" style={{ color: COLORS.error }}>
-            Missed
-          </MyText>
-        </MyTouchableOpacity>
-        <MyTouchableOpacity
-          style={styles.successBtn}
-          onPress={() => handleAddNewMedicationStatus('Taken')}
-        >
-          <Ionicons name="close-outline" size={30} color="white" />
-          <MyText size="h4" style={{ color: 'white' }}>
-            Taken
-          </MyText>
-        </MyTouchableOpacity>
-      </View>
+      {!actionExists && isToday && (
+        <View style={styles.btnContainer}>
+          <MyTouchableOpacity
+            style={styles.closeBtn}
+            onPress={() => handleAddNewMedicationStatus('Missed')}
+          >
+            <Ionicons name="close-outline" size={30} color={COLORS.error} />
+            <MyText size="h4" style={{ color: COLORS.error }}>
+              Missed
+            </MyText>
+          </MyTouchableOpacity>
+          <MyTouchableOpacity
+            style={styles.successBtn}
+            onPress={() => handleAddNewMedicationStatus('Taken')}
+          >
+            <Ionicons name="close-outline" size={30} color="white" />
+            <MyText size="h4" style={{ color: 'white' }}>
+              Taken
+            </MyText>
+          </MyTouchableOpacity>
+        </View>
+      )}
 
       <MyTouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
         <Ionicons name="close-circle" size={50} color={COLORS.secondary[200]} />

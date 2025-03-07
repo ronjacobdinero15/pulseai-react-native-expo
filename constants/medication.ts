@@ -11,7 +11,7 @@ export type Medication = {
   endDate: string
   reminder: string
   dates: string[]
-  actions?: { date: string; status: string; time: string }[]
+  actions?: { date: string; status: string; time: string }[] | []
   selectedDate?: string
 }
 
