@@ -26,13 +26,13 @@ export async function addNewMedication({
     body: JSON.stringify({
       medication_id: medicationId,
       patient_id: patientId,
-      medication_name: medicationName,
-      type,
-      dosage,
-      frequency,
-      start_date: startDate,
-      end_date: endDate,
-      reminder,
+      medication_name: medicationName.trim(),
+      type: type.trim(),
+      dosage: dosage.trim(),
+      frequency: frequency.trim(),
+      start_date: startDate.trim(),
+      end_date: endDate.trim(),
+      reminder: reminder.trim(),
       dates,
       actions,
     }),
@@ -75,9 +75,9 @@ export async function addNewMedicationStatus({
     },
     body: JSON.stringify({
       medication_id: medicationId,
-      date,
-      status,
-      time,
+      date: date.trim(),
+      status: status.trim(),
+      time: time.trim(),
     }),
   })
 
@@ -99,8 +99,8 @@ export async function addNewBpForToday({
     },
     body: JSON.stringify({
       patient_id: currentUserId,
-      systolic,
-      diastolic,
+      systolic: systolic?.trim(),
+      diastolic: diastolic?.trim(),
       date_taken: dateTaken,
     }),
   })

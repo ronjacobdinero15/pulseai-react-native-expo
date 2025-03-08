@@ -379,6 +379,9 @@ const styles = StyleSheet.create({
   bpAlreadyTakenContainer: {
     backgroundColor: COLORS.primary[500],
     borderRadius: 15,
-    padding: 10,
+    padding: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
 })

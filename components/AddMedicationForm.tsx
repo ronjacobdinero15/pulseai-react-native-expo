@@ -41,7 +41,7 @@ function AddMedicationForm() {
       medicationName: 'Shabu',
       type: 'tablet',
       dosage: '50ml',
-      frequency: 'Morning',
+      frequency: '',
       startDate: '',
       endDate: '',
     },

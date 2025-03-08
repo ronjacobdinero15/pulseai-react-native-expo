@@ -143,7 +143,7 @@ export default function SignIn() {
         </View>
 
         <Link href="/patient/forgot-password" style={styles.forgotPassword}>
-          Forgot Password?
+          Forgot your password?
         </Link>
 
         <View style={styles.formAction}>

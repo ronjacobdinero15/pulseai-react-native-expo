@@ -9,11 +9,8 @@ import { Image, StyleSheet, View } from 'react-native'
 
 type Tab = {
   name: string
-  icon: 'add-circle' | 'medkit' | 'time' | 'exit'
-  path?:
-    | '/patient/add-new-medication'
-    | '/patient/medication'
-    | '/patient/history'
+  icon: 'settings' | 'key' | 'exit'
+  path?: '/patient/update-profile' | '/patient/update-password'
 }
 
 export default function Profile() {
@@ -22,20 +19,30 @@ export default function Profile() {
 
   const tabs: Tab[] = [
     {
-      name: 'Add New Medication',
-      icon: 'add-circle',
-      path: '/patient/add-new-medication',
+      name: 'Profile',
+      icon: 'settings',
+      path: '/patient/update-profile',
     },
     {
-      name: 'My Medications',
-      icon: 'medkit',
-      path: '/patient/medication',
+      name: 'Change Password',
+      icon: 'key',
+      path: '/patient/update-password',
     },
-    {
-      name: 'History',
-      icon: 'time',
-      path: '/patient/history',
-    },
+    // {
+    //   name: 'Add New Medication',
+    //   icon: 'add-circle',
+    //   path: '/patient/add-new-medication',
+    // },
+    // {
+    //   name: 'My Medications',
+    //   icon: 'medkit',
+    //   path: '/patient/medication',
+    // },
+    // {
+    //   name: 'History',
+    //   icon: 'time',
+    //   path: '/patient/history',
+    // },
     {
       name: 'Logout',
       icon: 'exit',

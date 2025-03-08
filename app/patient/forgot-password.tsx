@@ -6,7 +6,7 @@ import { SignInType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { forgotPassword } from '@/services/apiAuth'
 import { useRouter } from 'expo-router'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native'
 
@@ -14,12 +14,21 @@ export default function ForgotPassword() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SignInType>({
-    defaultValues: { email: 'ronjacobdinero15@gmail.com' },
+    defaultValues: { email: '' },
   })
-  const { isLoading, setIsLoading } = useAuth()
+  const { currentUser, isLoading, setIsLoading } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    if (currentUser?.id) {
+      reset({
+        email: currentUser?.email!,
+      })
+    }
+  }, [])
 
   const handleResetPassword = async ({ email }: { email: string }) => {
     setIsLoading(true)

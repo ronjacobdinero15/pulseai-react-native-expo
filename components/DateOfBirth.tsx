@@ -31,7 +31,7 @@ function DateOfBirth({ value, onChange }: DateOfBirthProps) {
   }
 
   const handleConfirmIOSDate = () => {
-    onChange(date.toDateString())
+    onChange(formatDate(date))
     handleToggleDatePicker()
   }
 
@@ -45,11 +45,19 @@ function DateOfBirth({ value, onChange }: DateOfBirthProps) {
 
       if (Platform.OS === 'android') {
         handleToggleDatePicker()
-        onChange(currentDate.toDateString())
+        onChange(formatDate(currentDate))
       }
     } else {
       handleToggleDatePicker()
     }
+  }
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
   }
 
   return (

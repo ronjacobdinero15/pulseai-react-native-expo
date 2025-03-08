@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
 
 type DropdownComponentProps = {
-  label: string
+  label?: string
   data: { label: string; value: string }[]
   value: string
   onChange: (value: string) => void
@@ -24,13 +24,14 @@ function DropdownComponent({
     <View style={styles.container}>
       <Dropdown
         style={[styles.dropdown, { backgroundColor }]}
-        placeholderStyle={styles.placeholderStyle}
+        placeholderStyle={styles.selectedTextStyle}
         selectedTextStyle={styles.selectedTextStyle}
         data={data}
         labelField="label"
         valueField="value"
-        placeholder={label}
+        placeholder={value ? value : label}
         value={value}
+        mode="modal"
         onChange={item => {
           onChange(item.value)
           onBlur()
@@ -45,17 +46,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropdown: {
-    height: 44,
+    height: 50,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 12,
   },
-  placeholderStyle: {
-    fontSize: 16,
-    color: COLORS.secondary[500],
-  },
   selectedTextStyle: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: 500,
+    color: COLORS.secondary[900],
+    lineHeight: 25,
   },
 })
 

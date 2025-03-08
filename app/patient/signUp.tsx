@@ -46,13 +46,13 @@ export default function SignUp() {
       password: '12345',
       passwordConfirm: '12345',
       age: '20',
-      gender: 'male',
-      vices: ['alcohol'],
+      gender: 'Male',
+      vices: ['Alcohol'],
       bmiHeightCm: '168',
       bmiWeightKg: '60',
-      comorbidities: ['diabetes'],
-      parentalHypertension: 'no',
-      lifestyle: 'sedentary',
+      comorbidities: ['Diabetes'],
+      parentalHypertension: 'No',
+      lifestyle: 'Sedentary',
     },
   })
   const router = useRouter()

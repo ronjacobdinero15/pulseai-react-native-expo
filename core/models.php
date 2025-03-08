@@ -144,7 +144,6 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
     $sql = "SELECT * FROM medications WHERE patient_id = ? AND JSON_CONTAINS(dates, ?)";
     $stmt = $pdo->prepare($sql);
     
-    // Encode the selected date as a JSON string (e.g., "2025-03-02" becomes "\"2025-03-02\"")
     $jsonSelectedDate = json_encode($selected_date);
     
     $stmt->execute([$patient_id, $jsonSelectedDate]);
@@ -181,7 +180,6 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
 }
 
 function addNewMedicationStatus($pdo, $medication_id, $date, $status, $time) {
-    // Fetch the current actions array
     $sql = "SELECT actions FROM medications WHERE medication_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$medication_id]);
@@ -263,227 +261,100 @@ function checkIfUserHasAlreadyBpToday($pdo, $patient_id, $date_taken) {
     }
 }
 
-
-/* function updateShelf($pdo, $shelf_id, $shelf_name, $updatedBy) {
-    $sql = "UPDATE shelves SET shelf_name = ?, updated_by = ?, last_updated = NOW() WHERE shelf_id = ?";
+function getPatientProfile($pdo, $patient_id) {
+    $sql = "SELECT * FROM patients WHERE patient_id = ?";
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$shelf_name, $updatedBy, $shelf_id]);
+    $stmt->execute([$patient_id]);
 
-    if ($executeQuery) {
-        return true;
-    }
-}
+    if ($stmt->rowCount() > 0) {
+        $patient = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $patient = [
+            "firstName" => $patient["first_name"],
+            "lastName" => $patient["last_name"],
+            "dateOfBirth" => $patient["date_of_birth"],
+            "email" => $patient["email"],
+            "age" => $patient["age"],
+            "gender" => $patient["gender"],
+            "bmiHeightCm" => $patient["bmi_height_cm"],
+            "bmiWeightKg" => $patient["bmi_weight_kg"],
+            "vices" => json_decode($patient["vices"], true),
+            "comorbidities" => json_decode($patient["comorbidities"], true),
+            "parentalHypertension" => $patient["parental_hypertension"],
+            "lifestyle" => $patient["lifestyle"]
+        ];
 
-
-function insertNewUser($pdo, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $parental_hypertension, $lifestyle) {
-    $checkUserSql = "SELECT * FROM patients WHERE email = ?";
-    $checkUserSqlStmt = $pdo->prepare($checkUserSql);
-    $checkUserSqlStmt->execute([$email]);
-
-    if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO patients (email,password,age,gender,bmi_height_cm,bmi_weight_kg,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?)";
-        $stmt = $pdo->prepare($sql);
-        
-        $executeQuery = $stmt->execute([$email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $parental_hypertension, $lifestyle]);
-
-        if ($executeQuery) {
-            return [
-                "success" => true, 
-                "message" => "User successfully registered!" 
-            ];
-        }
-        else {
-            return [
-                "success" => false, 
-                "message" => "An error occurred from the query" 
-            ];
-        }
-    }
-    else {
         return [
-            "success" => false, 
-            "message" => "User already exists" 
+            "success" => true,
+            "patient" => $patient
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "Patient not found"
         ];
     }
 }
 
+function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+    // Encode JSON fields since they can contain arrays
+    $vices_json = json_encode($vices);
+    $comorbidities_json = json_encode($comorbidities);
 
+    $sql = "UPDATE patients SET first_name=?, last_name=?, full_name=?, date_of_birth=?, email=?, age=?, gender=?, bmi_height_cm=?, bmi_weight_kg=?, vices=?, comorbidities=?, parental_hypertension=?, lifestyle=? WHERE patient_id=?";
 
-function getAllUsers($pdo) {
-	$sql = "SELECT * FROM user_passwords";
-	$stmt = $pdo->prepare($sql);
-	$executeQuery = $stmt->execute();
-
-	if ($executeQuery) {
-		return $stmt->fetchAll();
-	}
-}
-
-
-
-function getUserByID($pdo, $user_id) {
-	$sql = "SELECT * FROM user_passwords WHERE user_id = ?";
-	$stmt = $pdo->prepare($sql);
-	$executeQuery = $stmt->execute([$user_id]);
-	if ($executeQuery) {
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-	}
-}
-
-
-
-function getCurrentUser() { 
-    return [
-        "username" => $_SESSION['username'] ?? null
-    ];
-}
-
-
-
-function insertNewUser($pdo, $username, $password, $email, $first_name, $last_name, $address, $age) {
-    $checkUserSql = "SELECT * FROM user_passwords WHERE username = ?";
-    $checkUserSqlStmt = $pdo->prepare($checkUserSql);
-    $checkUserSqlStmt->execute([$username]);
-
-    if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO user_passwords (username,password,email,first_name,last_name,address,age) VALUES(?,?,?,?,?,?,?)";
-        $stmt = $pdo->prepare($sql);
-        $executeQuery = $stmt->execute([$username, $password, $email, $first_name, $last_name, $address, $age]);
-
-        if ($executeQuery) {
-            return [
-                "success" => true, 
-                "message" => "User successfully registered!" 
-            ];
-        }
-        else {
-            return [
-                "success" => false, 
-                "message" => "An error occurred from the query" 
-            ];
-        }
-    }
-    else {
-        return [
-            "success" => false, 
-            "message" => "User already exists" 
-        ];
-    }
-} 
-
-
-
-function insertShelf($pdo, $shelf_name, $currentUser) {
-    $sql = "INSERT INTO shelves (shelf_name, added_by) VALUES (?,?)";
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$shelf_name, $currentUser]);
-
+    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $patient_id]);
     if ($executeQuery) {
         return [
             "success" => true,
-            "message" => "Shelf created successfully"
+            "message" => "Profile updated successfully"
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "An error occurred while updating the profile"
         ];
     }
-    return [
-        "success" => false,
-        "message" => "Failed to create shelf"
-    ];
 }
 
-
-
-function insertItem($pdo, $item_name, $price, $shelf_id, $currentUser) {
-    $sql = "INSERT INTO items (item_name, price, shelf_id, added_by) VALUES (?,?,?,?)";
+function updatePatientPassword($pdo, $patient_id, $old_password, $new_password) {
+    $sql = "SELECT * FROM patients WHERE patient_id = ?";
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$item_name, $price, $shelf_id, $currentUser]);
+    $stmt->execute([$patient_id]);
 
-    if ($executeQuery) {
-        return true;
+    if ($stmt->rowCount() == 1) {
+        $patientInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        $passwordFromDB = $patientInfoRow['password'];
+
+        if (password_verify($old_password, $passwordFromDB)) {
+            $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+
+            $updateSql = "UPDATE patients SET password = ? WHERE patient_id = ?";
+            $updateStmt = $pdo->prepare($updateSql);
+            $executeQuery = $updateStmt->execute([$new_password_hash, $patient_id]);
+
+            if ($executeQuery) {
+                return [
+                    "success" => true,
+                    "message" => "Password updated successfully"
+                ];
+            } else {
+                return [
+                    "success" => false,
+                    "message" => "An error occurred while updating the password"
+                ];
+            }
+        } else {
+            return [
+                "success" => false,
+                "message" => "Old password is incorrect"
+            ];
+        }
+    } else {
+        return [
+            "success" => false,
+            "message" => "Patient not found"
+        ];
     }
 }
-
-
-
-function fetchShelf($pdo, $shelf_id) {
-    $sql = "SELECT * FROM shelves WHERE shelf_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$shelf_id]);
-        
-    if ($executeQuery) {
-        return $stmt->fetch();
-    }
-}
-
-
-
-function fetchItem($pdo, $item_id) {
-    $sql = "SELECT * FROM items WHERE item_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$item_id]);
-
-    if ($executeQuery) {
-        return $stmt->fetch();
-    }
-}
-
-
-
-function fetchAllShelves($pdo) {
-    $sql = "SELECT * FROM shelves ORDER BY shelf_id DESC";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute();
-
-    if ($executeQuery) {
-        return $stmt->fetchAll();
-    }
-}
-
-
-
-function fetchItemsByShelf($pdo, $shelf_id) {
-    $sql = "SELECT * FROM items WHERE shelf_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$shelf_id]);
-    
-    if ($executeQuery) {
-        return $stmt->fetchAll();
-    }
-}
-
-
-
-function updateItem($pdo, $item_id, $item_name, $price, $updatedBy) {
-    $sql = "UPDATE items SET item_name = ?, price = ?, updated_by = ?, last_updated = NOW() WHERE item_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$item_name, $price, $updatedBy, $item_id]);
-
-    if ($executeQuery) {
-        return true;
-    }
-}
-
-
-
-function deleteShelf($pdo, $shelf_id) {
-    $sql = "DELETE FROM shelves WHERE shelf_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$shelf_id]);
-
-    if ($executeQuery) {
-        return true;
-    }
-}
-
-
-
-function deleteItem($pdo, $item_id) {
-    $sql = "DELETE FROM items WHERE item_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$item_id]);
-
-    if ($executeQuery) {
-        return true;
-    }
-}
-*/

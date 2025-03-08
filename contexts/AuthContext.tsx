@@ -18,6 +18,7 @@ type AuthContextType = {
   refresh: number
   setRefresh: React.Dispatch<React.SetStateAction<number>>
   currentUser: CurrentUser | null
+  setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser | null>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   patientSignIn: (id: string, email: string, firstName: string) => Promise<void>
   patientSignOut: () => Promise<void>
@@ -35,6 +36,7 @@ function AuthProvider({ children }: AuthContextProps) {
     const loadAuthState = async () => {
       try {
         const currentUserString = await SecureStore.getItemAsync('currentUser')
+        console.log(currentUserString, 'currentUserString')
 
         if (currentUserString) {
           const currentUser = JSON.parse(currentUserString)
@@ -62,7 +64,12 @@ function AuthProvider({ children }: AuthContextProps) {
     try {
       await SecureStore.setItemAsync(
         'currentUser',
-        JSON.stringify({ id, email, role: 'patient', firstName })
+        JSON.stringify({
+          id: id.trim(),
+          email: email.trim(),
+          role: 'patient',
+          firstName: firstName.trim(),
+        })
       )
       setCurrentUser({ id, email, role: 'patient', firstName })
 
@@ -91,6 +98,7 @@ function AuthProvider({ children }: AuthContextProps) {
         isLoading,
         setIsLoading,
         currentUser,
+        setCurrentUser,
         refresh,
         setRefresh,
       }}

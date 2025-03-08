@@ -27,27 +27,9 @@ function handleGet($pdo) {
         case 'checkIfUserHasAlreadyBpToday':
             echo json_encode(checkIfUserHasAlreadyBpToday($pdo, $_GET['patient_id'], $_GET['date_taken']));
             break;
-        /* case 'edit':
-            echo json_encode(fetchShelf($pdo, $_GET['shelf_id']));
+        case 'getPatientProfile':
+            echo json_encode(getPatientProfile($pdo, $_GET['patient_id']));
             break;
-        case 'edit_item':
-            echo json_encode(fetchItem($pdo, $_GET['item_id']));
-            break;
-        case 'shelf_data':
-            echo json_encode(fetchItemsByShelf($pdo, $_GET['shelf_id']));
-            break;
-        case 'logout':
-            unset($_SESSION['username']);
-            break;
-        case 'getAllUsers':
-            echo json_encode(getAllUsers($pdo));
-            break;
-        case 'getUserByID':
-            echo json_encode(getUserByID($pdo, $_GET['user_id']));
-            break;
-        case 'getShelves':
-            echo json_encode(fetchAllShelves($pdo));
-            break; */
         default:
             echo json_encode(['error' => 'Invalid action']);
     }
@@ -75,14 +57,8 @@ function handlePost($pdo) {
         case 'addNewBpForToday':
             echo json_encode(addNewBpForToday($pdo, $data['patient_id'], $data['systolic'], $data['diastolic'], $data['date_taken']));
             break;
-        /* case 'insertShelf':
-            echo json_encode(insertShelf($pdo, $data['shelf_name'], $data['currentUser']));
-            break;
-        case 'insertItem':
-            echo json_encode(insertItem($pdo, $data['item_name'], $data['price'], $data['shelf_id'], $data['currentUser']));
-            break;  */
         default:
-            echo json_encode(['error' => 'Invalid action']);
+            echo json_encode(['error' => 'InvalIid action']);
     }
 }
 
@@ -93,9 +69,12 @@ function handlePut($pdo) {
         case 'updatePatientNeedsOnboarding':
             echo json_encode(updatePatientNeedsOnboarding($pdo, $data['patient_id'], $data['needs_onboarding']));
             break;
-        /* case 'updateItem':
-            echo json_encode(updateItem($pdo, $data['item_id'], $data['item_name'], $data['price'], $data['updatedBy']));
-            break; */
+        case 'updatePatientProfile':
+            echo json_encode(updatePatientProfile($pdo, $data['patient_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
+            break;
+        case 'updatePatientPassword':
+            echo json_encode(updatePatientPassword($pdo, $data['patient_id'], $data['old_password'], $data['new_password']));
+            break;
         default:
             echo json_encode(['error' => 'Invalid action']);
     }

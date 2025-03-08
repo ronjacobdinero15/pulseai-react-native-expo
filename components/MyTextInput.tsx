@@ -13,12 +13,14 @@ type MyTextInputProps = TextInputProps & {
 }
 
 function MyTextInput({ style, ...rest }: MyTextInputProps) {
-  return <TextInput style={[styles.input, style]} {...rest} />
+  return (
+    <TextInput style={[styles.input, style]} {...rest} scrollEnabled={false} />
+  )
 }
 
 const styles = StyleSheet.create({
   input: {
-    height: 44,
+    height: 50,
     backgroundColor: COLORS.secondary[100],
     paddingVertical: 10,
     paddingHorizontal: 16,
