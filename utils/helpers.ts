@@ -1,9 +1,12 @@
 import { DateListType } from '@/constants/dates'
 import moment from 'moment'
 
-export const formatDate = (timestamp: string) => {
-  let date = new Date(timestamp).setHours(0, 0, 0, 0)
-  return moment(date).format('ll')
+export const formatDateForText = (timestamp: string) => {
+  return moment(timestamp, 'MM/DD/YYYY').format('ll')
+}
+
+export const formatDate = (timestamp: number) => {
+  return moment(timestamp).format('L')
 }
 
 export const formatTime = (timestamp: string) => {
@@ -17,8 +20,8 @@ export const formatTime = (timestamp: string) => {
 }
 
 export const getDatesRange = (startDate: string, endDate: string) => {
-  const start = moment(new Date(startDate), 'MM/DD/YYYY')
-  const end = moment(new Date(endDate), 'MM/DD/YYYY')
+  const start = moment(startDate, 'MM/DD/YYYY')
+  const end = moment(endDate, 'MM/DD/YYYY')
   const dates = []
 
   while (start.isSameOrBefore(end)) {

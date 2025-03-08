@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { addNewMedication } from '@/services/apiMedication'
 import {
   formatDate,
+  formatDateForText,
   formatTime,
   generateUniqueId,
   getDatesRange,
@@ -15,6 +16,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
+import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import {
@@ -53,6 +55,7 @@ function AddMedicationForm() {
   const router = useRouter()
 
   const startDate = useWatch({ control, name: 'startDate' })
+  const endDate = useWatch({ control, name: 'endDate' })
 
   const onSubmit = async (data: Medication) => {
     if (!currentUser?.id) return
@@ -220,7 +223,13 @@ function AddMedicationForm() {
           <Controller
             control={control}
             name="startDate"
-            rules={{ required: 'Required.' }}
+            rules={{
+              required: 'Required.',
+              validate: value =>
+                moment(value, 'MM/DD/YYYY').isBefore(
+                  moment(endDate, 'MM/DD/YYYY')
+                ) || 'Start date must be before end date.',
+            }}
             render={({ field: { onChange, value } }) => (
               <>
                 <MyTouchableOpacity
@@ -233,27 +242,29 @@ function AddMedicationForm() {
                     style={[styles.icon, { borderRightWidth: 0 }]}
                   />
                   {value ? (
-                    <MyText size="h6">{formatDate(value)}</MyText>
+                    <MyText size="h6">{formatDateForText(value)}</MyText>
                   ) : (
                     <MyText>Start Date</MyText>
                   )}
                 </MyTouchableOpacity>
                 {showStartDate && (
                   <RNDateTimePicker
-                    minimumDate={new Date()}
+                    minimumDate={new Date(2020, 0, 1)}
                     onChange={(event, selectedDate) => {
-                      const currentDate = selectedDate || new Date()
-                      onChange(currentDate.toISOString())
+                      const currentDate = formatDate(
+                        event.nativeEvent.timestamp
+                      )
+                      onChange(currentDate)
                       setShowStartDate(false)
                     }}
-                    value={value ? new Date(value) : new Date()}
+                    value={new Date()}
                   />
                 )}
               </>
             )}
           />
           {errors.startDate && (
-            <MyText style={styles.errorLabel}>
+            <MyText style={styles.errorLabel} size="h6">
               {errors.startDate.message}
             </MyText>
           )}
@@ -266,8 +277,9 @@ function AddMedicationForm() {
             rules={{
               required: 'Required.',
               validate: value =>
-                new Date(value) > new Date(startDate) ||
-                'End date must be after start date.',
+                moment(value, 'MM/DD/YYYY').isAfter(
+                  moment(startDate, 'MM/DD/YYYY')
+                ) || 'End date must be after start date.',
             }}
             render={({ field: { onChange, value } }) => (
               <>
@@ -281,27 +293,31 @@ function AddMedicationForm() {
                     style={[styles.icon, { borderRightWidth: 0 }]}
                   />
                   {value ? (
-                    <MyText size="h6">{formatDate(value)}</MyText>
+                    <MyText size="h6">{formatDateForText(value)}</MyText>
                   ) : (
                     <MyText>End Date</MyText>
                   )}
                 </MyTouchableOpacity>
                 {showEndDate && (
                   <RNDateTimePicker
-                    minimumDate={new Date()}
+                    minimumDate={new Date(2020, 0, 1)}
                     onChange={(event, selectedDate) => {
-                      const currentDate = selectedDate || new Date()
-                      onChange(currentDate.toISOString())
+                      const currentDate = formatDate(
+                        event.nativeEvent.timestamp
+                      )
+                      onChange(currentDate)
                       setShowEndDate(false)
                     }}
-                    value={value ? new Date(value) : new Date()}
+                    value={new Date()}
                   />
                 )}
               </>
             )}
           />
           {errors.endDate && (
-            <MyText style={styles.errorLabel}>{errors.endDate.message}</MyText>
+            <MyText style={styles.errorLabel} size="h6">
+              {errors.endDate.message}
+            </MyText>
           )}
         </View>
       </View>

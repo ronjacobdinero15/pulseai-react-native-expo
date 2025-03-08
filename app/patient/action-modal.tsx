@@ -5,7 +5,6 @@ import { COLORS } from '@/constants/colors'
 import { Medication } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
 import { addNewMedicationStatus } from '@/services/apiMedication'
-import { formatDate } from '@/utils/helpers'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import moment from 'moment'
@@ -19,8 +18,6 @@ export default function MedicationActionModal() {
 
   useEffect(() => {}, [params.selectedDate])
 
-  const isToday = moment().format('MM/DD/YYYY') === params.selectedDate
-
   const medicine: Medication = {
     medicationId: params.medicationId as string,
     patientId: params.patientId as string,
@@ -29,12 +26,20 @@ export default function MedicationActionModal() {
     dosage: params.dosage as string,
     frequency: params.frequency as string,
     startDate: params.startDate as string,
-    endDate: params.endDate as string,
+    endDate: moment(params.endDate, 'MM/DD/YYYY').format('LL') as string,
     reminder: params.reminder as string,
     dates: JSON.parse(params.dates as string),
     actions: JSON.parse(params.actions as string),
-    selectedDate: params.selectedDate as string,
+    selectedDate: moment(params.selectedDate, 'MM/DD/YYYY').format(
+      'LL'
+    ) as string,
   }
+
+  const isToday = moment().format('MM/DD/YYYY') === params.selectedDate
+  const isPastDate = moment(params.selectedDate, 'MM/DD/YYYY').isBefore(
+    moment(),
+    'day'
+  )
 
   const actionExists = (medicine.actions ?? []).some(
     (action: { date: string; status: string; time: string }) => {
@@ -79,7 +84,12 @@ export default function MedicationActionModal() {
         source={require('@/assets/images/notification.gif')}
         style={styles.gif}
       />
-      <MyText size="h4">{formatDate(medicine.startDate)}</MyText>
+      <MyText size="h4">{medicine.selectedDate}</MyText>
+      <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
+        {medicine.selectedDate === medicine.endDate && isToday
+          ? 'Until today'
+          : `Until ${medicine.endDate}`}
+      </MyText>
       <MyText size="h1" style={{ color: COLORS.primary[500] }}>
         {medicine.reminder}
       </MyText>
@@ -107,13 +117,28 @@ export default function MedicationActionModal() {
             style={styles.successBtn}
             onPress={() => handleAddNewMedicationStatus('Taken')}
           >
-            <Ionicons name="close-outline" size={30} color="white" />
+            <Ionicons name="checkmark-outline" size={30} color="white" />
             <MyText size="h4" style={{ color: 'white' }}>
               Taken
             </MyText>
           </MyTouchableOpacity>
         </View>
       )}
+
+      <MyText
+        size="h2"
+        style={{
+          padding: 30,
+          color: COLORS.secondary[500],
+          textAlign: 'center',
+        }}
+      >
+        {!isToday && !isPastDate
+          ? `Please wait until it's ${medicine.selectedDate}`
+          : actionExists
+          ? 'You have already taken this medication'
+          : ''}
+      </MyText>
 
       <MyTouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
         <Ionicons name="close-circle" size={50} color={COLORS.secondary[200]} />
@@ -146,9 +171,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     borderColor: COLORS.error,
+    width: 130,
+    justifyContent: 'center',
   },
   successBtn: {
     padding: 10,
+    width: 130,
+    justifyContent: 'center',
     flexDirection: 'row',
     gap: 6,
     alignItems: 'center',
