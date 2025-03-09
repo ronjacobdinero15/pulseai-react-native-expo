@@ -30,6 +30,9 @@ function handleGet($pdo) {
         case 'getPatientProfile':
             echo json_encode(getPatientProfile($pdo, $_GET['patient_id']));
             break;
+        case 'getDoctorProfile':
+            echo json_encode(getDoctorProfile($pdo, $_GET['doctor_id']));
+            break;
         default:
             echo json_encode(['error' => 'Invalid action']);
     }
@@ -39,8 +42,11 @@ function handlePost($pdo) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     switch ($_GET['action']) {
-        case 'loginPatient':
-            echo json_encode(loginPatient($pdo, $data['email'], $data['password']));
+        case 'patientLogin':
+            echo json_encode(patientLogin($pdo, $data['email'], $data['password']));
+            break;
+        case 'doctorLogin':
+            echo json_encode(doctorLogin($pdo, $data['email'], $data['password']));
             break;
         case 'registerPatient':
             echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
@@ -58,7 +64,7 @@ function handlePost($pdo) {
             echo json_encode(addNewBpForToday($pdo, $data['patient_id'], $data['systolic'], $data['diastolic'], $data['date_taken']));
             break;
         default:
-            echo json_encode(['error' => 'InvalIid action']);
+            echo json_encode(['error' => 'Invalid action']);
     }
 }
 
@@ -72,8 +78,14 @@ function handlePut($pdo) {
         case 'updatePatientProfile':
             echo json_encode(updatePatientProfile($pdo, $data['patient_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
+        case 'updateDoctorProfile':
+            echo json_encode(updateDoctorProfile($pdo, $data['doctor_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['email']));
+            break;
         case 'updatePatientPassword':
             echo json_encode(updatePatientPassword($pdo, $data['patient_id'], $data['old_password'], $data['new_password']));
+            break;
+        case 'updateDoctorPassword':
+            echo json_encode(updateDoctorPassword($pdo, $data['doctor_id'], $data['old_password'], $data['new_password']));
             break;
         default:
             echo json_encode(['error' => 'Invalid action']);

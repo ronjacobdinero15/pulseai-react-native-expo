@@ -38,7 +38,7 @@ function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_bir
     }
 }
 
-function loginPatient($pdo, $email, $password) {
+function patientLogin($pdo, $email, $password) {
     $sql = "SELECT * FROM patients WHERE email = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$email]); 
@@ -56,6 +56,39 @@ function loginPatient($pdo, $email, $password) {
                 "message" => "Login successful!",
                 "needsOnboarding" => $patientInfoRow['needs_onboarding'],
                 "userRole"    => "patient",
+                "success" => true, 
+            ];
+        } else {
+            return [
+                "success" => false, 
+                "message" => "Email/Password is incorrect."
+            ];
+        }
+    } else {
+        return [
+            "success" => false, 
+            "message" => "Email/Password is incorrect."
+        ];
+    }
+}
+
+function doctorLogin($pdo, $email, $password) {
+    $sql = "SELECT * FROM doctors WHERE email = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$email]); 
+
+    if ($stmt->rowCount() == 1) {
+        $doctorInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        $doctorIDFromDB = $doctorInfoRow['doctor_id']; 
+        $emailFromDB = $doctorInfoRow['email']; 
+        $passwordFromDB = $doctorInfoRow['password'];
+
+        if (password_verify($password, $passwordFromDB)) {
+            return [
+                "id"      =>  $doctorIDFromDB,
+                "firstName" => $doctorInfoRow['first_name'],
+                "message" => "Login successful!",
+                "userRole"    => "doctor",
                 "success" => true, 
             ];
         } else {
@@ -296,6 +329,32 @@ function getPatientProfile($pdo, $patient_id) {
     }
 }
 
+function getDoctorProfile($pdo, $doctor_id) {
+    $sql = "SELECT * FROM doctors WHERE doctor_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$doctor_id]);
+
+    if ($stmt->rowCount() > 0) {
+        $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $doctor = [
+            "firstName" => $doctor["first_name"],
+            "lastName" => $doctor["last_name"],
+            "email" => $doctor["email"]
+        ];
+
+        return [
+            "success" => true,
+            "doctor" => $doctor
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "Doctor not found"
+        ];
+    }
+}
+
 function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
     // Encode JSON fields since they can contain arrays
     $vices_json = json_encode($vices);
@@ -305,6 +364,24 @@ function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_
 
     $stmt = $pdo->prepare($sql);
     $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $patient_id]);
+    if ($executeQuery) {
+        return [
+            "success" => true,
+            "message" => "Profile updated successfully"
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "An error occurred while updating the profile"
+        ];
+    }
+}
+
+function updateDoctorProfile($pdo, $doctor_id, $first_name, $last_name, $full_name, $email) {
+    $sql = "UPDATE doctors SET first_name=?, last_name=?, full_name=?, email=? WHERE doctor_id=?";
+    $stmt = $pdo->prepare($sql);
+    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $email, $doctor_id]);
+
     if ($executeQuery) {
         return [
             "success" => true,
@@ -355,6 +432,47 @@ function updatePatientPassword($pdo, $patient_id, $old_password, $new_password) 
         return [
             "success" => false,
             "message" => "Patient not found"
+        ];
+    }
+}
+
+function updateDoctorPassword($pdo, $doctor_id, $old_password, $new_password) {
+    $sql = "SELECT * FROM doctors WHERE doctor_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$doctor_id]);
+
+    if ($stmt->rowCount() == 1) {
+        $doctorInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        $passwordFromDB = $doctorInfoRow['password'];
+
+        if (password_verify($old_password, $passwordFromDB)) {
+            $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+
+            $updateSql = "UPDATE doctors SET password = ? WHERE doctor_id = ?";
+            $updateStmt = $pdo->prepare($updateSql);
+            $executeQuery = $updateStmt->execute([$new_password_hash, $doctor_id]);
+
+            if ($executeQuery) {
+                return [
+                    "success" => true,
+                    "message" => "Password updated successfully"
+                ];
+            } else {
+                return [
+                    "success" => false,
+                    "message" => "An error occurred while updating the password"
+                ];
+            }
+        } else {
+            return [
+                "success" => false,
+                "message" => "Old password is incorrect"
+            ];
+        }
+    } else {
+        return [
+            "success" => false,
+            "message" => "Doctor not found"
         ];
     }
 }

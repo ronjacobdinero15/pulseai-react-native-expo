@@ -2,6 +2,13 @@ import { useRouter } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
 import { createContext, useContext, useEffect, useState } from 'react'
 
+type userSignInType = {
+  id: string
+  email: string
+  firstName: string
+  role: string
+}
+
 type CurrentUser = {
   id: string | null
   role: string | null
@@ -20,8 +27,8 @@ type AuthContextType = {
   currentUser: CurrentUser | null
   setCurrentUser: React.Dispatch<React.SetStateAction<CurrentUser | null>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-  patientSignIn: (id: string, email: string, firstName: string) => Promise<void>
-  patientSignOut: () => Promise<void>
+  userSignIn: ({ id, email, firstName, role }: userSignInType) => Promise<void>
+  userSignOut: ({ role }: { role: string }) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -43,7 +50,12 @@ function AuthProvider({ children }: AuthContextProps) {
 
           if (currentUser.id && currentUser.role && currentUser.firstName) {
             setCurrentUser(currentUser)
-            router.replace('/patient/(tabs)')
+
+            if (currentUser.role === 'patient') {
+              router.replace('/patient/(tabs)')
+            } else if (currentUser.role === 'doctor') {
+              router.replace('/doctor/(tabs)')
+            }
             return
           }
         }
@@ -56,35 +68,33 @@ function AuthProvider({ children }: AuthContextProps) {
     loadAuthState()
   }, [])
 
-  const patientSignIn = async (
-    id: string,
-    email: string,
-    firstName: string
-  ) => {
+  const userSignIn = async ({ id, email, firstName, role }: userSignInType) => {
     try {
       await SecureStore.setItemAsync(
         'currentUser',
         JSON.stringify({
-          id: id.trim(),
+          id: id?.trim(),
           email: email.trim(),
-          role: 'patient',
+          role: role.trim(),
           firstName: firstName.trim(),
         })
       )
-      setCurrentUser({ id, email, role: 'patient', firstName })
-
-      router.replace('/patient/(tabs)')
+      setCurrentUser({ id, email, role, firstName })
     } catch (error) {
       console.error('Failed to sign in:', error)
     }
   }
 
-  const patientSignOut = async () => {
+  const userSignOut = async ({ role }: { role: string }) => {
     try {
       await SecureStore.deleteItemAsync('currentUser')
       setCurrentUser(null)
 
-      router.replace('/patient/login')
+      if (role === 'patient') {
+        router.replace('/patient/login')
+      } else if (role === 'doctor') {
+        router.replace('/doctor/login')
+      }
     } catch (error) {
       console.error('Failed to sign out:', error)
     }
@@ -93,8 +103,8 @@ function AuthProvider({ children }: AuthContextProps) {
   return (
     <AuthContext.Provider
       value={{
-        patientSignIn,
-        patientSignOut,
+        userSignIn,
+        userSignOut,
         isLoading,
         setIsLoading,
         currentUser,

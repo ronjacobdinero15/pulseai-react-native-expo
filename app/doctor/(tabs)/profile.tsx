@@ -10,7 +10,7 @@ import { Image, StyleSheet, View } from 'react-native'
 type Tab = {
   name: string
   icon: 'settings' | 'key' | 'exit'
-  path?: '/patient/update-profile' | '/patient/update-password'
+  path?: '/doctor/update-profile' | '/doctor/update-password'
 }
 
 export default function Profile() {
@@ -21,12 +21,14 @@ export default function Profile() {
     {
       name: 'Profile',
       icon: 'settings',
-      path: '/patient/update-profile',
+      // CREATE A NEW SCREEN FOR THIS
+      path: '/doctor/update-profile',
     },
     {
       name: 'Change Password',
       icon: 'key',
-      path: '/patient/update-password',
+      // CREATE A NEW SCREEN FOR THIS
+      path: '/doctor/update-password',
     },
     {
       name: 'Logout',
@@ -56,7 +58,7 @@ export default function Profile() {
               if (tab.path) {
                 router.push(tab.path)
               } else {
-                userSignOut({ role: 'patient' })
+                userSignOut({ role: 'doctor' })
               }
             }}
           >

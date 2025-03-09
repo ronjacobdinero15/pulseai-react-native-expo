@@ -4,7 +4,7 @@ import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import { COLORS } from '@/constants/colors'
 import { PasswordType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
-import { updatePatientPassword } from '@/services/apiAuth'
+import { updateDoctorPassword } from '@/services/apiAuth'
 import { Ionicons } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
 import React from 'react'
@@ -25,8 +25,8 @@ export default function UpdatePassword() {
     oldPassword,
     newPassword,
   }: PasswordType) => {
-    const res = await updatePatientPassword({
-      patientId: currentUser?.id!,
+    const res = await updateDoctorPassword({
+      doctorId: currentUser?.id!,
       oldPassword,
       newPassword,
     })
@@ -37,7 +37,7 @@ export default function UpdatePassword() {
           text: 'Great',
           onPress: () => {
             reset()
-            router.replace('/patient/(tabs)/profile')
+            router.replace('/doctor/(tabs)/profile')
           },
         },
       ])
@@ -51,7 +51,7 @@ export default function UpdatePassword() {
       <View style={styles.headerContainer}>
         <MyTouchableOpacity
           style={styles.backBtn}
-          onPress={() => router.replace('/patient/(tabs)/profile')}
+          onPress={() => router.replace('/doctor/(tabs)/profile')}
         >
           <Ionicons name="arrow-back" size={24} color={COLORS.primary[500]} />
         </MyTouchableOpacity>

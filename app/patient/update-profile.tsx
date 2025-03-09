@@ -122,7 +122,7 @@ export default function UpdateProfile() {
           <View style={styles.headerContainer}>
             <MyTouchableOpacity
               style={styles.backBtn}
-              onPress={() => router.replace('/patient/profile')}
+              onPress={() => router.replace('/patient/(tabs)/profile')}
             >
               <Ionicons
                 name="arrow-back"
@@ -138,6 +138,8 @@ export default function UpdateProfile() {
 
           <View style={styles.body}>
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>First name:</MyText>
+
               <Controller
                 control={control}
                 rules={{
@@ -162,6 +164,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Last name:</MyText>
+
               <Controller
                 control={control}
                 rules={{
@@ -186,6 +190,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Date of birth:</MyText>
+
               <Controller
                 control={control}
                 rules={{
@@ -204,6 +210,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Email:</MyText>
+
               <Controller
                 control={control}
                 rules={{
@@ -252,6 +260,8 @@ export default function UpdateProfile() {
 
             <View style={styles.shortContainer}>
               <View style={{ flex: 1 }}>
+                <MyText style={styles.inputLabel}>Age:</MyText>
+
                 <Controller
                   control={control}
                   rules={{
@@ -284,6 +294,7 @@ export default function UpdateProfile() {
               </View>
 
               <View style={{ flex: 2 }}>
+                <MyText style={styles.inputLabel}>Gender:</MyText>
                 <Controller
                   control={control}
                   rules={{ required: 'Required.' }}
@@ -306,6 +317,7 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
               <Controller
                 control={control}
                 rules={{
@@ -335,6 +347,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>BMI (weight in kg):</MyText>
+
               <Controller
                 control={control}
                 rules={{
@@ -364,6 +378,7 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Vices:</MyText>
               <Controller
                 control={control}
                 rules={{ required: 'This field is required.' }}
@@ -386,6 +401,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Comorbidities:</MyText>
+
               <Controller
                 control={control}
                 rules={{ required: 'This field is required.' }}
@@ -430,6 +447,8 @@ export default function UpdateProfile() {
             </View>
 
             <View style={styles.inputControl}>
+              <MyText style={styles.inputLabel}>Lifestyle:</MyText>
+
               <Controller
                 control={control}
                 rules={{ required: 'This field is required.' }}
@@ -503,7 +522,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   inputLabel: {
-    marginBottom: 8,
+    fontSize: 15,
+    marginBottom: 5,
   },
   errorLabel: {
     color: COLORS.error,

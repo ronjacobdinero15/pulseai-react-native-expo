@@ -44,3 +44,16 @@ CREATE TABLE bp_readings (
     date_taken VARCHAR(200),
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 );
+
+CREATE TABLE doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    full_name VARCHAR(200),
+    email VARCHAR(50),
+	password VARCHAR(256),
+    reset_token_hash VARCHAR(64) NULL DEFAULT NULL UNIQUE,
+    reset_token_expires_at DATETIME NULL DEFAULT NULL,
+    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

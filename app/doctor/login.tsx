@@ -5,7 +5,7 @@ import Spinner from '@/components/Spinner'
 import { COLORS } from '@/constants/colors'
 import { SignInType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
-import { updatePatientNeedsOnboarding, userLogin } from '@/services/apiAuth'
+import { userLogin } from '@/services/apiAuth'
 import { Link, useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import { ActivityIndicator, Alert, Image, StyleSheet, View } from 'react-native'
@@ -19,7 +19,7 @@ export default function SignIn() {
   } = useForm<SignInType>({
     defaultValues: {
       email: 'ronjacobdinero15@gmail.com',
-      password: '123456',
+      password: 'qwerty123',
     },
   })
 
@@ -29,32 +29,22 @@ export default function SignIn() {
   const handleLogin = async ({ email, password }: SignInType) => {
     setIsLoading(true)
     try {
-      const res = await userLogin({ email, password, action: 'patientLogin' })
+      const res = await userLogin({ email, password, action: 'doctorLogin' })
 
       if (res.success) {
         await userSignIn({
           id: String(res.id),
           email,
           firstName: res.firstName,
-          role: 'patient',
+          role: 'doctor',
         })
 
-        if (res.needsOnboarding === 1) {
-          await updatePatientNeedsOnboarding(res.id, 0)
-          Alert.alert('Success', res.message, [
-            {
-              text: 'Great',
-            },
-          ])
-          router.replace('/patient/onboarding-screen')
-        } else {
-          Alert.alert('Success', res.message, [
-            {
-              text: 'Great',
-            },
-          ])
-          router.replace('/patient/(tabs)')
-        }
+        Alert.alert('Success', res.message, [
+          {
+            text: 'Great',
+          },
+        ])
+        router.replace('/doctor/(tabs)')
       } else {
         Alert.alert('Error', res.message)
       }
@@ -80,7 +70,10 @@ export default function SignIn() {
           Sign in to PulseAI
         </MyText>
 
-        <MyText>Analyze your pulse rate with AI</MyText>
+        <MyText style={{ textAlign: 'center' }}>
+          Access detailed patient data and monitor blood pressure trends for
+          personalized care.
+        </MyText>
       </View>
 
       <View style={styles.form}>
@@ -155,21 +148,15 @@ export default function SignIn() {
           </MyTouchableOpacity>
         </View>
 
-        <MyTouchableOpacity onPress={() => router.push('/patient/signUp')}>
-          <MyText size="h4" style={styles.formFooter}>
-            Don't have an account?{' '}
-            <MyText
-              size="h4"
-              style={[styles.formFooter, { textDecorationLine: 'underline' }]}
-            >
-              Sign up
-            </MyText>
-          </MyText>
-        </MyTouchableOpacity>
-
-        <Link href="/doctor/login" style={styles.anotherUser}>
-          Switch to doctor login
+        <Link href="/patient/login" style={styles.anotherUser}>
+          Switch to patient login
         </Link>
+
+        <View style={styles.needHelp}>
+          <MyText style={styles.needHelpText}>
+            To create a doctor account, please contact the IT department
+          </MyText>
+        </View>
       </View>
     </View>
   )
@@ -237,5 +224,17 @@ const styles = StyleSheet.create({
     color: COLORS.primary[500],
     textAlign: 'center',
     fontSize: 16,
+  },
+  needHelp: {
+    padding: 10,
+    borderRadius: 15,
+    marginTop: 10,
+    height: 'auto',
+  },
+  needHelpText: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    color: COLORS.secondary[400],
   },
 })

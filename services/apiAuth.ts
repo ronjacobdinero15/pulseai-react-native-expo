@@ -1,5 +1,5 @@
 import { SignUpType } from '@/constants/signup'
-import { apiUrl, PasswordType } from '@/constants/types'
+import { apiUrl, PasswordType, SignInType } from '@/constants/types'
 
 export async function registerPatient({
   firstName,
@@ -40,23 +40,6 @@ export async function registerPatient({
   })
 
   if (!res.ok) throw new Error('Could not register a new user')
-
-  return await res.json()
-}
-
-export async function loginPatient(email: string, password: string) {
-  const res = await fetch(`${apiUrl}?action=loginPatient`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email: email.trim(),
-      password: password.trim(),
-    }),
-  })
-
-  if (!res.ok) throw new Error('Error occurred logging in')
 
   return await res.json()
 }
@@ -107,6 +90,22 @@ export async function getPatientProfile(patientId: string) {
   return await res.json()
 }
 
+export async function getDoctorProfile({ doctorId }: { doctorId: string }) {
+  const res = await fetch(
+    `${apiUrl}?action=getDoctorProfile&doctor_id=${doctorId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+
+  if (!res.ok) throw new Error('Error occurred fetching doctor profile')
+
+  return await res.json()
+}
+
 export async function updatePatientProfile({
   patientId,
   firstName,
@@ -149,6 +148,30 @@ export async function updatePatientProfile({
 
   return await res.json()
 }
+export async function updateDoctorProfile({
+  doctorId,
+  firstName,
+  lastName,
+  email,
+}: SignUpType) {
+  const res = await fetch(`${apiUrl}?action=updateDoctorProfile`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      doctor_id: doctorId,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      full_name: `${firstName.trim()} ${lastName.trim()}`,
+      email: email.trim(),
+    }),
+  })
+
+  if (!res.ok) throw new Error('Error occurred updating doctor profile')
+
+  return await res.json()
+}
 
 export async function updatePatientPassword({
   patientId,
@@ -168,6 +191,45 @@ export async function updatePatientPassword({
   })
 
   if (!res.ok) throw new Error('Error occurred updating password')
+
+  return await res.json()
+}
+
+export async function updateDoctorPassword({
+  doctorId,
+  oldPassword,
+  newPassword,
+}: PasswordType) {
+  const res = await fetch(`${apiUrl}?action=updateDoctorPassword`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      doctor_id: doctorId,
+      old_password: oldPassword,
+      new_password: newPassword,
+    }),
+  })
+
+  if (!res.ok) throw new Error('Error occurred updating password')
+
+  return await res.json()
+}
+
+export async function userLogin({ email, password, action }: SignInType) {
+  const res = await fetch(`${apiUrl}?action=${action}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: email.trim(),
+      password,
+    }),
+  })
+
+  if (!res.ok) throw new Error('Error occurred logging in')
 
   return await res.json()
 }

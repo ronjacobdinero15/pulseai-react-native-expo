@@ -1,22 +1,18 @@
 import { COLORS } from '@/constants/colors'
-import { AntDesign, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons'
+import { AntDesign } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 type MyTabBarProps = BottomTabBarProps
 
-function MyTabBar({ state, descriptors, navigation }: MyTabBarProps) {
+function MyDoctorTabBar({ state, descriptors, navigation }: MyTabBarProps) {
   type IconProps = {
     color: string
   }
 
   const icons: { [key: string]: (props: IconProps) => JSX.Element } = {
-    index: props => <AntDesign name="pluscircleo" size={26} {...props} />,
-    medication: props => (
-      <MaterialCommunityIcons name="pill" size={26} {...props} />
-    ),
-    history: props => <Fontisto name="history" size={26} {...props} />,
+    index: props => <AntDesign name="database" size={26} {...props} />,
     profile: props => <AntDesign name="user" size={26} {...props} />,
   }
 
@@ -108,4 +104,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default MyTabBar
+export default MyDoctorTabBar

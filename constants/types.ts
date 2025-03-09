@@ -1,10 +1,12 @@
 export type SignInType = {
   email: string
   password: string
+  action: string
 }
 
 export type PasswordType = {
-  patientId: string
+  doctorId?: string
+  patientId?: string
   oldPassword: string
   newPassword: string
   confirmNewPassword?: string

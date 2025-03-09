@@ -1,7 +1,9 @@
 export type SignUpType = {
+  doctorId?: string
   patientId?: string
   firstName: string
   lastName: string
+  fullName?: string
   dateOfBirth: string
   email: string
   password: string
