@@ -128,3 +128,16 @@ export async function checkIfUserHasAlreadyBpToday({
 
   return await res.json()
 }
+
+export async function getAllPatients() {
+  const res = await fetch(`${apiUrl}?action=getAllPatients`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!res.ok) throw new Error('Error occurred fetching all patients')
+
+  return await res.json()
+}

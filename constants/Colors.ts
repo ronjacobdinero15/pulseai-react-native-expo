@@ -6,7 +6,6 @@
 type ColorsType = {
   primary: Record<number, string>
   secondary: Record<number, string>
-  accent: string
   success: string
   error: string
   warning: string
@@ -36,7 +35,6 @@ export const COLORS: ColorsType = {
     800: '#2e2e2e',
     900: '#171717',
   },
-  accent: '#c6c9ff',
   success: '#0adb70',
   error: '#d71818',
   warning: '#f5d224',

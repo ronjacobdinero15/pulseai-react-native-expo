@@ -37,7 +37,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-#sql
-sql/
+# custom-styles
+.vscode
 
 app-example

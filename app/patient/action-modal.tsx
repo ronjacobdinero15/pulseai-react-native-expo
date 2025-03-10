@@ -136,7 +136,7 @@ export default function MedicationActionModal() {
         {!isToday && !isPastDate
           ? `Please wait until it's ${medicine.selectedDate}`
           : actionExists
-          ? 'You have already taken this medication'
+          ? 'You have already updated this medication'
           : ''}
       </MyText>
 

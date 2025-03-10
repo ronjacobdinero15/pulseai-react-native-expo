@@ -1,5 +1,6 @@
+import { PasswordType, SignInType } from '@/constants/account'
 import { SignUpType } from '@/constants/signup'
-import { apiUrl, PasswordType, SignInType } from '@/constants/types'
+import { apiUrl } from '@/constants/types'
 
 export async function registerPatient({
   firstName,
@@ -206,7 +207,7 @@ export async function updateDoctorPassword({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      doctor_id: doctorId,
+      doctor_id: Number(doctorId),
       old_password: oldPassword,
       new_password: newPassword,
     }),

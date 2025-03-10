@@ -476,3 +476,29 @@ function updateDoctorPassword($pdo, $doctor_id, $old_password, $new_password) {
         ];
     }
 }
+
+function getAllPatients($pdo) {
+    $sql = "SELECT * FROM patients";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $patients = array_map(function($patient) {
+            return [
+                "patientId" => $patient["patient_id"],
+                "fullName" => $patient["full_name"],
+            ];
+        }, $patients);
+        return [
+            "success" => true,
+            "patients" => $patients
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "No patients found"
+        ];
+    }
+}

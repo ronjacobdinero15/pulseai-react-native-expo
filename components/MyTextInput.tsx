@@ -21,10 +21,10 @@ function MyTextInput({ style, ...rest }: MyTextInputProps) {
 const styles = StyleSheet.create({
   input: {
     height: 50,
-    backgroundColor: COLORS.secondary[100],
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderWidth: 0,
+    borderWidth: 1,
+    borderColor: COLORS.secondary[200],
     borderRadius: 12,
     fontSize: 16,
     fontWeight: 500,

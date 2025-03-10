@@ -207,7 +207,6 @@ function AddMedicationForm() {
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
-                backgroundColor="white"
               />
             )}
           />

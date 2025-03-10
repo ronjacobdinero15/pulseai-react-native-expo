@@ -2,8 +2,8 @@ import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import Spinner from '@/components/Spinner'
+import { SignInType } from '@/constants/account'
 import { COLORS } from '@/constants/colors'
-import { SignInType } from '@/constants/types'
 import { useAuth } from '@/contexts/AuthContext'
 import { updatePatientNeedsOnboarding, userLogin } from '@/services/apiAuth'
 import { Link, useRouter } from 'expo-router'
@@ -19,7 +19,7 @@ export default function SignIn() {
   } = useForm<SignInType>({
     defaultValues: {
       email: 'ronjacobdinero15@gmail.com',
-      password: '123456',
+      password: '12345',
     },
   })
 

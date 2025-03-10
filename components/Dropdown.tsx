@@ -6,10 +6,9 @@ import { Dropdown } from 'react-native-element-dropdown'
 type DropdownComponentProps = {
   label?: string
   data: { label: string; value: string }[]
-  value: string
+  value?: string
   onChange: (value: string) => void
   onBlur: () => void
-  backgroundColor?: string
 }
 
 function DropdownComponent({
@@ -18,12 +17,11 @@ function DropdownComponent({
   value,
   onChange,
   onBlur,
-  backgroundColor = COLORS.secondary[100],
 }: DropdownComponentProps) {
   return (
     <View style={styles.container}>
       <Dropdown
-        style={[styles.dropdown, { backgroundColor }]}
+        style={[styles.dropdown]}
         placeholderStyle={styles.selectedTextStyle}
         selectedTextStyle={styles.selectedTextStyle}
         data={data}
@@ -49,11 +47,13 @@ const styles = StyleSheet.create({
     height: 50,
     paddingVertical: 10,
     paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: COLORS.secondary[200],
     borderRadius: 12,
   },
   selectedTextStyle: {
     fontSize: 16,
-    fontWeight: 500,
+    fontWeight: '500',
     color: COLORS.secondary[900],
     lineHeight: 25,
   },

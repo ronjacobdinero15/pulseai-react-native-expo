@@ -21,6 +21,12 @@ if ($method === 'GET') {
 
 function handleGet($pdo) {
     switch ($_GET['action']) {
+        case 'getAllPatients':
+            echo json_encode(getAllPatients($pdo));
+            break;
+        case 'getPatientsList':
+            echo json_encode(getPatientsList($pdo, $_GET['doctor_id']));
+            break;
         case 'getMedicationList':
             echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $_GET['selected_date']));
             break;

@@ -1,5 +1,5 @@
 import DateOfBirth from '@/components/DateOfBirth'
-import Dropdown from '@/components/Dropdown'
+import DropdownComponent from '@/components/Dropdown'
 import MultipleSelectListCheckbox from '@/components/MultipleSelectListCheckbox'
 import MyModal from '@/components/MyModal'
 import MyText from '@/components/MyText'
@@ -41,7 +41,7 @@ export default function SignUp() {
     defaultValues: {
       firstName: 'Ron Jacob',
       lastName: 'Dinero',
-      dateOfBirth: 'Sat Dec 14 2024',
+      dateOfBirth: 'March 15, 2003',
       email: 'ronjacobdinero15@gmail.com',
       password: '12345',
       passwordConfirm: '12345',
@@ -56,7 +56,7 @@ export default function SignUp() {
     },
   })
   const router = useRouter()
-  const [showComplianceModal, setShowComplianceModal] = useState(true)
+  const [showComplianceModal, setShowComplianceModal] = useState(false)
   const [toggleComplianceCheckbox, setToggleComplianceCheckbox] =
     useState(false)
   const { isLoading, setIsLoading } = useAuth()
@@ -72,6 +72,7 @@ export default function SignUp() {
           text: 'OK',
           onPress: () => {
             router.replace('/patient/login')
+            setIsLoading(false)
             reset()
           },
         },
@@ -142,6 +143,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>First name:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -166,6 +169,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Last name:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -188,6 +193,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Date of birth:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -206,6 +213,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Email:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -234,6 +243,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Create password:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -262,6 +273,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Confirm new password:</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -308,6 +321,8 @@ export default function SignUp() {
 
         <View style={styles.shortContainer}>
           <View style={{ flex: 1 }}>
+            <MyText style={styles.inputLabel}>Age:</MyText>
+
             <Controller
               control={control}
               rules={{
@@ -337,11 +352,13 @@ export default function SignUp() {
           </View>
 
           <View style={{ flex: 2 }}>
+            <MyText style={styles.inputLabel}>Gender:</MyText>
+
             <Controller
               control={control}
               rules={{ required: 'Required.' }}
               render={({ field: { onChange, onBlur, value } }) => (
-                <Dropdown
+                <DropdownComponent
                   label="Gender"
                   data={GENDEROPTIONS}
                   value={value}
@@ -358,6 +375,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -387,6 +406,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>BMI (weight in kg):</MyText>
+
           <Controller
             control={control}
             rules={{
@@ -416,6 +437,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Vices:</MyText>
+
           <Controller
             control={control}
             rules={{ required: 'This field is required.' }}
@@ -436,6 +459,8 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Comorbidities:</MyText>
+
           <Controller
             control={control}
             rules={{ required: 'This field is required.' }}
@@ -480,11 +505,13 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Lifestyle:</MyText>
+
           <Controller
             control={control}
             rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
-              <Dropdown
+              <DropdownComponent
                 label="Lifestyle"
                 data={LIFESTYLEOPTIONS}
                 value={value}
@@ -507,7 +534,13 @@ export default function SignUp() {
             color={COLORS.primary[500]}
             onValueChange={checked => setToggleComplianceCheckbox(checked)}
           />
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <MyText>I agree to the </MyText>
             <Pressable onPress={() => setShowComplianceModal(true)}>
               <MyText style={styles.terms}>Terms and Conditions</MyText>
@@ -614,7 +647,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: COLORS.primary[500],
     flexDirection: 'row',
     alignItems: 'center',
@@ -644,7 +677,8 @@ const styles = StyleSheet.create({
     color: COLORS.primary[500],
   },
   divider: {
-    height: 2,
+    flex: 1,
+    height: 1,
     backgroundColor: COLORS.secondary[200],
     borderRadius: 50,
   },
