@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
@@ -9,6 +9,7 @@ type DropdownComponentProps = {
   value?: string
   onChange: (value: string) => void
   onBlur: () => void
+  style?: object
 }
 
 function DropdownComponent({
@@ -17,11 +18,12 @@ function DropdownComponent({
   value,
   onChange,
   onBlur,
+  style,
 }: DropdownComponentProps) {
   return (
     <View style={styles.container}>
       <Dropdown
-        style={[styles.dropdown]}
+        style={[styles.dropdown, style]}
         placeholderStyle={styles.selectedTextStyle}
         selectedTextStyle={styles.selectedTextStyle}
         data={data}

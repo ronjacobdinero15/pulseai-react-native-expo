@@ -1,6 +1,6 @@
 import ButtonLabel from '@/components/ButtonLabel'
 import MyText from '@/components/MyText'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { SLIDES } from '@/constants/onboarding-slides'
 import { DIMENSIONS } from '@/constants/sizes'
 import { useRouter } from 'expo-router'

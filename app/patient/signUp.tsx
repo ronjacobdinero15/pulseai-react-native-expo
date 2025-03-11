@@ -7,7 +7,7 @@ import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import RadioButton from '@/components/RadioButton'
 import Terms from '@/components/Terms'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import {
   COMORBIDITIESOPTIONS,
   GENDEROPTIONS,
@@ -56,10 +56,10 @@ export default function SignUp() {
     },
   })
   const router = useRouter()
-  const [showComplianceModal, setShowComplianceModal] = useState(false)
+  const [showComplianceModal, setShowComplianceModal] = useState(true)
   const [toggleComplianceCheckbox, setToggleComplianceCheckbox] =
     useState(false)
-  const { isLoading, setIsLoading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleRegistration = async (data: SignUpType) => {
     setIsLoading(true)
@@ -71,7 +71,7 @@ export default function SignUp() {
         {
           text: 'OK',
           onPress: () => {
-            router.replace('/patient/login')
+            router.replace('/')
             setIsLoading(false)
             reset()
           },
@@ -576,7 +576,7 @@ export default function SignUp() {
 
         <MyTouchableOpacity
           style={styles.footer}
-          onPress={() => router.push('/patient/login')}
+          onPress={() => router.push('/')}
         >
           <MyText size="h4" style={styles.formFooter}>
             Login instead?{' '}

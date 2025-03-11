@@ -2,7 +2,8 @@ import EmptyMedication from '@/components/EmptyMedication'
 import MedicationCardItem from '@/components/MedicationCardItem'
 import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import Spinner from '@/components/Spinner'
+import { COLORS } from '@/constants/Colors'
 import { DateListType } from '@/constants/dates'
 import { Medication } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
@@ -19,9 +20,10 @@ function MedicationList() {
   const [selectedDate, setSelectedDate] = useState(
     moment().format('MM/DD/YYYY')
   )
-  const { currentUser, isLoading, setIsLoading } = useAuth()
+  const { currentUser } = useAuth()
   const { refresh, setRefresh } = useAuth()
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     getDateRangeList()
@@ -101,7 +103,9 @@ function MedicationList() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
 
-      {medList?.length > 0 ? (
+      {isLoading && medList?.length === 0 ? (
+        <Spinner />
+      ) : (
         <FlatList
           data={medList}
           onRefresh={() => fetchMedicationList(currentUser?.id!)}
@@ -125,9 +129,9 @@ function MedicationList() {
             </MyTouchableOpacity>
           )}
         />
-      ) : (
-        <EmptyMedication />
       )}
+
+      {medList?.length === 0 && !isLoading && <EmptyMedication />}
     </View>
   )
 }

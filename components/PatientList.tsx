@@ -2,7 +2,7 @@ import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import Spinner from '@/components/Spinner'
 import { PatientType } from '@/constants/account'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import React from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 

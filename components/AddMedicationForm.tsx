@@ -2,7 +2,7 @@ import DropdownComponent from '@/components/Dropdown'
 import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { FREQUENCY, Medication, MEDICINES } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
 import { addNewMedication } from '@/services/apiMedication'
@@ -207,6 +207,7 @@ function AddMedicationForm() {
                 value={value}
                 onChange={onChange}
                 onBlur={onBlur}
+                style={{ borderWidth: 0 }}
               />
             )}
           />
@@ -393,6 +394,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     backgroundColor: 'white',
+    borderWidth: 0,
   },
   icon: {
     color: COLORS.primary[500],

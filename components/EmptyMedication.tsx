@@ -1,6 +1,6 @@
 import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { useRouter } from 'expo-router'
 import { Image, StyleSheet, View } from 'react-native'
 

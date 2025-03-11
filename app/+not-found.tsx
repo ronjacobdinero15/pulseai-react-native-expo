@@ -1,12 +1,14 @@
+import { COLORS } from '@/constants/Colors'
+import { Link } from 'expo-router'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 export default function NotFoundScreen() {
   return (
     <View style={styles.container}>
-      {/* <Link href="/patient/login" style={styles.link}>
+      <Link href="/" style={styles.link}>
         Go back to Home screen!
-      </Link> */}
+      </Link>
     </View>
   )
 }
@@ -18,9 +20,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // link: {
-  //   fontSize: 20,
-  //   textDecorationLine: 'underline',
-  //   color: COLORS.secondary[100],
-  // },
+  link: {
+    fontSize: 20,
+    textDecorationLine: 'underline',
+    color: COLORS.secondary[100],
+  },
 })

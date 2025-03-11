@@ -3,7 +3,7 @@ import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import Spinner from '@/components/Spinner'
 import { SignInType } from '@/constants/account'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { useAuth } from '@/contexts/AuthContext'
 import { userLogin } from '@/services/apiAuth'
 import { Link, useRouter } from 'expo-router'
@@ -148,7 +148,7 @@ export default function SignIn() {
           </MyTouchableOpacity>
         </View>
 
-        <Link href="/patient/login" style={styles.anotherUser}>
+        <Link href="/" style={styles.anotherUser}>
           Switch to patient login
         </Link>
 

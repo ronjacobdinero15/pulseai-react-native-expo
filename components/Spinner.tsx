@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 function Spinner() {

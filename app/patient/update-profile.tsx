@@ -5,7 +5,7 @@ import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import RadioButton from '@/components/RadioButton'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import {
   COMORBIDITIESOPTIONS,
   GENDEROPTIONS,
@@ -536,9 +536,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   divider: {
-    height: 2,
+    height: 1,
     backgroundColor: COLORS.secondary[200],
     borderRadius: 50,
+    flex: 1,
   },
   shortContainer: {
     flexDirection: 'row',

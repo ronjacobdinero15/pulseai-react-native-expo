@@ -2,7 +2,7 @@ import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import { SignInType } from '@/constants/account'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { useAuth } from '@/contexts/AuthContext'
 import { forgotPassword } from '@/services/apiAuth'
 import { useRouter } from 'expo-router'
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
           {
             text: 'OK',
             onPress: () => {
-              router.push('/patient/login')
+              router.push('/')
             },
           },
         ])

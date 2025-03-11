@@ -1,7 +1,7 @@
 import MedicationCardItem from '@/components/MedicationCardItem'
 import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { DateListType } from '@/constants/dates'
 import { Medication } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
@@ -18,7 +18,8 @@ export default function History() {
   const [selectedDate, setSelectedDate] = useState(
     moment().format('MM/DD/YYYY')
   )
-  const { currentUser, isLoading, setIsLoading } = useAuth()
+  const { currentUser } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {

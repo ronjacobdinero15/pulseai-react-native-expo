@@ -2,7 +2,7 @@ import MyModal from '@/components/MyModal'
 import MyText from '@/components/MyText'
 import MyTextInput from '@/components/MyTextInput'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   addNewBpForToday,

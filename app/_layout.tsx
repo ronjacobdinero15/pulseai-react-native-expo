@@ -8,7 +8,8 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{ headerShown: false }} initialRouteName="index">
+          <Stack.Screen name="index" />
           <Stack.Screen name="doctor" />
           <Stack.Screen name="patient" />
           <Stack.Screen

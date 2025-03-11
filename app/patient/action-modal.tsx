@@ -1,7 +1,7 @@
 import MedicationCardItem from '@/components/MedicationCardItem'
 import MyText from '@/components/MyText'
 import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/colors'
+import { COLORS } from '@/constants/Colors'
 import { Medication } from '@/constants/medication'
 import { useAuth } from '@/contexts/AuthContext'
 import { addNewMedicationStatus } from '@/services/apiMedication'

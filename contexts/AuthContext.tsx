@@ -59,10 +59,10 @@ function AuthProvider({ children }: AuthContextProps) {
             return
           }
         }
-        router.replace('/patient/login')
+        router.replace('/')
       } catch (error) {
         console.error('Failed to load auth state:', error)
-        router.replace('/patient/login')
+        router.replace('/')
       }
     }
     loadAuthState()
@@ -91,7 +91,7 @@ function AuthProvider({ children }: AuthContextProps) {
       setCurrentUser(null)
 
       if (role === 'patient') {
-        router.replace('/patient/login')
+        router.replace('/')
       } else if (role === 'doctor') {
         router.replace('/doctor/login')
       }
