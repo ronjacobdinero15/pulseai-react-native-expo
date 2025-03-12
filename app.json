@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "thesis",
+    "name": "PulseAI",
     "slug": "thesis",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ronjacobdinero15.thesis"
     },
     "web": {
       "bundler": "metro",
@@ -36,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "4854b4de-f03f-41fe-87fc-1a15afac1636"
+      }
     }
   }
 }

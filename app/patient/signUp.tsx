@@ -128,7 +128,7 @@ export default function SignUp() {
         <View style={styles.header}>
           <Image
             style={styles.headerImg}
-            source={require('@/assets/images/icon.png')}
+            source={require('@/assets/images/logo.png')}
             alt="MyApp icon"
           />
 
