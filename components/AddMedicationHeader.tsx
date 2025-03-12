@@ -1,9 +1,9 @@
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React from 'react'
 import { Image, Platform, StyleSheet, View } from 'react-native'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
 function AddMedicationHeader() {
   const router = useRouter()
@@ -11,7 +11,7 @@ function AddMedicationHeader() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/consult.png')}
+        source={require('../assets/images/consult.png')}
         style={styles.img}
       />
       <MyTouchableOpacity style={styles.backBtn} onPress={() => router.back()}>

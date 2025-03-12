@@ -1,15 +1,15 @@
-import MyText from '@/components/MyText'
-import MyTextInput from '@/components/MyTextInput'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { PasswordType } from '@/constants/account'
-import { COLORS } from '@/constants/Colors'
-import { useAuth } from '@/contexts/AuthContext'
-import { updateDoctorPassword } from '@/services/apiAuth'
 import { Ionicons } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, Platform, StyleSheet, View } from 'react-native'
+import MyText from '../../components/MyText'
+import MyTextInput from '../../components/MyTextInput'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import { COLORS } from '../../constants/Colors'
+import { useAuth } from '../../contexts/AuthContext'
+import { PasswordType } from '../../constants/account'
+import { updateDoctorPassword } from '../../services/apiAuth'
 
 export default function UpdatePassword() {
   const {

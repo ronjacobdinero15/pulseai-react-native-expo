@@ -1,10 +1,10 @@
-import MedicationCardItem from '@/components/MedicationCardItem'
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
-import { Medication } from '@/constants/medication'
-import { useAuth } from '@/contexts/AuthContext'
-import { addNewMedicationStatus } from '@/services/apiMedication'
+import MedicationCardItem from '../../components/MedicationCardItem'
+import MyText from '../../components/MyText'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import { COLORS } from '../../constants/Colors'
+import { Medication } from '../../constants/medication'
+import { useAuth } from '../../contexts/AuthContext'
+import { addNewMedicationStatus } from '../../services/apiMedication'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import moment from 'moment'
@@ -81,7 +81,7 @@ export default function MedicationActionModal() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/notification.gif')}
+        source={require('../../assets/images/notification.gif')}
         style={styles.gif}
       />
       <MyText size="h4">{medicine.selectedDate}</MyText>

@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import React, { useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { MultipleSelectList } from 'react-native-dropdown-select-list'

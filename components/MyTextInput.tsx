@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import React from 'react'
 import {
   StyleProp,

@@ -1,22 +1,22 @@
-import DateOfBirth from '@/components/DateOfBirth'
-import DropdownComponent from '@/components/Dropdown'
-import MultipleSelectListCheckbox from '@/components/MultipleSelectListCheckbox'
-import MyModal from '@/components/MyModal'
-import MyText from '@/components/MyText'
-import MyTextInput from '@/components/MyTextInput'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import RadioButton from '@/components/RadioButton'
-import Terms from '@/components/Terms'
-import { COLORS } from '@/constants/Colors'
+import DateOfBirth from '../../components/DateOfBirth'
+import DropdownComponent from '../../components/Dropdown'
+import MultipleSelectListCheckbox from '../../components/MultipleSelectListCheckbox'
+import MyModal from '../../components/MyModal'
+import MyText from '../../components/MyText'
+import MyTextInput from '../../components/MyTextInput'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import RadioButton from '../../components/RadioButton'
+import Terms from '../../components/Terms'
+import { COLORS } from '../../constants/Colors'
 import {
   COMORBIDITIESOPTIONS,
   GENDEROPTIONS,
   LIFESTYLEOPTIONS,
   SignUpType,
   VICESOPTIONS,
-} from '@/constants/signup'
-import { useAuth } from '@/contexts/AuthContext'
-import { registerPatient } from '@/services/apiAuth'
+} from '../../constants/signup'
+import { useAuth } from '../../contexts/AuthContext'
+import { registerPatient } from '../../services/apiAuth'
 import Checkbox from 'expo-checkbox'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
@@ -128,7 +128,7 @@ export default function SignUp() {
         <View style={styles.header}>
           <Image
             style={styles.headerImg}
-            source={require('@/assets/images/logo.png')}
+            source={require('../../assets/images/logo.png')}
             alt="MyApp icon"
           />
 

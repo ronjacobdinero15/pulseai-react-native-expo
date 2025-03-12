@@ -1,20 +1,20 @@
-import DateOfBirth from '@/components/DateOfBirth'
-import DropdownComponent from '@/components/Dropdown'
-import MultipleSelectListCheckbox from '@/components/MultipleSelectListCheckbox'
-import MyText from '@/components/MyText'
-import MyTextInput from '@/components/MyTextInput'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import RadioButton from '@/components/RadioButton'
-import { COLORS } from '@/constants/Colors'
+import DateOfBirth from '../../components/DateOfBirth'
+import DropdownComponent from '../../components/Dropdown'
+import MultipleSelectListCheckbox from '../../components/MultipleSelectListCheckbox'
+import MyText from '../../components/MyText'
+import MyTextInput from '../../components/MyTextInput'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import RadioButton from '../../components/RadioButton'
+import { COLORS } from '../../constants/Colors'
 import {
   COMORBIDITIESOPTIONS,
   GENDEROPTIONS,
   LIFESTYLEOPTIONS,
   SignUpType,
   VICESOPTIONS,
-} from '@/constants/signup'
-import { useAuth } from '@/contexts/AuthContext'
-import { getPatientProfile, updatePatientProfile } from '@/services/apiAuth'
+} from '../../constants/signup'
+import { useAuth } from '../../contexts/AuthContext'
+import { getPatientProfile, updatePatientProfile } from '../../services/apiAuth'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'

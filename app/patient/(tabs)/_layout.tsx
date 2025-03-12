@@ -1,9 +1,9 @@
-import HomeScreen from '@/app/patient/(tabs)/index'
-import MedicationTracker from '@/app/patient/(tabs)/medication'
-import MyPatientTabBar from '@/components/MyPatientTabBar'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
+import HomeScreen from '.'
+import MyPatientTabBar from '../../../components/MyPatientTabBar'
 import History from './history'
+import MedicationTracker from './medication'
 import Profile from './profile'
 
 const Tab = createBottomTabNavigator()

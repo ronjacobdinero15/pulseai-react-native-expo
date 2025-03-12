@@ -1,10 +1,10 @@
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import Spinner from '@/components/Spinner'
-import { PatientType } from '@/constants/account'
-import { COLORS } from '@/constants/Colors'
 import React from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
+import { PatientType } from '../constants/account'
+import { COLORS } from '../constants/Colors'
+import MyText from './MyText'
+import MyTouchableOpacity from './MyTouchableOpacity'
+import Spinner from './Spinner'
 
 type PatientListProps = {
   patients: PatientType[]

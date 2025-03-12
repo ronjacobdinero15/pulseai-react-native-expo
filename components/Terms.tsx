@@ -1,6 +1,6 @@
-import MyText from '@/components/MyText'
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import { StyleSheet, View } from 'react-native'
+import MyText from './MyText'
 
 function Terms() {
   return (

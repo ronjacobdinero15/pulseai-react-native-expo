@@ -1,8 +1,8 @@
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
 import { useRouter } from 'expo-router'
 import { Image, StyleSheet, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
+import MyText from './MyText'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
 function EmptyMedication() {
   const router = useRouter()
@@ -10,7 +10,7 @@ function EmptyMedication() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/medicine.png')}
+        source={require('../assets/images/medicine.png')}
         style={styles.img}
       />
 

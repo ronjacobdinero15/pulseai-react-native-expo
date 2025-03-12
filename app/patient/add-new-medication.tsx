@@ -1,5 +1,5 @@
-import AddMedicationForm from '@/components/AddMedicationForm'
-import AddMedicationHeader from '@/components/AddMedicationHeader'
+import AddMedicationForm from '../../components/AddMedicationForm'
+import AddMedicationHeader from '../../components/AddMedicationHeader'
 import {
   KeyboardAvoidingView,
   Platform,

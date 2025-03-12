@@ -1,5 +1,5 @@
-import { DateListType } from '@/constants/dates'
 import moment from 'moment'
+import { DateListType } from '../constants/dates'
 
 export const formatDateForText = (timestamp: string) => {
   return moment(timestamp, 'MM/DD/YYYY').format('ll')
