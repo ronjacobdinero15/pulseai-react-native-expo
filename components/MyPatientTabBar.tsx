@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import { AntDesign, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import React from 'react'

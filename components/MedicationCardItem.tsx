@@ -1,13 +1,13 @@
-import MyText from '@/components/MyText'
-import { COLORS } from '@/constants/Colors'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
 import {
   addNewMedicationStatusType,
   Medication,
   MEDICINES,
-} from '@/constants/medication'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+} from '../constants/medication'
+import MyText from './MyText'
 
 type MedicationCardItemProps = {
   medicine: Medication

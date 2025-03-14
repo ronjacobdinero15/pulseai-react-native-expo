@@ -1,9 +1,9 @@
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useRouter } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
+import MyText from './MyText'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
 function MedicationHeader() {
   const router = useRouter()

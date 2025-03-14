@@ -1,7 +1,7 @@
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
-import { useAuth } from '@/contexts/AuthContext'
+import MyText from '../../../components/MyText'
+import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
+import { COLORS } from '../../../constants/Colors'
+import { useAuth } from '../../../contexts/AuthContext'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React from 'react'
@@ -38,7 +38,7 @@ export default function Profile() {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image
-          source={require('@/assets/images/smiley.png')}
+          source={require('../../../assets/images/smiley.png')}
           style={{ width: 60, height: 60 }}
         />
         <MyText size="h2">{currentUser?.firstName}</MyText>

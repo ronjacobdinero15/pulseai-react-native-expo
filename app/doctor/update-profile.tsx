@@ -1,14 +1,3 @@
-import MyText from '@/components/MyText'
-import MyTextInput from '@/components/MyTextInput'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
-import { SignUpType } from '@/constants/signup'
-import { useAuth } from '@/contexts/AuthContext'
-import {
-  getDoctorProfile,
-  updateDoctorProfile,
-  updatePatientProfile,
-} from '@/services/apiAuth'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
@@ -22,6 +11,13 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+import MyText from '../../components/MyText'
+import MyTextInput from '../../components/MyTextInput'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import { COLORS } from '../../constants/Colors'
+import { SignUpType } from '../../constants/signup'
+import { useAuth } from '../../contexts/AuthContext'
+import { getDoctorProfile, updateDoctorProfile } from '../../services/apiAuth'
 
 export default function UpdateProfile() {
   const {

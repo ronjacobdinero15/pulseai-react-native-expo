@@ -37,23 +37,23 @@ type MedicineType = {
 export const MEDICINES: MedicineType[] = [
   {
     name: 'Tablet',
-    icon: require('@/assets/images/tablet.png'),
+    icon: require('../assets/images/tablet.png'),
   },
   {
     name: 'Capsule',
-    icon: require('@/assets/images/capsule.png'),
+    icon: require('../assets/images/capsule.png'),
   },
   {
     name: 'Drops',
-    icon: require('@/assets/images/dropper.png'),
+    icon: require('../assets/images/dropper.png'),
   },
   {
     name: 'Syrup',
-    icon: require('@/assets/images/syrup.png'),
+    icon: require('../assets/images/syrup.png'),
   },
   {
     name: 'Injection',
-    icon: require('@/assets/images/syringe.png'),
+    icon: require('../assets/images/syringe.png'),
   },
 ]
 

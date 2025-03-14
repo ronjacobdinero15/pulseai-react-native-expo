@@ -2,8 +2,8 @@ import {
   AddNewBpForTodayType,
   addNewMedicationStatusType,
   Medication,
-} from '@/constants/medication'
-import { apiUrl } from '@/constants/types'
+} from '../constants/medication'
+import { apiUrl } from '../constants/types'
 
 export async function addNewMedication({
   medicationId,

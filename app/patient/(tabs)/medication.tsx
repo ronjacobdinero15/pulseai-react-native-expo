@@ -1,5 +1,5 @@
-import MedicationHeader from '@/components/MedicationHeader'
-import MedicationList from '@/components/MedicationList'
+import MedicationHeader from '../../../components/MedicationHeader'
+import MedicationList from '../../../components/MedicationList'
 import React from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 

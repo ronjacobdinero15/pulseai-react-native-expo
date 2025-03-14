@@ -1,7 +1,7 @@
-import MyText from '@/components/MyText'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
-import { COLORS } from '@/constants/Colors'
 import { StyleSheet, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
+import MyText from './MyText'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
 type RadioButtonProps = {
   selected: string

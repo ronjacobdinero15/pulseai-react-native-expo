@@ -1,11 +1,11 @@
-import MyText from '@/components/MyText'
-import MyTextInput from '@/components/MyTextInput'
-import MyTouchableOpacity from '@/components/MyTouchableOpacity'
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
 import { useEffect, useState } from 'react'
 import { Platform, Pressable, StyleSheet, View } from 'react-native'
+import MyText from './MyText'
+import MyTextInput from './MyTextInput'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
 type DateOfBirthProps = {
   value: string

@@ -1,7 +1,7 @@
-import MyText from '@/components/MyText'
-import { COLORS } from '@/constants/Colors'
+import { COLORS } from '../constants/Colors'
 import React from 'react'
 import { View } from 'react-native'
+import MyText from './MyText'
 
 function ButtonLabel(label: string) {
   return (
