@@ -1,14 +1,10 @@
+import MyText from '@/components/MyText'
+import MyTouchableOpacity from '@/components/MyTouchableOpacity'
+import Spinner from '@/components/Spinner'
+import { PatientType } from '@/constants/account'
+import { COLORS } from '@/constants/Colors'
 import React from 'react'
-import { Alert, FlatList, StyleSheet, View } from 'react-native'
-import { PatientType } from '../constants/account'
-import { COLORS } from '../constants/Colors'
-import MyText from './MyText'
-import MyTouchableOpacity from './MyTouchableOpacity'
-import Spinner from './Spinner'
-import * as FileSystem from 'expo-file-system'
-import { StorageAccessFramework } from 'expo-file-system'
-import * as Print from 'expo-print'
-import { shareAsync } from 'expo-sharing'
+import { FlatList, StyleSheet, View } from 'react-native'
 
 type PatientListProps = {
   patients: PatientType[]
@@ -16,29 +12,10 @@ type PatientListProps = {
 }
 
 function PatientList({ patients, isLoading }: PatientListProps) {
-  const handleGeneratePatientReport = async (patientId: string) => {
-    const html = `
-      <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-        </head>
-        <body style="text-align: center;">
-          <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-            Hello Patient ID ${patientId}!
-          </h1>
-          <img
-            src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
-            style="width: 90vw;" />
-        </body>
-      </html>
-      `
-
-    const file = await Print.printToFileAsync({
-      html,
-      base64: false,
-    })
-
-    await shareAsync(file.uri)
+  // GENERATE PDF REPORT LATER
+  const handleGenerateReport = (patientId: string) => {
+    console.log('Generate report for patient ID:', patientId)
+    // Add your report generation logic here
   }
 
   return (
@@ -64,7 +41,7 @@ function PatientList({ patients, isLoading }: PatientListProps) {
               <MyText>{item.fullName}</MyText>
               <MyTouchableOpacity
                 style={styles.generateBtn}
-                onPress={() => handleGeneratePatientReport(item.patientId)}
+                onPress={() => handleGenerateReport(item.patientId)}
               >
                 <MyText style={{ color: 'white' }}>Generate</MyText>
               </MyTouchableOpacity>
@@ -107,12 +84,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.primary[500],
     alignItems: 'center',
-  },
-  spacer: {
-    height: 8,
-  },
-  printer: {
-    textAlign: 'center',
   },
 })
 
