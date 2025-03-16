@@ -1,12 +1,12 @@
+import { useRouter } from 'expo-router'
+import React from 'react'
+import { Image, StyleSheet, View } from 'react-native'
+import AppIntroSlider from 'react-native-app-intro-slider'
 import ButtonLabel from '../../components/ButtonLabel'
 import MyText from '../../components/MyText'
 import { COLORS } from '../../constants/Colors'
 import { SLIDES } from '../../constants/onboarding-slides'
 import { DIMENSIONS } from '../../constants/sizes'
-import { useRouter } from 'expo-router'
-import React from 'react'
-import { Image, StyleSheet, View } from 'react-native'
-import AppIntroSlider from 'react-native-app-intro-slider'
 
 export default function OnboardingScreen() {
   const router = useRouter()

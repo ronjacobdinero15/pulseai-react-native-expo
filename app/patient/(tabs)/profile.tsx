@@ -1,11 +1,11 @@
-import MyText from '../../../components/MyText'
-import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
-import { COLORS } from '../../../constants/Colors'
-import { useAuth } from '../../../contexts/AuthContext'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
+import MyText from '../../../components/MyText'
+import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
+import { COLORS } from '../../../constants/Colors'
+import { useAuth } from '../../../contexts/AuthContext'
 
 type Tab = {
   name: string

@@ -1,8 +1,8 @@
-import { COLORS } from '../constants/Colors'
 import { AntDesign } from '@expo/vector-icons'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
 
 type MyTabBarProps = BottomTabBarProps
 

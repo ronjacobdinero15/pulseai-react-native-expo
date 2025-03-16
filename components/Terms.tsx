@@ -1,5 +1,5 @@
-import { COLORS } from '../constants/Colors'
 import { StyleSheet, View } from 'react-native'
+import { COLORS } from '../constants/Colors'
 import MyText from './MyText'
 
 function Terms() {

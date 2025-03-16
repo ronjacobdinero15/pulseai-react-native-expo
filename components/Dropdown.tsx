@@ -1,7 +1,7 @@
-import { COLORS } from '../constants/Colors'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
+import { COLORS } from '../constants/Colors'
 
 type DropdownComponentProps = {
   label?: string

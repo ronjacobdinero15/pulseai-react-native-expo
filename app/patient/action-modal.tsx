@@ -1,3 +1,8 @@
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import moment from 'moment'
+import React, { useEffect } from 'react'
+import { Alert, Image, StyleSheet, View } from 'react-native'
 import MedicationCardItem from '../../components/MedicationCardItem'
 import MyText from '../../components/MyText'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
@@ -5,11 +10,6 @@ import { COLORS } from '../../constants/Colors'
 import { Medication } from '../../constants/medication'
 import { useAuth } from '../../contexts/AuthContext'
 import { addNewMedicationStatus } from '../../services/apiMedication'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { useLocalSearchParams, useRouter } from 'expo-router'
-import moment from 'moment'
-import React, { useEffect } from 'react'
-import { Alert, Image, StyleSheet, View } from 'react-native'
 
 export default function MedicationActionModal() {
   const params = useLocalSearchParams()

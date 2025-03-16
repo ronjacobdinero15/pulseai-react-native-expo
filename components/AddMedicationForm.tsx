@@ -1,15 +1,4 @@
 
-import { COLORS } from '../constants/Colors'
-import { FREQUENCY, Medication, MEDICINES } from '../constants/medication'
-import { useAuth } from '../contexts/AuthContext'
-import { addNewMedication } from '../services/apiMedication'
-import {
-  formatDate,
-  formatDateForText,
-  formatTime,
-  generateUniqueId,
-  getDatesRange,
-} from '../utils/helpers'
 import { Ionicons } from '@expo/vector-icons'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
@@ -23,10 +12,21 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+import { COLORS } from '../constants/Colors'
+import { FREQUENCY, Medication, MEDICINES } from '../constants/medication'
+import { useAuth } from '../contexts/AuthContext'
+import { addNewMedication } from '../services/apiMedication'
+import {
+  formatDate,
+  formatDateForText,
+  formatTime,
+  generateUniqueId,
+  getDatesRange,
+} from '../utils/helpers'
+import DropdownComponent from './Dropdown'
 import MyText from './MyText'
 import MyTextInput from './MyTextInput'
 import MyTouchableOpacity from './MyTouchableOpacity'
-import DropdownComponent from './Dropdown'
 
 function AddMedicationForm() {
   const [showStartDate, setShowStartDate] = useState(false)

@@ -1,7 +1,7 @@
-import MedicationHeader from '../../../components/MedicationHeader'
-import MedicationList from '../../../components/MedicationList'
 import React from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
+import MedicationHeader from '../../../components/MedicationHeader'
+import MedicationList from '../../../components/MedicationList'
 
 export default function MedicationTracker() {
   return (

@@ -1,3 +1,16 @@
+import Checkbox from 'expo-checkbox'
+import { useRouter } from 'expo-router'
+import React, { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import DateOfBirth from '../../components/DateOfBirth'
 import DropdownComponent from '../../components/Dropdown'
 import MultipleSelectListCheckbox from '../../components/MultipleSelectListCheckbox'
@@ -15,21 +28,7 @@ import {
   SignUpType,
   VICESOPTIONS,
 } from '../../constants/signup'
-import { useAuth } from '../../contexts/AuthContext'
 import { registerPatient } from '../../services/apiAuth'
-import Checkbox from 'expo-checkbox'
-import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
 
 export default function SignUp() {
   const {

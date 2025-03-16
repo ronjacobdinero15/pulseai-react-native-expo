@@ -8,11 +8,11 @@ import { Medication } from '../constants/medication'
 import { useAuth } from '../contexts/AuthContext'
 import { getMedicationList } from '../services/apiMedication'
 import { getDatesRangeToDisplay } from '../utils/helpers'
+import EmptyMedication from './EmptyMedication'
+import MedicationCardItem from './MedicationCardItem'
 import MyText from './MyText'
 import MyTouchableOpacity from './MyTouchableOpacity'
 import Spinner from './Spinner'
-import MedicationCardItem from './MedicationCardItem'
-import EmptyMedication from './EmptyMedication'
 
 function MedicationList() {
   const [medList, setMedList] = useState<Medication[]>([])

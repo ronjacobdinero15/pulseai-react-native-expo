@@ -1,13 +1,13 @@
 import { Link, useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import { ActivityIndicator, Alert, Image, StyleSheet, View } from 'react-native'
-import { SignInType } from '../constants/account'
-import { useAuth } from '../contexts/AuthContext'
-import Spinner from '../components/Spinner'
 import MyText from '../components/MyText'
 import MyTextInput from '../components/MyTextInput'
 import MyTouchableOpacity from '../components/MyTouchableOpacity'
+import Spinner from '../components/Spinner'
+import { SignInType } from '../constants/account'
 import { COLORS } from '../constants/Colors'
+import { useAuth } from '../contexts/AuthContext'
 import { updatePatientNeedsOnboarding, userLogin } from '../services/apiAuth'
 
 export default function SignIn() {

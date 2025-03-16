@@ -1,3 +1,7 @@
+import Ionicons from '@expo/vector-icons/Ionicons'
+import moment from 'moment'
+import React, { useEffect, useState } from 'react'
+import { Alert, FlatList, StyleSheet, View } from 'react-native'
 import MyModal from '../../../components/MyModal'
 import MyText from '../../../components/MyText'
 import MyTextInput from '../../../components/MyTextInput'
@@ -8,10 +12,6 @@ import {
   addNewBpForToday,
   checkIfUserHasAlreadyBpToday,
 } from '../../../services/apiMedication'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import moment from 'moment'
-import React, { useEffect, useState } from 'react'
-import { Alert, FlatList, StyleSheet, View } from 'react-native'
 
 export default function HomeScreen() {
   const [bp, setBp] = useState({ systolic: '120', diastolic: '90' })

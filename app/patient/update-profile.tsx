@@ -1,3 +1,16 @@
+import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
+import * as SecureStore from 'expo-secure-store'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native'
 import DateOfBirth from '../../components/DateOfBirth'
 import DropdownComponent from '../../components/Dropdown'
 import MultipleSelectListCheckbox from '../../components/MultipleSelectListCheckbox'
@@ -15,19 +28,6 @@ import {
 } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getPatientProfile, updatePatientProfile } from '../../services/apiAuth'
-import { Ionicons } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
-import * as SecureStore from 'expo-secure-store'
-import React, { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native'
 
 export default function UpdateProfile() {
   const {

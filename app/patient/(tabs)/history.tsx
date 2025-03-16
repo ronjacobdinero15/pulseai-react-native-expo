@@ -3,14 +3,14 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import MedicationCardItem from '../../../components/MedicationCardItem'
-import { getMedicationList } from '../../../services/apiMedication'
-import { Medication } from '../../../constants/medication'
-import { DateListType } from '../../../constants/dates'
-import { useAuth } from '../../../contexts/AuthContext'
-import { getPreviousDateRangeToDisplay } from '../../../utils/helpers'
 import MyText from '../../../components/MyText'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import { COLORS } from '../../../constants/Colors'
+import { DateListType } from '../../../constants/dates'
+import { Medication } from '../../../constants/medication'
+import { useAuth } from '../../../contexts/AuthContext'
+import { getMedicationList } from '../../../services/apiMedication'
+import { getPreviousDateRangeToDisplay } from '../../../utils/helpers'
 
 export default function History() {
   const [medList, setMedList] = useState<Medication[]>([])
@@ -18,14 +18,14 @@ export default function History() {
   const [selectedDate, setSelectedDate] = useState(
     moment().format('MM/DD/YYYY')
   )
-  const { currentUser } = useAuth()
+  const { currentUser, refresh } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     getDateList()
     fetchMedicationList(currentUser!.id!)
-  }, [selectedDate])
+  }, [selectedDate, refresh])
 
   const getDateList = () => {
     const dates = getPreviousDateRangeToDisplay()
@@ -115,7 +115,7 @@ export default function History() {
               data={medList}
               onRefresh={() => fetchMedicationList(currentUser?.id!)}
               refreshing={isLoading}
-              renderItem={({ item, index }) => (
+              renderItem={({ item }) => (
                 <MyTouchableOpacity
                   style={{ height: 'auto' }}
                   onPress={() => {

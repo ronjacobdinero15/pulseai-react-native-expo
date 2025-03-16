@@ -1,3 +1,7 @@
+import { useRouter } from 'expo-router'
+import React, { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native'
 import MyText from '../../components/MyText'
 import MyTextInput from '../../components/MyTextInput'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
@@ -5,10 +9,6 @@ import { SignInType } from '../../constants/account'
 import { COLORS } from '../../constants/Colors'
 import { useAuth } from '../../contexts/AuthContext'
 import { forgotPassword } from '../../services/apiAuth'
-import { useRouter } from 'expo-router'
-import React, { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native'
 
 export default function ForgotPassword() {
   const {

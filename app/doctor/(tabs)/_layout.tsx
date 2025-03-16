@@ -1,7 +1,7 @@
-import MyDoctorTabBar from '../../../components/MyDoctorTabBar'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import HomeScreen from '.'
+import MyDoctorTabBar from '../../../components/MyDoctorTabBar'
 import Profile from './profile'
 
 const Tab = createBottomTabNavigator()
@@ -11,7 +11,6 @@ export default function TabLayout() {
     <Tab.Navigator
       tabBar={props => <MyDoctorTabBar {...props} />}
       screenOptions={{ headerShown: false }}
-      initialRouteName="index"
     >
       <Tab.Screen
         name="index"

@@ -1,14 +1,20 @@
+import * as FileSystem from 'expo-file-system'
+import * as IntentLauncher from 'expo-intent-launcher'
+import * as Print from 'expo-print'
 import React from 'react'
-import { Alert, FlatList, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  FlatList,
+  Linking,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { PatientType } from '../constants/account'
 import { COLORS } from '../constants/Colors'
 import MyText from './MyText'
 import MyTouchableOpacity from './MyTouchableOpacity'
 import Spinner from './Spinner'
-import * as FileSystem from 'expo-file-system'
-import { StorageAccessFramework } from 'expo-file-system'
-import * as Print from 'expo-print'
-import { shareAsync } from 'expo-sharing'
 
 type PatientListProps = {
   patients: PatientType[]
@@ -16,29 +22,55 @@ type PatientListProps = {
 }
 
 function PatientList({ patients, isLoading }: PatientListProps) {
+  const htmlTemplate = (patientId: string) => `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Patient Report</title>
+    </head>
+    <body style="text-align: center;">
+      <h1>Hello Patient ID ${patientId}!</h1>
+      <p>This is your health summary report.</p>
+    </body>
+  </html>
+`
+
   const handleGeneratePatientReport = async (patientId: string) => {
-    const html = `
-      <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-        </head>
-        <body style="text-align: center;">
-          <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-            Hello Patient ID ${patientId}!
-          </h1>
-          <img
-            src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
-            style="width: 90vw;" />
-        </body>
-      </html>
-      `
+    try {
+      // Generate the PDF from HTML
+      const { uri } = await Print.printToFileAsync({
+        html: htmlTemplate(patientId),
+        base64: false,
+      })
 
-    const file = await Print.printToFileAsync({
-      html,
-      base64: false,
-    })
+      // Check if the file exists
+      const fileInfo = await FileSystem.getInfoAsync(uri)
+      if (!fileInfo.exists) {
+        Alert.alert('Error', 'PDF file does not exist.')
+        return
+      }
 
-    await shareAsync(file.uri)
+      let uriToOpen = uri
+      if (Platform.OS === 'android') {
+        // Convert file URI for Android
+        uriToOpen = await FileSystem.getContentUriAsync(uri)
+
+        // Open the PDF using the system's default PDF viewer
+        IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
+          data: uriToOpen,
+          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+          type: 'application/pdf',
+        })
+      } else {
+        // For iOS, use Linking to open the PDF
+        await Linking.openURL(uriToOpen)
+      }
+    } catch (error) {
+      console.error('Error generating or opening PDF:', error)
+      Alert.alert('Error', 'Failed to generate or open the PDF')
+    }
   }
 
   return (
@@ -66,7 +98,7 @@ function PatientList({ patients, isLoading }: PatientListProps) {
                 style={styles.generateBtn}
                 onPress={() => handleGeneratePatientReport(item.patientId)}
               >
-                <MyText style={{ color: 'white' }}>Generate</MyText>
+                <MyText style={{ color: 'white' }}>View</MyText>
               </MyTouchableOpacity>
             </View>
           )}
@@ -102,17 +134,10 @@ const styles = StyleSheet.create({
   },
   generateBtn: {
     justifyContent: 'center',
-    height: 'auto',
     padding: 10,
     borderRadius: 12,
     backgroundColor: COLORS.primary[500],
     alignItems: 'center',
-  },
-  spacer: {
-    height: 8,
-  },
-  printer: {
-    textAlign: 'center',
   },
 })
 

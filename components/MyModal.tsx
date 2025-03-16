@@ -1,6 +1,6 @@
-import { COLORS } from '../constants/Colors'
 import { Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { COLORS } from '../constants/Colors'
 import MyText from './MyText'
 
 type MyModalProps = {
