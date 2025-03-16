@@ -7,15 +7,17 @@ type MyModalProps = {
   visible: boolean
   title: string
   children: React.ReactNode
+  onRequestClose?: () => void
 }
 
-function MyModal({ visible, title, children }: MyModalProps) {
+function MyModal({ visible, title, children, onRequestClose }: MyModalProps) {
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={visible}
       style={styles.modalMainContainer}
+      onRequestClose={onRequestClose}
     >
       <SafeAreaView style={styles.safeAreaView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     margin: 20,
     padding: 20,
-    alignItems: 'center',
+    alignItems: 'stretch',
     width: '90%',
   },
   modalTitle: {

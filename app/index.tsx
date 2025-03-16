@@ -19,7 +19,7 @@ export default function SignIn() {
   } = useForm<SignInType>({
     defaultValues: {
       email: 'ronjacobdinero15@gmail.com',
-      password: 'qwerty123',
+      password: '12345',
     },
   })
 

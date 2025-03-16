@@ -69,6 +69,9 @@ function handlePost($pdo) {
         case 'addNewBpForToday':
             echo json_encode(addNewBpForToday($pdo, $data['patient_id'], $data['systolic'], $data['diastolic'], $data['date_taken']));
             break;
+        case 'deletePatientAccountAndData':
+            echo json_encode(deletePatientAccountAndData($pdo, $data['patient_id'], $data['password']));
+            break;
         default:
             echo json_encode(['error' => 'Invalid action']);
     }
@@ -98,10 +101,10 @@ function handlePut($pdo) {
     }
 }
 
-/* function handleDelete($pdo) {
-    if (isset($_GET['item_id'])) {
-        echo json_encode(deleteItem($pdo, $_GET['item_id']));
-    } elseif (isset($_GET['shelf_id'])) {
-        echo json_encode(deleteShelf($pdo, $_GET['shelf_id']));
-    }
-}  */
+// function handleDelete($pdo) {
+//     switch ($_GET['action']) {
+
+//         default:
+//             echo json_encode(['error' => 'Invalid action']);
+//     }
+// } 

@@ -72,7 +72,11 @@ export default function HomeScreen() {
       style={styles.mainContainer}
       ListHeaderComponent={
         <View style={styles.container}>
-          <MyModal visible={showConfirmationModal} title="Notice">
+          <MyModal
+            visible={showConfirmationModal}
+            title="Notice"
+            onRequestClose={() => setShowConfirmationModal(false)}
+          >
             <MyText size="h4" style={{ textAlign: 'center' }}>
               Are you sure you want to submit your BP for today?
             </MyText>
@@ -278,7 +282,7 @@ export default function HomeScreen() {
                       a few days, weeks, or months of using our app. This will
                       essentially make it easier for our cardiologists to
                       understand your BP patterns and current medications and
-                      betterz help you with your treatment.
+                      better help you with your treatment.
                     </MyText>
                   </View>
                 </View>

@@ -502,3 +502,57 @@ function getAllPatients($pdo) {
         ];
     }
 }
+
+function deletePatientAccountAndData($pdo, $patient_id, $password) {
+    $sql = "SELECT * FROM patients WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$patient_id]);
+
+    if ($stmt->rowCount() == 1) {
+        $patientInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        $passwordFromDB = $patientInfoRow['password'];
+
+        if (password_verify($password, $passwordFromDB)) {
+            // Begin transaction
+            $pdo->beginTransaction();
+
+            try {
+                $deleteMedicationsSql = "DELETE FROM medications WHERE patient_id = ?";
+                $deleteMedicationsStmt = $pdo->prepare($deleteMedicationsSql);
+                $deleteMedicationsStmt->execute([$patient_id]);
+
+                $deleteBpReadingsSql = "DELETE FROM bp_readings WHERE patient_id = ?";
+                $deleteBpReadingsStmt = $pdo->prepare($deleteBpReadingsSql);
+                $deleteBpReadingsStmt->execute([$patient_id]);
+
+                $deletePatientSql = "DELETE FROM patients WHERE patient_id = ?";
+                $deletePatientStmt = $pdo->prepare($deletePatientSql);
+                $deletePatientStmt->execute([$patient_id]);
+
+                $pdo->commit();
+
+                return [
+                    "success" => true,
+                    "message" => "Account and related data deleted successfully"
+                ];
+            } catch (Exception $e) {
+                $pdo->rollBack();
+
+                return [
+                    "success" => false,
+                    "message" => "An error occurred while deleting the account and related data: " . $e->getMessage()
+                ];
+            }
+        } else {
+            return [
+                "success" => false,
+                "message" => "Password is incorrect"
+            ];
+        }
+    } else {
+        return [
+            "success" => false,
+            "message" => "Patient not found"
+        ];
+    }
+}

@@ -1,6 +1,8 @@
+import NetInfo from '@react-native-community/netinfo'
 import { useRouter } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { Alert } from 'react-native'
 
 type userSignInType = {
   id: string
@@ -40,6 +42,15 @@ function AuthProvider({ children }: AuthContextProps) {
   const router = useRouter()
 
   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        Alert.alert(
+          'No Internet Connection',
+          'Please check your internet connection and try again.'
+        )
+      }
+    })
+
     const loadAuthState = async () => {
       try {
         const currentUserString = await SecureStore.getItemAsync('currentUser')
@@ -66,6 +77,10 @@ function AuthProvider({ children }: AuthContextProps) {
       }
     }
     loadAuthState()
+
+    return () => {
+      unsubscribe()
+    }
   }, [])
 
   const userSignIn = async ({ id, email, firstName, role }: userSignInType) => {
