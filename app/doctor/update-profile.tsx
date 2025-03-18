@@ -18,6 +18,7 @@ import { COLORS } from '../../constants/Colors'
 import { SignUpType } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getDoctorProfile, updateDoctorProfile } from '../../services/apiAuth'
+import Spinner from '../../components/Spinner'
 
 export default function UpdateProfile() {
   const {
@@ -38,11 +39,13 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setIsLoading(true)
       const res = await getDoctorProfile({ doctorId: currentUser?.id! })
 
       if (res.success) {
         reset(res.doctor)
       }
+      setIsLoading(false)
     }
     fetchUserProfile()
   }, [])
@@ -119,107 +122,114 @@ export default function UpdateProfile() {
           </View>
 
           <View style={styles.body}>
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>First name:</MyText>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>First name:</MyText>
 
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="First Name"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="First Name"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                      />
+                    )}
+                    name="firstName"
                   />
-                )}
-                name="firstName"
-              />
-              {errors.firstName && (
-                <MyText style={styles.errorLabel}>
-                  {errors.firstName.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.firstName && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.firstName.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Last name:</MyText>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Last name:</MyText>
 
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="Last Name"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="Last Name"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                      />
+                    )}
+                    name="lastName"
                   />
-                )}
-                name="lastName"
-              />
-              {errors.lastName && (
-                <MyText style={styles.errorLabel}>
-                  {errors.lastName.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.lastName && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.lastName.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Email:</MyText>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Email:</MyText>
 
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: 'Invalid email address.',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="Email"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: 'Invalid email address.',
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="Email"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                      />
+                    )}
+                    name="email"
                   />
-                )}
-                name="email"
-              />
-              {errors.email && (
-                <MyText style={styles.errorLabel}>
-                  {errors.email.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.email && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.email.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <MyTouchableOpacity
-              style={[styles.btn]}
-              onPress={handleSubmit(handleUpdateProfile)}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="large" color="white" />
-              ) : (
-                <MyText
-                  size="h4"
-                  style={{
-                    color: 'white',
-                  }}
+                <MyTouchableOpacity
+                  style={[styles.btn]}
+                  onPress={handleSubmit(handleUpdateProfile)}
                 >
-                  Update my profile
-                </MyText>
-              )}
-            </MyTouchableOpacity>
+                  {isLoading ? (
+                    <ActivityIndicator size="large" color="white" />
+                  ) : (
+                    <MyText
+                      size="h4"
+                      style={{
+                        color: 'white',
+                      }}
+                    >
+                      Update my profile
+                    </MyText>
+                  )}
+                </MyTouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       }

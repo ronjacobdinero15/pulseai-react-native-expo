@@ -11,6 +11,7 @@ import { Medication } from '../../../constants/medication'
 import { useAuth } from '../../../contexts/AuthContext'
 import { getMedicationList } from '../../../services/apiMedication'
 import { getPreviousDateRangeToDisplay } from '../../../utils/helpers'
+import Spinner from '../../../components/Spinner'
 
 export default function History() {
   const [medList, setMedList] = useState<Medication[]>([])
@@ -110,6 +111,8 @@ export default function History() {
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
 
+          {isLoading && <Spinner />}
+
           {medList?.length > 0 ? (
             <FlatList
               data={medList}
@@ -137,7 +140,7 @@ export default function History() {
                 </MyTouchableOpacity>
               )}
             />
-          ) : (
+          ) : !isLoading ? (
             <MyText
               size="h2"
               style={{
@@ -148,7 +151,7 @@ export default function History() {
             >
               No Medication Found
             </MyText>
-          )}
+          ) : null}
         </View>
       }
     />

@@ -28,6 +28,7 @@ import {
 } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getPatientProfile, updatePatientProfile } from '../../services/apiAuth'
+import Spinner from '../../components/Spinner'
 
 export default function UpdateProfile() {
   const {
@@ -56,11 +57,13 @@ export default function UpdateProfile() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setIsLoading(true)
       const res = await getPatientProfile(currentUser?.id!)
 
       if (res.success) {
         reset(res.patient)
       }
+      setIsLoading(false)
     }
     fetchUserProfile()
   }, [])
@@ -137,355 +140,362 @@ export default function UpdateProfile() {
           </View>
 
           <View style={styles.body}>
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>First name:</MyText>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>First name:</MyText>
 
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="First Name"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="First Name"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                      />
+                    )}
+                    name="firstName"
                   />
-                )}
-                name="firstName"
-              />
-              {errors.firstName && (
-                <MyText style={styles.errorLabel}>
-                  {errors.firstName.message}
-                </MyText>
-              )}
-            </View>
-
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Last name:</MyText>
-
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="Last Name"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
-                  />
-                )}
-                name="lastName"
-              />
-              {errors.lastName && (
-                <MyText style={styles.errorLabel}>
-                  {errors.lastName.message}
-                </MyText>
-              )}
-            </View>
-
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Date of birth:</MyText>
-
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required',
-                }}
-                render={({ field: { onChange, value } }) => (
-                  <DateOfBirth value={value} onChange={onChange} />
-                )}
-                name="dateOfBirth"
-              />
-              {errors.dateOfBirth && (
-                <MyText style={styles.errorLabel}>
-                  {errors.dateOfBirth.message}
-                </MyText>
-              )}
-            </View>
-
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Email:</MyText>
-
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: 'Invalid email address.',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="Email"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                  />
-                )}
-                name="email"
-              />
-              {errors.email && (
-                <MyText style={styles.errorLabel}>
-                  {errors.email.message}
-                </MyText>
-              )}
-            </View>
-
-            <View style={styles.healthInfo}>
-              <View style={styles.divider} />
-
-              <MyText
-                size="h6"
-                style={{
-                  flex: 2,
-                  textAlign: 'center',
-                  color: COLORS.secondary[400],
-                }}
-              >
-                Health information
-              </MyText>
-
-              <View style={styles.divider} />
-            </View>
-
-            <View style={styles.shortContainer}>
-              <View style={{ flex: 1 }}>
-                <MyText style={styles.inputLabel}>Age:</MyText>
-
-                <Controller
-                  control={control}
-                  rules={{
-                    required: 'Required.',
-                    maxLength: {
-                      value: 3,
-                      message: 'Invalid age.',
-                    },
-                    validate: value =>
-                      parseInt(value) >= 18 ||
-                      'You must be at least 18 years old.',
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <MyTextInput
-                      placeholder="Age"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      maxLength={3}
-                      keyboardType="numeric"
-                    />
+                  {errors.firstName && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.firstName.message}
+                    </MyText>
                   )}
-                  name="age"
-                />
-                {errors.age && (
-                  <MyText style={styles.errorLabel}>
-                    {errors.age.message}
-                  </MyText>
-                )}
-              </View>
+                </View>
 
-              <View style={{ flex: 2 }}>
-                <MyText style={styles.inputLabel}>Gender:</MyText>
-                <Controller
-                  control={control}
-                  rules={{ required: 'Required.' }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <DropdownComponent
-                      data={GENDEROPTIONS}
-                      value={value}
-                      onChange={onChange}
-                      onBlur={onBlur}
-                    />
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Last name:</MyText>
+
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="Last Name"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                      />
+                    )}
+                    name="lastName"
+                  />
+                  {errors.lastName && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.lastName.message}
+                    </MyText>
                   )}
-                  name="gender"
-                />
-                {errors.gender && (
-                  <MyText style={styles.errorLabel}>
-                    {errors.gender.message}
+                </View>
+
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Date of birth:</MyText>
+
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required',
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                      <DateOfBirth value={value} onChange={onChange} />
+                    )}
+                    name="dateOfBirth"
+                  />
+                  {errors.dateOfBirth && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.dateOfBirth.message}
+                    </MyText>
+                  )}
+                </View>
+
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Email:</MyText>
+
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: 'Invalid email address.',
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="Email"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                      />
+                    )}
+                    name="email"
+                  />
+                  {errors.email && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.email.message}
+                    </MyText>
+                  )}
+                </View>
+
+                <View style={styles.healthInfo}>
+                  <View style={styles.divider} />
+
+                  <MyText
+                    size="h6"
+                    style={{
+                      flex: 2,
+                      textAlign: 'center',
+                      color: COLORS.secondary[400],
+                    }}
+                  >
+                    Health information
                   </MyText>
-                )}
-              </View>
-            </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                  minLength: {
-                    value: 2,
-                    message: 'Invalid BMI.',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="BMI (height in cm)"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    keyboardType="numeric"
-                    maxLength={3}
+                  <View style={styles.divider} />
+                </View>
+
+                <View style={styles.shortContainer}>
+                  <View style={{ flex: 1 }}>
+                    <MyText style={styles.inputLabel}>Age:</MyText>
+
+                    <Controller
+                      control={control}
+                      rules={{
+                        required: 'Required.',
+                        maxLength: {
+                          value: 3,
+                          message: 'Invalid age.',
+                        },
+                        validate: value =>
+                          parseInt(value) >= 18 ||
+                          'You must be at least 18 years old.',
+                      }}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <MyTextInput
+                          placeholder="Age"
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          value={value}
+                          maxLength={3}
+                          keyboardType="numeric"
+                        />
+                      )}
+                      name="age"
+                    />
+                    {errors.age && (
+                      <MyText style={styles.errorLabel}>
+                        {errors.age.message}
+                      </MyText>
+                    )}
+                  </View>
+
+                  <View style={{ flex: 2 }}>
+                    <MyText style={styles.inputLabel}>Gender:</MyText>
+                    <Controller
+                      control={control}
+                      rules={{ required: 'Required.' }}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <DropdownComponent
+                          data={GENDEROPTIONS}
+                          value={value}
+                          onChange={onChange}
+                          onBlur={onBlur}
+                        />
+                      )}
+                      name="gender"
+                    />
+                    {errors.gender && (
+                      <MyText style={styles.errorLabel}>
+                        {errors.gender.message}
+                      </MyText>
+                    )}
+                  </View>
+                </View>
+
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                      minLength: {
+                        value: 2,
+                        message: 'Invalid BMI.',
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="BMI (height in cm)"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        keyboardType="numeric"
+                        maxLength={3}
+                      />
+                    )}
+                    name="bmiHeightCm"
                   />
-                )}
-                name="bmiHeightCm"
-              />
-              {errors.bmiHeightCm && (
-                <MyText style={styles.errorLabel}>
-                  {errors.bmiHeightCm.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.bmiHeightCm && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.bmiHeightCm.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>BMI (weight in kg):</MyText>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>BMI (weight in kg):</MyText>
 
-              <Controller
-                control={control}
-                rules={{
-                  required: 'This field is required.',
-                  minLength: {
-                    value: 2,
-                    message: 'Invalid BMI.',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    placeholder="BMI (weight in kg)"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    keyboardType="numeric"
-                    maxLength={4}
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                      minLength: {
+                        value: 2,
+                        message: 'Invalid BMI.',
+                      },
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        placeholder="BMI (weight in kg)"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        keyboardType="numeric"
+                        maxLength={4}
+                      />
+                    )}
+                    name="bmiWeightKg"
                   />
-                )}
-                name="bmiWeightKg"
-              />
-              {errors.bmiWeightKg && (
-                <MyText style={styles.errorLabel}>
-                  {errors.bmiWeightKg.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.bmiWeightKg && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.bmiWeightKg.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Vices:</MyText>
-              <Controller
-                control={control}
-                rules={{ required: 'This field is required.' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MultipleSelectListCheckbox
-                    label="Vices"
-                    data={VICESOPTIONS}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Vices:</MyText>
+                  <Controller
+                    control={control}
+                    rules={{ required: 'This field is required.' }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MultipleSelectListCheckbox
+                        label="Vices"
+                        data={VICESOPTIONS}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                      />
+                    )}
+                    name="vices"
                   />
-                )}
-                name="vices"
-              />
-              {errors.vices && (
-                <MyText style={styles.errorLabel}>
-                  {errors.vices.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.vices && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.vices.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Comorbidities:</MyText>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Comorbidities:</MyText>
 
-              <Controller
-                control={control}
-                rules={{ required: 'This field is required.' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MultipleSelectListCheckbox
-                    label="Comorbidities"
-                    data={COMORBIDITIESOPTIONS}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
+                  <Controller
+                    control={control}
+                    rules={{ required: 'This field is required.' }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MultipleSelectListCheckbox
+                        label="Comorbidities"
+                        data={COMORBIDITIESOPTIONS}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                      />
+                    )}
+                    name="comorbidities"
                   />
-                )}
-                name="comorbidities"
-              />
-              {errors.comorbidities && (
-                <MyText style={styles.errorLabel}>
-                  {errors.comorbidities.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.comorbidities && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.comorbidities.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText>Parental history of hypertension?</MyText>
+                <View style={styles.inputControl}>
+                  <MyText>Parental history of hypertension?</MyText>
 
-              <Controller
-                control={control}
-                rules={{ required: 'This field is required.' }}
-                render={({ field: { onChange, value } }) => (
-                  <RadioButton
-                    selected={value}
-                    options={['Yes', 'No', 'Not sure']}
-                    handleRadioPress={onChange}
+                  <Controller
+                    control={control}
+                    rules={{ required: 'This field is required.' }}
+                    render={({ field: { onChange, value } }) => (
+                      <RadioButton
+                        selected={value}
+                        options={['Yes', 'No', 'Not sure']}
+                        handleRadioPress={onChange}
+                      />
+                    )}
+                    name="parentalHypertension"
                   />
-                )}
-                name="parentalHypertension"
-              />
-              {errors.parentalHypertension && (
-                <MyText style={styles.errorLabel}>
-                  {errors.parentalHypertension.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.parentalHypertension && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.parentalHypertension.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Lifestyle:</MyText>
+                <View style={styles.inputControl}>
+                  <MyText style={styles.inputLabel}>Lifestyle:</MyText>
 
-              <Controller
-                control={control}
-                rules={{ required: 'This field is required.' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DropdownComponent
-                    data={LIFESTYLEOPTIONS}
-                    value={value}
-                    onChange={onChange}
-                    onBlur={onBlur}
+                  <Controller
+                    control={control}
+                    rules={{ required: 'This field is required.' }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <DropdownComponent
+                        data={LIFESTYLEOPTIONS}
+                        value={value}
+                        onChange={onChange}
+                        onBlur={onBlur}
+                      />
+                    )}
+                    name="lifestyle"
                   />
-                )}
-                name="lifestyle"
-              />
-              {errors.lifestyle && (
-                <MyText style={styles.errorLabel}>
-                  {errors.lifestyle.message}
-                </MyText>
-              )}
-            </View>
+                  {errors.lifestyle && (
+                    <MyText style={styles.errorLabel}>
+                      {errors.lifestyle.message}
+                    </MyText>
+                  )}
+                </View>
 
-            <MyTouchableOpacity
-              style={[styles.btn]}
-              onPress={handleSubmit(handleUpdateProfile)}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="large" color="white" />
-              ) : (
-                <MyText
-                  size="h4"
-                  style={{
-                    color: 'white',
-                  }}
+                <MyTouchableOpacity
+                  style={[styles.btn]}
+                  onPress={handleSubmit(handleUpdateProfile)}
                 >
-                  Update my profile
-                </MyText>
-              )}
-            </MyTouchableOpacity>
+                  {isLoading ? (
+                    <ActivityIndicator size="large" color="white" />
+                  ) : (
+                    <MyText
+                      size="h4"
+                      style={{
+                        color: 'white',
+                      }}
+                    >
+                      Update my profile
+                    </MyText>
+                  )}
+                </MyTouchableOpacity>
+              </>
+            )}
           </View>
         </View>
       }

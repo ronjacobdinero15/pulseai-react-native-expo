@@ -1,11 +1,18 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { Alert, FlatList, StyleSheet, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  View,
+} from 'react-native'
 import MyModal from '../../../components/MyModal'
 import MyText from '../../../components/MyText'
 import MyTextInput from '../../../components/MyTextInput'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
+import Spinner from '../../../components/Spinner'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
 import {
@@ -14,18 +21,20 @@ import {
 } from '../../../services/apiMedication'
 
 export default function HomeScreen() {
-  const [bp, setBp] = useState({ systolic: '120', diastolic: '90' })
+  const [bp, setBp] = useState({ systolic: '', diastolic: '' })
   const [bpAlreadyTaken, setBpAlreadyTaken] = useState(false)
   const { currentUser, refresh, setRefresh } = useAuth()
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [openHelpAccordion, setOpenHelpAccordion] = useState(false)
   const [openGuideAccordion, setOpenGuideAccordion] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     fetchIfUserHasAlreadyBpToday()
   }, [refresh])
 
   const fetchIfUserHasAlreadyBpToday = async () => {
+    setIsLoading(true)
     const res = await checkIfUserHasAlreadyBpToday({
       currentUserId: currentUser?.id!,
       dateTaken: moment().format('L'),
@@ -41,6 +50,7 @@ export default function HomeScreen() {
       setBpAlreadyTaken(false)
       setBp({ systolic: '', diastolic: '' })
     }
+    setIsLoading(false)
   }
 
   const handleAddNewBpForToday = async () => {
@@ -65,6 +75,17 @@ export default function HomeScreen() {
     }
   }
 
+  const validateBpInput = (value: string) => {
+    // Allow clearing the field
+    if (value === '') return true
+    // Must be all digits and cannot start with "0"
+    if (!/^[1-9]\d{0,2}$/.test(value)) return false
+    const numValue = parseInt(value, 10)
+    return numValue <= 250
+  }
+
+  if (isLoading) return <Spinner />
+
   return (
     <FlatList
       data={[]}
@@ -85,20 +106,28 @@ export default function HomeScreen() {
               style={[
                 styles.modalBtn,
                 {
-                  backgroundColor: COLORS.primary[500],
+                  backgroundColor: isLoading
+                    ? COLORS.secondary[200]
+                    : COLORS.primary[500],
                 },
               ]}
               disabled={!showConfirmationModal}
               onPress={() => handleAddNewBpForToday()}
             >
-              <MyText
-                size="h4"
-                style={{
-                  color: showConfirmationModal ? 'white' : COLORS.primary[900],
-                }}
-              >
-                Submit BP for today
-              </MyText>
+              {isLoading ? (
+                <ActivityIndicator size="large" color="white" />
+              ) : (
+                <MyText
+                  size="h4"
+                  style={{
+                    color: showConfirmationModal
+                      ? 'white'
+                      : COLORS.primary[900],
+                  }}
+                >
+                  Submit BP for today
+                </MyText>
+              )}
             </MyTouchableOpacity>
 
             <MyTouchableOpacity
@@ -167,7 +196,11 @@ export default function HomeScreen() {
                     keyboardType="numeric"
                     autoCorrect={false}
                     value={bp.systolic}
-                    onChangeText={text => setBp({ ...bp, systolic: text })}
+                    onChangeText={text => {
+                      if (validateBpInput(text)) {
+                        setBp({ ...bp, systolic: text })
+                      }
+                    }}
                     style={styles.bpInput}
                     maxLength={3}
                   />
@@ -180,7 +213,11 @@ export default function HomeScreen() {
                     keyboardType="numeric"
                     autoCorrect={false}
                     value={bp.diastolic}
-                    onChangeText={text => setBp({ ...bp, diastolic: text })}
+                    onChangeText={text => {
+                      if (validateBpInput(text)) {
+                        setBp({ ...bp, diastolic: text })
+                      }
+                    }}
                     style={styles.bpInput}
                     maxLength={3}
                   />

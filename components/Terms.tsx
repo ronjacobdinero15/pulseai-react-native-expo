@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   bulleted: {},
   divider: {
-    height: 2,
+    height: 1,
     backgroundColor: COLORS.secondary[200],
     borderRadius: 50,
   },

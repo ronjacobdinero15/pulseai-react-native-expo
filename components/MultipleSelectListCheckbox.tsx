@@ -29,7 +29,7 @@ const MultipleSelectListCheckbox: React.FC<MultipleSelectListCheckboxProps> = ({
 
   return (
     <View>
-      <TouchableOpacity activeOpacity={0.6} style={styles.touchable}>
+      <TouchableOpacity style={styles.touchable}>
         <MultipleSelectList
           setSelected={handleSelected}
           data={data}
@@ -50,18 +50,21 @@ const MultipleSelectListCheckbox: React.FC<MultipleSelectListCheckboxProps> = ({
 
 const styles = StyleSheet.create({
   touchable: {
-    backgroundColor: COLORS.secondary[100],
+    backgroundColor: 'white',
+    borderColor: COLORS.secondary[200],
     borderRadius: 8,
   },
   multipleSelectList: {
     color: COLORS.secondary[500],
-    backgroundColor: COLORS.secondary[100],
-    borderWidth: 0,
+    backgroundColor: 'white',
+    borderColor: COLORS.secondary[200],
+    borderWidth: 1,
     marginBottom: 0,
   },
   dropdown: {
-    backgroundColor: COLORS.secondary[100],
-    borderWidth: 0,
+    backgroundColor: 'white',
+    borderColor: COLORS.secondary[200],
+    borderWidth: 1,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
     marginTop: -10,

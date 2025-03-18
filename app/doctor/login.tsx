@@ -9,8 +9,11 @@ import { SignInType } from '../../constants/account'
 import { COLORS } from '../../constants/Colors'
 import { useAuth } from '../../contexts/AuthContext'
 import { userLogin } from '../../services/apiAuth'
+import { Ionicons } from '@expo/vector-icons'
+import { useState } from 'react'
 
 export default function SignIn() {
+  const [showPassword, setShowPassword] = useState(false)
   const {
     control,
     handleSubmit,
@@ -113,7 +116,7 @@ export default function SignIn() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MyTextInput
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 placeholder="Password"
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -127,9 +130,35 @@ export default function SignIn() {
           {errors.password && (
             <MyText style={styles.errorLabel}>{errors.password.message}</MyText>
           )}
+          {showPassword ? (
+            <MyTouchableOpacity
+              style={styles.showPasswordBtn}
+              onPress={() => setShowPassword(false)}
+            >
+              <Ionicons
+                name="eye-outline"
+                size={28}
+                color={COLORS.primary[500]}
+              />
+            </MyTouchableOpacity>
+          ) : (
+            <MyTouchableOpacity
+              style={styles.showPasswordBtn}
+              onPress={() => setShowPassword(true)}
+            >
+              <Ionicons
+                name="eye-off-outline"
+                size={28}
+                color={COLORS.primary[500]}
+              />
+            </MyTouchableOpacity>
+          )}
         </View>
 
-        <Link href="/patient/forgot-password" style={styles.forgotPassword}>
+        <Link
+          href="/patient/forgot-password"
+          style={[styles.links, { textAlign: 'right' }]}
+        >
           Forgot your password?
         </Link>
 
@@ -148,7 +177,13 @@ export default function SignIn() {
           </MyTouchableOpacity>
         </View>
 
-        <Link href="/" style={styles.anotherUser}>
+        <Link
+          href="/"
+          style={[
+            styles.links,
+            { textAlign: 'center', color: COLORS.primary[500] },
+          ]}
+        >
           Switch to patient login
         </Link>
 
@@ -207,10 +242,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-  forgotPassword: {
+  links: {
     color: COLORS.secondary[400],
-    textAlign: 'right',
-    fontSize: 16,
+    fontSize: 17,
   },
   btn: {
     backgroundColor: COLORS.primary[500],
@@ -219,11 +253,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
-  },
-  anotherUser: {
-    color: COLORS.primary[500],
-    textAlign: 'center',
-    fontSize: 16,
   },
   needHelp: {
     padding: 10,
@@ -236,5 +265,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     color: COLORS.secondary[400],
+  },
+  showPasswordBtn: {
+    position: 'absolute',
+    right: 15,
+    top: 12,
+    color: COLORS.primary[500],
+    height: 'auto',
   },
 })

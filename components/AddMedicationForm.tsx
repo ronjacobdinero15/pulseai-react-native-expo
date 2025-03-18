@@ -1,10 +1,9 @@
-
 import { Ionicons } from '@expo/vector-icons'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { Controller, useForm, useWatch } from 'react-hook-form'
+import { Controller, set, useForm, useWatch } from 'react-hook-form'
 import {
   ActivityIndicator,
   Alert,
@@ -13,9 +12,17 @@ import {
   View,
 } from 'react-native'
 import { COLORS } from '../constants/Colors'
-import { FREQUENCY, Medication, MEDICINES } from '../constants/medication'
+import {
+  FREQUENCY,
+  Medication,
+  MEDICINES,
+  TAKENORNOT,
+} from '../constants/medication'
 import { useAuth } from '../contexts/AuthContext'
-import { addNewMedication } from '../services/apiMedication'
+import {
+  addNewMedication,
+  addNewMedicationStatus,
+} from '../services/apiMedication'
 import {
   formatDate,
   formatDateForText,
@@ -32,6 +39,7 @@ function AddMedicationForm() {
   const [showStartDate, setShowStartDate] = useState(false)
   const [showEndDate, setShowEndDate] = useState(false)
   const [showTimePicker, setShowTimePicker] = useState(false)
+  const [isAddingNewMedication, setIsAddingNewMedication] = useState(false)
 
   const {
     control,
@@ -47,12 +55,7 @@ function AddMedicationForm() {
       endDate: '',
     },
   })
-  const {
-    currentUser,
-    isLoading: isAddingNewMedication,
-    setIsLoading: setIsAddingNewMedication,
-    setRefresh,
-  } = useAuth()
+  const { currentUser, setRefresh } = useAuth()
   const router = useRouter()
 
   const startDate = useWatch({ control, name: 'startDate' })
@@ -61,17 +64,37 @@ function AddMedicationForm() {
   const onSubmit = async (data: Medication) => {
     if (!currentUser?.id) return
 
-    setIsAddingNewMedication(false)
+    setIsAddingNewMedication(true)
+    const medicationId = generateUniqueId()
+    const datesRange = getDatesRange(data?.startDate, data?.endDate)
     const res = await addNewMedication({
       ...data,
       patientId: currentUser?.id,
-      medicationId: generateUniqueId(),
-      dates: getDatesRange(data?.startDate, data?.endDate),
+      medicationId,
+      dates: datesRange,
       reminder: formatTime(data.reminder),
       actions: [],
     })
 
     if (res.success) {
+      // Update medication status if "Already taken" or "Missed" is selected
+      if (data.taken === 'Taken' || data.taken === 'Missed') {
+        for (const date of datesRange) {
+          const statusUpdateRes = await addNewMedicationStatus({
+            medicationId,
+            date,
+            status: data.taken,
+            time: moment().format('LT'),
+          })
+
+          if (!statusUpdateRes.success) {
+            Alert.alert('Error', statusUpdateRes.message)
+            setIsAddingNewMedication(false)
+            return
+          }
+        }
+      }
+
       Alert.alert('Success', res.message, [
         {
           text: 'GREAT',
@@ -359,9 +382,64 @@ function AddMedicationForm() {
         )}
       </View>
 
+      {/* NOTE: TAKEN OR NOT */}
+      <View>
+        <Controller
+          control={control}
+          name="taken"
+          rules={{ required: 'Taken/not/missed status is required' }}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <FlatList
+                data={TAKENORNOT}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ maxHeight: 70 }}
+                renderItem={({ item }) => (
+                  <MyTouchableOpacity
+                    style={[
+                      styles.inputControl,
+                      { height: 50 },
+                      item.value === value
+                        ? { backgroundColor: COLORS.primary[500] }
+                        : { backgroundColor: 'white' },
+                    ]}
+                    onPress={() => onChange(item.value)}
+                  >
+                    <MyText
+                      style={{
+                        color:
+                          item.value === value ? 'white' : COLORS.primary[900],
+                      }}
+                    >
+                      {item.label}
+                    </MyText>
+                  </MyTouchableOpacity>
+                )}
+                keyExtractor={item => item.value}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+              />
+              {errors.taken && (
+                <MyText style={styles.errorLabel}>
+                  {errors.taken.message}
+                </MyText>
+              )}
+            </>
+          )}
+        />
+      </View>
+
       <MyTouchableOpacity
-        style={styles.submitButton}
+        style={[
+          styles.submitButton,
+          {
+            backgroundColor: isAddingNewMedication
+              ? COLORS.secondary[200]
+              : COLORS.primary[500],
+          },
+        ]}
         onPress={handleSubmit(onSubmit)}
+        disabled={isAddingNewMedication}
       >
         {isAddingNewMedication ? (
           <ActivityIndicator size="large" color="white" />

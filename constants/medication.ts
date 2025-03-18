@@ -13,6 +13,7 @@ export type Medication = {
   dates: string[]
   actions?: { date: string; status: string; time: string }[] | []
   selectedDate?: string
+  taken?: string
 }
 
 export type addNewMedicationStatusType = {
@@ -55,6 +56,12 @@ export const MEDICINES: MedicineType[] = [
     name: 'Injection',
     icon: require('../assets/images/syringe.png'),
   },
+]
+
+export const TAKENORNOT: { label: string; value: string }[] = [
+  { label: 'Not yet taken', value: 'Not Taken' },
+  { label: 'Already taken', value: 'Taken' },
+  { label: 'Missed', value: 'Missed' },
 ]
 
 export const FREQUENCY: { label: string; value: string }[] = [

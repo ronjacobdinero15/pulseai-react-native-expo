@@ -23,6 +23,17 @@ function PatientList({ patients, isLoading }: PatientListProps) {
       </View>
       {isLoading ? (
         <Spinner />
+      ) : patients.length === 0 ? (
+        <MyText
+          size="h2"
+          style={{
+            padding: 30,
+            color: COLORS.secondary[500],
+            textAlign: 'center',
+          }}
+        >
+          No such patient found
+        </MyText>
       ) : (
         <FlatList
           data={patients}

@@ -1,6 +1,13 @@
 import { Link, useRouter } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, Alert, Image, StyleSheet, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import MyText from '../components/MyText'
 import MyTextInput from '../components/MyTextInput'
 import MyTouchableOpacity from '../components/MyTouchableOpacity'
@@ -9,8 +16,11 @@ import { SignInType } from '../constants/account'
 import { COLORS } from '../constants/Colors'
 import { useAuth } from '../contexts/AuthContext'
 import { updatePatientNeedsOnboarding, userLogin } from '../services/apiAuth'
+import { Ionicons } from '@expo/vector-icons'
+import { useState } from 'react'
 
 export default function SignIn() {
+  const [showPassword, setShowPassword] = useState(false)
   const {
     control,
     handleSubmit,
@@ -18,7 +28,7 @@ export default function SignIn() {
     formState: { errors },
   } = useForm<SignInType>({
     defaultValues: {
-      email: 'ronjacobdinero15@gmail.com',
+      email: 'lemon@gmail.com',
       password: '12345',
     },
   })
@@ -120,13 +130,14 @@ export default function SignIn() {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MyTextInput
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 placeholder="Password"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
                 autoCorrect={false}
                 autoCapitalize="none"
+                style={{ paddingRight: 60 }}
               />
             )}
             name="password"
@@ -134,9 +145,35 @@ export default function SignIn() {
           {errors.password && (
             <MyText style={styles.errorLabel}>{errors.password.message}</MyText>
           )}
+          {showPassword ? (
+            <MyTouchableOpacity
+              style={styles.showPasswordBtn}
+              onPress={() => setShowPassword(false)}
+            >
+              <Ionicons
+                name="eye-outline"
+                size={28}
+                color={COLORS.primary[500]}
+              />
+            </MyTouchableOpacity>
+          ) : (
+            <MyTouchableOpacity
+              style={styles.showPasswordBtn}
+              onPress={() => setShowPassword(true)}
+            >
+              <Ionicons
+                name="eye-off-outline"
+                size={28}
+                color={COLORS.primary[500]}
+              />
+            </MyTouchableOpacity>
+          )}
         </View>
 
-        <Link href="/patient/forgot-password" style={styles.forgotPassword}>
+        <Link
+          href="/patient/forgot-password"
+          style={[styles.links, { textAlign: 'right' }]}
+        >
           Forgot your password?
         </Link>
 
@@ -155,19 +192,21 @@ export default function SignIn() {
           </MyTouchableOpacity>
         </View>
 
-        <MyTouchableOpacity onPress={() => router.push('/patient/signUp')}>
-          <MyText size="h4" style={styles.formFooter}>
-            Don't have an account?{' '}
-            <MyText
-              size="h4"
-              style={[styles.formFooter, { textDecorationLine: 'underline' }]}
-            >
-              Sign up
-            </MyText>
-          </MyText>
-        </MyTouchableOpacity>
+        <Link
+          href="/patient/signUp"
+          style={[styles.links, { textAlign: 'center', marginVertical: 20 }]}
+        >
+          Don't have an account?{' '}
+          <Text style={{ textDecorationLine: 'underline' }}>Sign up</Text>
+        </Link>
 
-        <Link href="/doctor/login" style={styles.anotherUser}>
+        <Link
+          href="/doctor/login"
+          style={[
+            styles.links,
+            { textAlign: 'center', color: COLORS.primary[500] },
+          ]}
+        >
           Switch to doctor login
         </Link>
       </View>
@@ -204,12 +243,9 @@ const styles = StyleSheet.create({
   formAction: {
     marginVertical: 10,
   },
-  formFooter: {
-    color: COLORS.secondary[400],
-    textAlign: 'center',
-    letterSpacing: 0.15,
+  inputControl: {
+    position: 'relative',
   },
-  inputControl: {},
   inputLabel: {
     marginBottom: 8,
   },
@@ -220,10 +256,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-  forgotPassword: {
+  links: {
     color: COLORS.secondary[400],
-    textAlign: 'right',
-    fontSize: 16,
+    fontSize: 17,
   },
   btn: {
     backgroundColor: COLORS.primary[500],
@@ -233,9 +268,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  anotherUser: {
+  showPasswordBtn: {
+    position: 'absolute',
+    right: 15,
+    top: 12,
     color: COLORS.primary[500],
-    textAlign: 'center',
-    fontSize: 16,
+    height: 'auto',
   },
 })

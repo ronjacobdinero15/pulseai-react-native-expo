@@ -1,5 +1,5 @@
 import Checkbox from 'expo-checkbox'
-import { useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
@@ -9,6 +9,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Text,
   View,
 } from 'react-native'
 import DateOfBirth from '../../components/DateOfBirth'
@@ -90,7 +91,11 @@ export default function SignUp() {
 
           <View style={styles.checkboxContainer}>
             <Checkbox
-              color={COLORS.primary[500]}
+              color={
+                toggleComplianceCheckbox
+                  ? COLORS.primary[500]
+                  : COLORS.secondary[200]
+              }
               style={[styles.checkbox]}
               value={toggleComplianceCheckbox}
               onValueChange={checked => setToggleComplianceCheckbox(checked)}
@@ -573,20 +578,13 @@ export default function SignUp() {
           )}
         </MyTouchableOpacity>
 
-        <MyTouchableOpacity
-          style={styles.footer}
-          onPress={() => router.push('/')}
+        <Link
+          href="/"
+          style={[styles.links, { textAlign: 'center', marginVertical: 20 }]}
         >
-          <MyText size="h4" style={styles.formFooter}>
-            Login instead?{' '}
-            <MyText
-              size="h4"
-              style={[styles.formFooter, { textDecorationLine: 'underline' }]}
-            >
-              Sign up
-            </MyText>
-          </MyText>
-        </MyTouchableOpacity>
+          Login instead?{' '}
+          <Text style={{ textDecorationLine: 'underline' }}>Login</Text>
+        </Link>
       </View>
     </ScrollView>
   )
@@ -647,7 +645,7 @@ const styles = StyleSheet.create({
   btn: {
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.primary[500],
+    borderColor: COLORS.secondary[200],
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -680,5 +678,9 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: COLORS.secondary[200],
     borderRadius: 50,
+  },
+  links: {
+    color: COLORS.secondary[400],
+    fontSize: 17,
   },
 })
