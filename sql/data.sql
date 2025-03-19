@@ -51,8 +51,11 @@ CREATE TABLE medications (
 CREATE TABLE bp_readings (
     reading_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id INT,
-    systolic INT,
-    diastolic INT,
     date_taken VARCHAR(200),
+    time_taken VARCHAR(200),
+    systolic DECIMAL(5, 2),
+    diastolic DECIMAL(5, 2),
+    pulse_rate DECIMAL(5, 2),
+    comments TEXT,
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 );

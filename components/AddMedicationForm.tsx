@@ -3,7 +3,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useState } from 'react'
-import { Controller, set, useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import {
   ActivityIndicator,
   Alert,
@@ -77,7 +77,6 @@ function AddMedicationForm() {
     })
 
     if (res.success) {
-      // Update medication status if "Already taken" or "Missed" is selected
       if (data.taken === 'Taken' || data.taken === 'Missed') {
         for (const date of datesRange) {
           const statusUpdateRes = await addNewMedicationStatus({

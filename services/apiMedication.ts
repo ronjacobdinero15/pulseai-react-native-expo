@@ -1,5 +1,5 @@
 import {
-  AddNewBpForTodayType,
+  AddNewBpType,
   addNewMedicationStatusType,
   Medication,
 } from '../constants/medication'
@@ -86,22 +86,28 @@ export async function addNewMedicationStatus({
   return await res.json()
 }
 
-export async function addNewBpForToday({
-  currentUserId,
+export async function addNewBp({
+  patientId,
+  dateTaken,
+  timeTaken,
   systolic,
   diastolic,
-  dateTaken,
-}: AddNewBpForTodayType) {
-  const res = await fetch(`${apiUrl}?action=addNewBpForToday`, {
+  pulseRate,
+  comments,
+}: AddNewBpType) {
+  const res = await fetch(`${apiUrl}?action=addNewBp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      patient_id: currentUserId,
-      systolic: systolic?.trim(),
-      diastolic: diastolic?.trim(),
+      patient_id: patientId,
       date_taken: dateTaken,
+      time_taken: timeTaken,
+      systolic,
+      diastolic,
+      pulse_rate: pulseRate,
+      comments,
     }),
   })
 
@@ -110,12 +116,15 @@ export async function addNewBpForToday({
   return await res.json()
 }
 
-export async function checkIfUserHasAlreadyBpToday({
-  currentUserId,
+export async function getBpForTodayList({
+  patientId,
   dateTaken,
-}: AddNewBpForTodayType) {
+}: {
+  patientId: string
+  dateTaken: string
+}) {
   const res = await fetch(
-    `${apiUrl}?action=checkIfUserHasAlreadyBpToday&patient_id=${currentUserId}&date_taken=${dateTaken}`,
+    `${apiUrl}?action=getBpForTodayList&patient_id=${patientId}&date_taken=${dateTaken}`,
     {
       method: 'GET',
       headers: {

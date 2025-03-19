@@ -68,6 +68,7 @@ export default function HomeScreen() {
                   </MyTouchableOpacity>
                 )}
               </View>
+
               {/* NOTE: SEARCH */}
               <MyTouchableOpacity
                 style={styles.searchBtn}

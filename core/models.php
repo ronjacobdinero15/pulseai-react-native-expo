@@ -254,10 +254,10 @@ function addNewMedicationStatus($pdo, $medication_id, $date, $status, $time) {
     }
 }
 
-function addNewBpForToday ($pdo, $patient_id, $systolic, $diastolic, $date_taken) {
-    $sql = "INSERT INTO bp_readings (patient_id, systolic, diastolic, date_taken) VALUES (?,?,?,?)";
+function addNewBp($pdo, $patient_id, $date_taken, $time_taken, $systolic, $diastolic, $pulse_rate, $comments) {
+    $sql = "INSERT INTO bp_readings (patient_id, date_taken, time_taken, systolic, diastolic, pulse_rate, comments) VALUES (?,?,?,?,?,?,?)";
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$patient_id, $systolic, $diastolic, $date_taken]);
+    $executeQuery = $stmt->execute([$patient_id, $date_taken, $time_taken, $systolic, $diastolic, $pulse_rate, $comments]);
 
     if ($executeQuery) {
         return [
@@ -272,24 +272,36 @@ function addNewBpForToday ($pdo, $patient_id, $systolic, $diastolic, $date_taken
     }
 }
 
-function checkIfUserHasAlreadyBpToday($pdo, $patient_id, $date_taken) {
+
+function getBpForTodayList($pdo, $patient_id, $date_taken) {
     $sql = "SELECT * FROM bp_readings WHERE patient_id = ? AND date_taken = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$patient_id, $date_taken]);
 
     if ($stmt->rowCount() > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $bp_readings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $bp_readings = array_map(function($bp_reading) {
+            return [
+                "readingId" => $bp_reading["reading_id"],
+                "patientId" => $bp_reading["patient_id"],
+                "dateTaken" => $bp_reading["date_taken"],
+                "timeTaken" => $bp_reading["time_taken"],
+                "systolic" => round($bp_reading["systolic"], 1),
+                "diastolic" => round($bp_reading["diastolic"], 1),
+                "pulseRate" => round($bp_reading["pulse_rate"], 1),
+                "comments" => $bp_reading["comments"]
+            ];
+        },  $bp_readings);
 
         return [
             "success" => true,
-            "message" => "User already has a blood pressure record for today",
-            "systolic" => $row['systolic'],
-            "diastolic" => $row['diastolic']
+            "bpList" => $bp_readings
         ];
     } else {
         return [
             "success" => false,
-            "message" => "User does not have a blood pressure record for today"
+            "message" => "No blood pressure data."
         ];
     }
 }
@@ -513,7 +525,6 @@ function deletePatientAccountAndData($pdo, $patient_id, $password) {
         $passwordFromDB = $patientInfoRow['password'];
 
         if (password_verify($password, $passwordFromDB)) {
-            // Begin transaction
             $pdo->beginTransaction();
 
             try {

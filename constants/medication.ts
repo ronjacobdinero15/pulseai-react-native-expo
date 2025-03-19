@@ -23,11 +23,14 @@ export type addNewMedicationStatusType = {
   time: string
 }
 
-export type AddNewBpForTodayType = {
-  currentUserId: string
-  systolic?: string
-  diastolic?: string
+export type AddNewBpType = {
+  patientId: string
   dateTaken: string
+  timeTaken: string
+  systolic: string
+  diastolic: string
+  pulseRate: string
+  comments: string
 }
 
 type MedicineType = {

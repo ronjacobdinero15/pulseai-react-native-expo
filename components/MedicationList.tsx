@@ -41,7 +41,6 @@ function MedicationList() {
     setIsLoading(true)
     const res = await getMedicationList(patientId, formattedDate)
     if (res.success) {
-      // console.log(JSON.stringify(res.medications, null, 2))
       setMedList(res.medications)
     }
     setIsLoading(false)

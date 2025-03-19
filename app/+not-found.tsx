@@ -23,6 +23,5 @@ const styles = StyleSheet.create({
   link: {
     fontSize: 20,
     textDecorationLine: 'underline',
-    color: COLORS.secondary[100],
   },
 })

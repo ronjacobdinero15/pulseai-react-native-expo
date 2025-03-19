@@ -62,3 +62,21 @@ export const getPreviousDateRangeToDisplay = () => {
   }
   return dates
 }
+
+export const validateBpInput = (value: string) => {
+  if (value === '') return true
+
+  // Regex: must start with a nonzero digit, may have more digits,
+  // and can optionally have a decimal point followed by 1-2 digits.
+  const regex = /^[1-9]\d*(\.\d{1,2})?$/
+  if (!regex.test(value)) {
+    return 'Invalid input.'
+  }
+
+  const numValue = parseFloat(value)
+  if (numValue > 300) {
+    return 'Value must be less than or equal to 300.'
+  }
+
+  return true
+}

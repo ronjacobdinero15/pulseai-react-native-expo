@@ -30,8 +30,8 @@ function handleGet($pdo) {
         case 'getMedicationList':
             echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $_GET['selected_date']));
             break;
-        case 'checkIfUserHasAlreadyBpToday':
-            echo json_encode(checkIfUserHasAlreadyBpToday($pdo, $_GET['patient_id'], $_GET['date_taken']));
+        case 'getBpForTodayList':
+            echo json_encode(getBpForTodayList($pdo, $_GET['patient_id'], $_GET['date_taken']));
             break;
         case 'getPatientProfile':
             echo json_encode(getPatientProfile($pdo, $_GET['patient_id']));
@@ -66,8 +66,8 @@ function handlePost($pdo) {
         case 'addNewMedicationStatus':
             echo json_encode(addNewMedicationStatus($pdo, $data['medication_id'], $data['date'], $data['status'], $data['time']));
             break;
-        case 'addNewBpForToday':
-            echo json_encode(addNewBpForToday($pdo, $data['patient_id'], $data['systolic'], $data['diastolic'], $data['date_taken']));
+        case 'addNewBp':
+            echo json_encode(addNewBp($pdo, $data['patient_id'], $data['date_taken'], $data['time_taken'], $data['systolic'], $data['diastolic'], $data['pulse_rate'], $data['comments']));
             break;
         case 'deletePatientAccountAndData':
             echo json_encode(deletePatientAccountAndData($pdo, $data['patient_id'], $data['password']));

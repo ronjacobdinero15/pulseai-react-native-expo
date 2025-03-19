@@ -1,88 +1,39 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native'
-import MyModal from '../../../components/MyModal'
+import { FlatList, StyleSheet, View } from 'react-native'
+import BpIndexTable from '../../../components/BpIndexTable'
 import MyText from '../../../components/MyText'
-import MyTextInput from '../../../components/MyTextInput'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import Spinner from '../../../components/Spinner'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
-import {
-  addNewBpForToday,
-  checkIfUserHasAlreadyBpToday,
-} from '../../../services/apiMedication'
+import { getBpForTodayList } from '../../../services/apiMedication'
 
 export default function HomeScreen() {
-  const [bp, setBp] = useState({ systolic: '', diastolic: '' })
-  const [bpAlreadyTaken, setBpAlreadyTaken] = useState(false)
-  const { currentUser, refresh, setRefresh } = useAuth()
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const [bpList, setBpList] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const [openHelpAccordion, setOpenHelpAccordion] = useState(false)
   const [openGuideAccordion, setOpenGuideAccordion] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { currentUser, refresh } = useAuth()
 
   useEffect(() => {
-    fetchIfUserHasAlreadyBpToday()
-  }, [refresh])
-
-  const fetchIfUserHasAlreadyBpToday = async () => {
-    setIsLoading(true)
-    const res = await checkIfUserHasAlreadyBpToday({
-      currentUserId: currentUser?.id!,
-      dateTaken: moment().format('L'),
-    })
-
-    if (res.success) {
-      setBpAlreadyTaken(true)
-      setBp({
-        systolic: res.systolic,
-        diastolic: res.diastolic,
+    const fetchBp = async () => {
+      setIsLoading(true)
+      const res = await getBpForTodayList({
+        patientId: currentUser?.id!,
+        dateTaken: moment().format('ll'),
       })
-    } else {
-      setBpAlreadyTaken(false)
-      setBp({ systolic: '', diastolic: '' })
+      setIsLoading(false)
+
+      if (res.success) {
+        setBpList(res.bpList)
+      }
     }
-    setIsLoading(false)
-  }
-
-  const handleAddNewBpForToday = async () => {
-    const res = await addNewBpForToday({
-      currentUserId: currentUser?.id!,
-      systolic: bp.systolic,
-      diastolic: bp.diastolic,
-      dateTaken: moment().format('L'),
-    })
-
-    if (res.success) {
-      Alert.alert('Success', res.message, [
-        {
-          text: 'OK',
-          onPress: () => {
-            setShowConfirmationModal(false)
-            setOpenHelpAccordion(false)
-            setRefresh(1)
-          },
-        },
-      ])
-    }
-  }
-
-  const validateBpInput = (value: string) => {
-    // Allow clearing the field
-    if (value === '') return true
-    // Must be all digits and cannot start with "0"
-    if (!/^[1-9]\d{0,2}$/.test(value)) return false
-    const numValue = parseInt(value, 10)
-    return numValue <= 250
-  }
+    fetchBp()
+  }, [refresh])
 
   if (isLoading) return <Spinner />
 
@@ -93,54 +44,6 @@ export default function HomeScreen() {
       style={styles.mainContainer}
       ListHeaderComponent={
         <View style={styles.container}>
-          <MyModal
-            visible={showConfirmationModal}
-            title="Notice"
-            onRequestClose={() => setShowConfirmationModal(false)}
-          >
-            <MyText size="h4" style={{ textAlign: 'center' }}>
-              Are you sure you want to submit your BP for today?
-            </MyText>
-
-            <MyTouchableOpacity
-              style={[
-                styles.modalBtn,
-                {
-                  backgroundColor: isLoading
-                    ? COLORS.secondary[200]
-                    : COLORS.primary[500],
-                },
-              ]}
-              disabled={!showConfirmationModal}
-              onPress={() => handleAddNewBpForToday()}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="large" color="white" />
-              ) : (
-                <MyText
-                  size="h4"
-                  style={{
-                    color: showConfirmationModal
-                      ? 'white'
-                      : COLORS.primary[900],
-                  }}
-                >
-                  Submit BP for today
-                </MyText>
-              )}
-            </MyTouchableOpacity>
-
-            <MyTouchableOpacity
-              style={[styles.modalBtn]}
-              onPress={() => setShowConfirmationModal(false)}
-            >
-              <Ionicons name="close" size={24} color={COLORS.primary[500]} />
-              <MyText size="h4" style={{ marginLeft: 5 }}>
-                Cancel
-              </MyText>
-            </MyTouchableOpacity>
-          </MyModal>
-
           <View style={styles.headerContainer}>
             <MyText
               size="h2"
@@ -155,26 +58,16 @@ export default function HomeScreen() {
             </MyText>
           </View>
 
-          {bpAlreadyTaken ? (
-            <View>
-              <MyText
-                size="h3"
-                style={{
-                  padding: 30,
-                  textAlign: 'center',
-                }}
-              >
-                Your BP for today is already submitted
-              </MyText>
+          {bpList.length > 0 ? (
+            <View style={{ gap: 20 }}>
+              <BpIndexTable bpList={bpList} isLoading={isLoading} />
 
-              <View style={styles.bpAlreadyTakenContainer}>
-                <MyText style={{ color: 'white' }} size="h3">
-                  Systolic: {bp.systolic}
-                </MyText>
-                <MyText style={{ color: 'white' }} size="h3">
-                  Diastolic: {bp.diastolic}
-                </MyText>
-              </View>
+              <MyTouchableOpacity
+                style={styles.addBpToday}
+                onPress={() => router.push('/patient/add-new-bp')}
+              >
+                <MyText style={{ color: 'white' }}>ADD MORE BP RECORD</MyText>
+              </MyTouchableOpacity>
             </View>
           ) : (
             <View>
@@ -185,60 +78,16 @@ export default function HomeScreen() {
                 What is your BP for today?
               </MyText>
 
-              <View>
-                <View style={[styles.bpContainer, { gap: 35 }]}>
-                  <MyText size="h3">Systolic</MyText>
-                  <MyText size="h3">Diastolic</MyText>
-                </View>
-
-                <View style={styles.bpContainer}>
-                  <MyTextInput
-                    keyboardType="numeric"
-                    autoCorrect={false}
-                    value={bp.systolic}
-                    onChangeText={text => {
-                      if (validateBpInput(text)) {
-                        setBp({ ...bp, systolic: text })
-                      }
-                    }}
-                    style={styles.bpInput}
-                    maxLength={3}
-                  />
-
-                  <MyText size="h3" style={{ fontSize: 25 }}>
-                    /
-                  </MyText>
-
-                  <MyTextInput
-                    keyboardType="numeric"
-                    autoCorrect={false}
-                    value={bp.diastolic}
-                    onChangeText={text => {
-                      if (validateBpInput(text)) {
-                        setBp({ ...bp, diastolic: text })
-                      }
-                    }}
-                    style={styles.bpInput}
-                    maxLength={3}
-                  />
-                </View>
-              </View>
+              <MyTouchableOpacity
+                style={styles.addBpToday}
+                onPress={() => router.push('/patient/add-new-bp')}
+              >
+                <MyText style={{ color: 'white' }}>ADD BP RECORD TODAY</MyText>
+              </MyTouchableOpacity>
             </View>
           )}
 
-          {bp.systolic.length >= 2 && bp.diastolic.length >= 2 && (
-            <MyTouchableOpacity
-              style={styles.submitBtn}
-              onPress={() => setShowConfirmationModal(true)}
-              disabled={!bp.systolic && !bp.diastolic}
-            >
-              <MyText style={styles.submitBtnText} size="h4">
-                Submit Record For Today
-              </MyText>
-            </MyTouchableOpacity>
-          )}
-
-          <View style={{ marginTop: 20 }}>
+          <View style={styles.questionsContainer}>
             <MyTouchableOpacity
               style={styles.reminderContainer}
               onPress={() => setOpenHelpAccordion(open => !open)}
@@ -376,29 +225,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
   },
-  modalBtn: {
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: COLORS.primary[500],
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
   bpContainer: {
+    alignItems: 'center',
+  },
+  sysdiaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
     gap: 10,
   },
-  bpInput: {
-    width: 90,
-    textAlign: 'center',
-    fontSize: 20,
-    height: 'auto',
+  pulseRateContainer: {
+    alignItems: 'center',
+    gap: 10,
   },
   reminderContainer: {
     backgroundColor: COLORS.secondary[100],
@@ -417,12 +256,17 @@ const styles = StyleSheet.create({
   reminderText: {
     fontSize: 14,
   },
-  bpAlreadyTakenContainer: {
-    backgroundColor: COLORS.primary[500],
+  addBpToday: {
+    backgroundColor: COLORS.success,
+    padding: 10,
     borderRadius: 15,
-    padding: 30,
+    marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+  },
+  questionsContainer: {
+    marginTop: 20,
+    borderRadius: 15,
+    paddingTop: 10,
   },
 })

@@ -1,4 +1,6 @@
+import { Ionicons } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   ActivityIndicator,
@@ -16,8 +18,6 @@ import { SignInType } from '../constants/account'
 import { COLORS } from '../constants/Colors'
 import { useAuth } from '../contexts/AuthContext'
 import { updatePatientNeedsOnboarding, userLogin } from '../services/apiAuth'
-import { Ionicons } from '@expo/vector-icons'
-import { useState } from 'react'
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false)

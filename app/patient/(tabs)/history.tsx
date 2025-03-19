@@ -5,13 +5,13 @@ import { FlatList, StyleSheet, View } from 'react-native'
 import MedicationCardItem from '../../../components/MedicationCardItem'
 import MyText from '../../../components/MyText'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
+import Spinner from '../../../components/Spinner'
 import { COLORS } from '../../../constants/Colors'
 import { DateListType } from '../../../constants/dates'
 import { Medication } from '../../../constants/medication'
 import { useAuth } from '../../../contexts/AuthContext'
 import { getMedicationList } from '../../../services/apiMedication'
 import { getPreviousDateRangeToDisplay } from '../../../utils/helpers'
-import Spinner from '../../../components/Spinner'
 
 export default function History() {
   const [medList, setMedList] = useState<Medication[]>([])

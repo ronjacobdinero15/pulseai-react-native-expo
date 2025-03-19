@@ -54,7 +54,6 @@ function AuthProvider({ children }: AuthContextProps) {
     const loadAuthState = async () => {
       try {
         const currentUserString = await SecureStore.getItemAsync('currentUser')
-        // console.log(currentUserString, 'currentUserString')
 
         if (currentUserString) {
           const currentUser = JSON.parse(currentUserString)

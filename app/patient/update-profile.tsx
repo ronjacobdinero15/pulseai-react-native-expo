@@ -18,6 +18,7 @@ import MyText from '../../components/MyText'
 import MyTextInput from '../../components/MyTextInput'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
 import RadioButton from '../../components/RadioButton'
+import Spinner from '../../components/Spinner'
 import { COLORS } from '../../constants/Colors'
 import {
   COMORBIDITIESOPTIONS,
@@ -28,7 +29,6 @@ import {
 } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getPatientProfile, updatePatientProfile } from '../../services/apiAuth'
-import Spinner from '../../components/Spinner'
 
 export default function UpdateProfile() {
   const {

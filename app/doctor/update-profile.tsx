@@ -14,11 +14,11 @@ import {
 import MyText from '../../components/MyText'
 import MyTextInput from '../../components/MyTextInput'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import Spinner from '../../components/Spinner'
 import { COLORS } from '../../constants/Colors'
 import { SignUpType } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getDoctorProfile, updateDoctorProfile } from '../../services/apiAuth'
-import Spinner from '../../components/Spinner'
 
 export default function UpdateProfile() {
   const {

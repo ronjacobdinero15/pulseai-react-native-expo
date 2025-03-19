@@ -2,11 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { COLORS } from '../constants/Colors'
-import {
-  addNewMedicationStatusType,
-  Medication,
-  MEDICINES,
-} from '../constants/medication'
+import { addNewMedicationStatusType, Medication } from '../constants/medication'
 import MyText from './MyText'
 
 type MedicationCardItemProps = {
@@ -35,17 +31,10 @@ function MedicationCardItem({
     setStatus(foundAction)
   }
 
-  const medicineImg = MEDICINES.find(
-    m => m.name.toLowerCase() === medicine.type.toLowerCase()
-  )
-
   return (
     <View style={styles.container}>
       <View style={styles.subContainer}>
         <View style={{ flexDirection: 'row', maxWidth: '70%' }}>
-          {/* <View style={styles.imgContainer}>
-            <Image source={medicineImg?.icon} style={styles.icon} />
-          </View> */}
           <View>
             <MyText size="h2">{medicine?.medicationName}</MyText>
             <MyText style={{ color: COLORS.secondary[500], flexWrap: 'wrap' }}>
@@ -104,18 +93,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     maxHeight: 100,
-  },
-  imgContainer: {
-    backgroundColor: 'white',
-    padding: 10,
-    height: '100%',
-    borderRadius: 15,
-    marginRight: 10,
-    justifyContent: 'center',
-  },
-  icon: {
-    width: 50,
-    height: 50,
   },
   reminderContainer: {
     padding: 10,
