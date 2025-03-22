@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   input: {
-    color: COLORS.secondary[400],
+    color: COLORS.secondary[900],
     marginLeft: 10,
     marginRight: 10,
     backgroundColor: 'white',
