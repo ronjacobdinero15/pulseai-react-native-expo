@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontSize: 16,
     fontWeight: '500',
-    color: COLORS.secondary[900],
+    color: COLORS.secondary[500],
     lineHeight: 25,
   },
 })

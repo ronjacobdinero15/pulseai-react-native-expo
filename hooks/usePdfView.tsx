@@ -196,47 +196,25 @@ const htmlTemplate = ({
       <tbody>
         ${
           bpList.length > 0
-            ? (() => {
-                // Group bpList by dateTaken
-                const grouped = bpList.reduce((acc, bp) => {
-                  const date = bp.dateTaken
-                  if (!acc[date]) acc[date] = []
-                  acc[date].push(bp)
-                  return acc
-                }, {} as { [key: string]: BpType[] })
-                // Sort dates using moment auto-detection
-                const sortedDates = Object.keys(grouped).sort((a, b) =>
-                  moment(a).diff(moment(b))
+            ? bpList
+                .map(
+                  bp => `
+          <tr class="bp-record">
+            <td style="white-space: nowrap;">${bp.dateTaken}</td>
+            <td style="white-space: nowrap;">${bp.timeTaken}</td>
+            <td style="white-space: nowrap;">${bp.systolic}/${bp.diastolic}</td>
+            <td style="white-space: nowrap;">${bp.pulseRate}</td>
+            <td>${bp.comments || ''}</td>
+          </tr>
+        `
                 )
-                let rows = ''
-                sortedDates.forEach(date => {
-                  const group = grouped[date]
-                  group.forEach((bp, index) => {
-                    rows += `<tr class="bp-record">`
-                    if (index === 0) {
-                      const formattedDate = moment(date).isValid()
-                        ? moment(date).format('ll')
-                        : date
-                      rows += `<td style="white-space: nowrap;" rowspan="${group.length}">${formattedDate}</td>`
-                    }
-                    rows += `<td style="white-space: nowrap;">${
-                      bp.timeTaken
-                    }</td>
-                            <td style="white-space: nowrap;">${bp.systolic}/${
-                      bp.diastolic
-                    }</td>
-                            <td style="white-space: nowrap;">${
-                              bp.pulseRate
-                            }</td>
-                            <td>${bp.comments || ''}</td>
-                            </tr>`
-                  })
-                })
-                return rows
-              })()
-            : `<tr>
-                <td colspan="5" style="text-align: center; padding: 16px;">No data available</td>
-              </tr>`
+                .join('')
+            : `
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 16px;">
+              No data available
+            </td>
+          </tr>`
         }
       </tbody>
     </table>
@@ -268,9 +246,8 @@ const htmlTemplate = ({
       <tbody>
         ${
           medicationList.length > 0
-            ? (() => {
-                // Flatten the medication records into an array of rows
-                const rowsData = medicationList.reduce(
+            ? medicationList
+                .reduce(
                   (acc, medication) => {
                     const dates = medication.dates
                       ? JSON.parse(JSON.stringify(medication.dates))
@@ -278,6 +255,7 @@ const htmlTemplate = ({
                     const actions = medication.actions
                       ? JSON.parse(JSON.stringify(medication.actions))
                       : []
+                    // Create a row for each scheduled date (only for past dates)
                     const rows = dates
                       .filter((medDate: string) =>
                         moment(medDate, 'MM/DD/YYYY').isBefore(moment(), 'day')
@@ -306,32 +284,19 @@ const htmlTemplate = ({
                     endDate: string
                   }>
                 )
-                // Sort rows by scheduled date
-                rowsData.sort((a, b) =>
+                // Sort the combined rows by date
+                .sort((a, b) =>
                   moment(a.date, 'MM/DD/YYYY').diff(
                     moment(b.date, 'MM/DD/YYYY')
                   )
                 )
-                // Group by date
-                const grouped = rowsData.reduce((acc, row) => {
-                  if (!acc[row.date]) acc[row.date] = []
-                  acc[row.date].push(row)
-                  return acc
-                }, {} as { [key: string]: typeof rowsData })
-                const sortedDates = Object.keys(grouped).sort((a, b) =>
-                  moment(a, 'MM/DD/YYYY').diff(moment(b, 'MM/DD/YYYY'))
-                )
-                let rows = ''
-                sortedDates.forEach(date => {
-                  const group = grouped[date]
-                  group.forEach((row, index) => {
-                    rows += `<tr>`
-                    if (index === 0) {
-                      rows += `<td style="white-space: nowrap;" rowspan="${
-                        group.length
-                      }">${moment(date, 'MM/DD/YYYY').format('ll')}</td>`
-                    }
-                    rows += `
+                .map(
+                  row => `
+                    <tr>
+                      <td style="white-space: nowrap;">${moment(
+                        row.date,
+                        'MM/DD/YYYY'
+                      ).format('ll')}</td>
                       <td style="white-space: nowrap;">${row.status}</td>
                       <td style="white-space: nowrap;">${row.time}</td>
                       <td style="white-space: nowrap;">${
@@ -341,14 +306,16 @@ const htmlTemplate = ({
                         'll'
                       )}</td>
                       <td>${moment(row.endDate, 'MM/DD/YYYY').format('ll')}</td>
-                    </tr>`
-                  })
-                })
-                return rows
-              })()
-            : `<tr>
-                 <td colspan="6" style="text-align: center; padding: 16px;">No data available</td>
-               </tr>`
+                    </tr>
+                  `
+                )
+                .join('')
+            : `
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: 16px;">
+                    No data available
+                  </td>
+                </tr>`
         }
       </tbody>
     </table>
