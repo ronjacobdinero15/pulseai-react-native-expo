@@ -1,11 +1,13 @@
 import { PasswordType, SignInType } from '../constants/account'
-import { SignUpType } from '../constants/signup'
+import { PatientProfileType } from '../constants/signup'
 import { apiUrl } from '../constants/types'
 
 export async function registerPatient({
   firstName,
   lastName,
   dateOfBirth,
+  contact,
+  address,
   email,
   password,
   age,
@@ -16,7 +18,7 @@ export async function registerPatient({
   comorbidities,
   parentalHypertension,
   lifestyle,
-}: SignUpType) {
+}: PatientProfileType) {
   const res = await fetch(`${apiUrl}?action=registerPatient`, {
     method: 'POST',
     headers: {
@@ -27,6 +29,8 @@ export async function registerPatient({
       last_name: lastName.trim(),
       full_name: `${firstName.trim()} ${lastName.trim()}`,
       date_of_birth: dateOfBirth,
+      contact: contact.trim(),
+      address: address.trim(),
       email: email.trim(),
       password,
       age: age.trim(),
@@ -112,6 +116,8 @@ export async function updatePatientProfile({
   firstName,
   lastName,
   dateOfBirth,
+  contact,
+  address,
   email,
   age,
   gender,
@@ -121,7 +127,7 @@ export async function updatePatientProfile({
   comorbidities,
   parentalHypertension,
   lifestyle,
-}: SignUpType) {
+}: PatientProfileType) {
   const res = await fetch(`${apiUrl}?action=updatePatientProfile`, {
     method: 'PUT',
     headers: {
@@ -133,6 +139,8 @@ export async function updatePatientProfile({
       last_name: lastName.trim(),
       full_name: `${firstName.trim()} ${lastName.trim()}`,
       date_of_birth: dateOfBirth,
+      contact: contact.trim(),
+      address: address.trim(),
       email: email.trim(),
       age: age.trim(),
       gender: gender.trim(),
@@ -154,7 +162,7 @@ export async function updateDoctorProfile({
   firstName,
   lastName,
   email,
-}: SignUpType) {
+}: PatientProfileType) {
   const res = await fetch(`${apiUrl}?action=updateDoctorProfile`, {
     method: 'PUT',
     headers: {

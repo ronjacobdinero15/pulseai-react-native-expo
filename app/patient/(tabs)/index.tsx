@@ -9,15 +9,18 @@ import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import Spinner from '../../../components/Spinner'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
-import { getBpForTodayList } from '../../../services/apiMedication'
+import { getBpForTodayList } from '../../../services/apiBp'
 
 export default function HomeScreen() {
   const [bpList, setBpList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [openHelpAccordion, setOpenHelpAccordion] = useState(false)
+  const [openWhenToTakeAccordion, setOpenWhenToTakeAccordion] = useState(false)
+  const [openMeasuringTheRightWayAccordion, setMeasuringTheRightWayAccordion] =
+    useState(false)
   const [openGuideAccordion, setOpenGuideAccordion] = useState(false)
   const router = useRouter()
-  const { currentUser, refresh } = useAuth()
+  const { currentUser, refresh, setRefresh } = useAuth()
 
   useEffect(() => {
     const fetchBp = async () => {
@@ -31,6 +34,7 @@ export default function HomeScreen() {
       if (res.success) {
         setBpList(res.bpList)
       }
+      setRefresh(0)
     }
     fetchBp()
   }, [refresh])
@@ -103,7 +107,7 @@ export default function HomeScreen() {
                 />
               </View>
               {openHelpAccordion && (
-                <View style={{ marginTop: 10, gap: 10 }}>
+                <View style={styles.reminderTextContainer}>
                   <View>
                     <MyText
                       style={[
@@ -117,10 +121,16 @@ export default function HomeScreen() {
                     </MyText>
                     <View>
                       <MyText style={styles.reminderText}>
-                        &bull;Pressure when your heart beats
+                        <MyText style={{ color: COLORS.primary[500] }}>
+                          &bull;
+                        </MyText>
+                        Pressure when your heart beats
                       </MyText>
                       <MyText style={styles.reminderText}>
-                        &bull;First number = Systolic (e.g., 120)
+                        <MyText style={{ color: COLORS.primary[500] }}>
+                          &bull;
+                        </MyText>
+                        First number = Systolic (e.g., 120)
                       </MyText>
                     </View>
                   </View>
@@ -136,12 +146,134 @@ export default function HomeScreen() {
                       Diastolic (Bottom Number):
                     </MyText>
                     <MyText style={styles.reminderText}>
-                      &bull;Pressure between heartbeats
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Pressure between heartbeats
                     </MyText>
                     <MyText style={styles.reminderText}>
-                      &bull;Second number = Diastolic (e.g., 80)
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Second number = Diastolic (e.g., 80)
                     </MyText>
                   </View>
+                </View>
+              )}
+            </MyTouchableOpacity>
+
+            <MyTouchableOpacity
+              style={styles.reminderContainer}
+              onPress={() => setOpenWhenToTakeAccordion(open => !open)}
+            >
+              <View style={styles.reminderHeaderContainer}>
+                <MyText style={{ fontSize: 14 }}>Reminders</MyText>
+                <Ionicons
+                  name="chevron-down"
+                  size={24}
+                  color={COLORS.secondary[900]}
+                />
+              </View>
+              {openWhenToTakeAccordion && (
+                <View style={styles.reminderTextContainer}>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    It is a prerequisite to have a BP monitoring device at home,
+                    that detects systolic, diastolic, and pulse rate.
+                  </MyText>
+                </View>
+              )}
+            </MyTouchableOpacity>
+
+            <MyTouchableOpacity
+              style={styles.reminderContainer}
+              onPress={() => setMeasuringTheRightWayAccordion(open => !open)}
+            >
+              <View style={styles.reminderHeaderContainer}>
+                <MyText style={{ fontSize: 14 }}>Instructions</MyText>
+                <Ionicons
+                  name="chevron-down"
+                  size={24}
+                  color={COLORS.secondary[900]}
+                />
+              </View>
+              {openMeasuringTheRightWayAccordion && (
+                <View style={styles.reminderTextContainer}>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Measure your blood pressure twice a day—morning and late
+                    afternoon—at about the same times every day for 7
+                    consecutive days (unless you have been advised otherwise).
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    On each occasion take a minimum of two readings, leaving at
+                    least a minute between each. If the first two readings are
+                    very different, take 2 or 3 further readings.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    In the comments section, you should also write down anything
+                    that could have affected your reading, such as feeling
+                    unwell or changes in your medication.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    For best results, sit comfortably with both feet on the
+                    floor for at least two minutes before taking a measurement.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    When you measure your blood pressure, rest your arm on a
+                    table so the blood pressure cuff is at about the same height
+                    as your heart.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Take your blood pressure measurement before taking your
+                    blood pressure medication.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Measure at least two hours after a meal.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Wait at least one hour after drinking coffee or smoking
+                    before measuring.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Wait at least 30 minutes after exercise before taking a
+                    measurement.
+                  </MyText>
+                  <MyText style={styles.reminderText}>
+                    <MyText style={{ color: COLORS.primary[500] }}>
+                      &bull;
+                    </MyText>
+                    Record your blood pressure in this app and show it to your
+                    doctor at EAC Medical Center – Cavite during every visit.
+                  </MyText>
                 </View>
               )}
             </MyTouchableOpacity>
@@ -161,16 +293,14 @@ export default function HomeScreen() {
                 />
               </View>
               {openGuideAccordion && (
-                <View style={{ marginTop: 10, gap: 10 }}>
-                  <View>
-                    <MyText style={styles.reminderText}>
-                      Your BP readings will be used to analyze patterns for over
-                      a few days, weeks, or months of using our app. This will
-                      essentially make it easier for our cardiologists to
-                      understand your BP patterns and current medications and
-                      better help you with your treatment.
-                    </MyText>
-                  </View>
+                <View style={styles.reminderTextContainer}>
+                  <MyText style={styles.reminderText}>
+                    Your BP readings will be used to analyze patterns for over a
+                    few days, weeks, or months of using our app. This will
+                    essentially make it easier for our cardiologists to
+                    understand your BP patterns and current medications and
+                    better help you with your current treatment.
+                  </MyText>
                 </View>
               )}
             </MyTouchableOpacity>
@@ -241,7 +371,7 @@ const styles = StyleSheet.create({
   },
   reminderContainer: {
     backgroundColor: COLORS.secondary[100],
-    padding: 10,
+    padding: 15,
     borderRadius: 15,
     marginTop: 10,
     height: 'auto',
@@ -253,8 +383,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexWrap: 'wrap',
   },
+  reminderTextContainer: {
+    marginTop: 10,
+    gap: 15,
+  },
   reminderText: {
     fontSize: 14,
+    lineHeight: 20,
   },
   addBpToday: {
     backgroundColor: COLORS.success,

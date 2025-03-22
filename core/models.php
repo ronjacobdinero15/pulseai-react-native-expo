@@ -2,13 +2,13 @@
 
 require_once 'dbConfig.php';
 
-function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
     $checkUserSql = "SELECT * FROM patients WHERE email = ?";
     $checkUserSqlStmt = $pdo->prepare($checkUserSql);
     $checkUserSqlStmt->execute([$email]);
 
     if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO patients (first_name,last_name,full_name,date_of_birth,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO patients (first_name,last_name,full_name,date_of_birth,contact,address,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt = $pdo->prepare($sql);
 
         // Encode JSON fields since they can contain arrays
@@ -17,7 +17,7 @@ function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_bir
         
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle]);
+        $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle]);
 
         if ($executeQuery) {
             return [
@@ -173,7 +173,7 @@ function addNewMedication($pdo, $medication_id, $patient_id, $medication_name, $
     }
 }
 
-function getMedicationList($pdo, $patient_id, $selected_date) {
+function getMedicationListForSelectedDate($pdo, $patient_id, $selected_date) {
     $sql = "SELECT * FROM medications WHERE patient_id = ? AND JSON_CONTAINS(dates, ?)";
     $stmt = $pdo->prepare($sql);
     
@@ -199,6 +199,42 @@ function getMedicationList($pdo, $patient_id, $selected_date) {
                 "actions" => json_decode($medication["actions"])
             ];
         }, $medications);
+
+        return [
+            "success" => true,
+            "medications" => $medications
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "No medications found."
+        ];
+    }
+}
+
+function getMedicationList($pdo, $patient_id) {
+    $sql = "SELECT * FROM medications WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$patient_id]);
+
+    if ($stmt->rowCount() > 0) {
+        $medications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $medications = array_map(function($medication) {
+            return [
+                "medicationId" => $medication["medication_id"],
+                "patientId" => $medication["patient_id"],
+                "medicationName" => $medication["medication_name"],
+                "type" => $medication["type"],
+                "dosage" => $medication["dosage"],
+                "frequency" => $medication["frequency"],
+                "startDate" => $medication["start_date"],
+                "endDate" => $medication["end_date"],
+                "reminder" => $medication["reminder"],
+                "dates"   => json_decode($medication["dates"]),
+                "actions" => json_decode($medication["actions"])
+            ];
+        },  $medications);
 
         return [
             "success" => true,
@@ -317,6 +353,7 @@ function getPatientProfile($pdo, $patient_id) {
         $patient = [
             "firstName" => $patient["first_name"],
             "lastName" => $patient["last_name"],
+            "fullName" => $patient["full_name"],
             "dateOfBirth" => $patient["date_of_birth"],
             "email" => $patient["email"],
             "age" => $patient["age"],
@@ -367,15 +404,15 @@ function getDoctorProfile($pdo, $doctor_id) {
     }
 }
 
-function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
     // Encode JSON fields since they can contain arrays
     $vices_json = json_encode($vices);
     $comorbidities_json = json_encode($comorbidities);
 
-    $sql = "UPDATE patients SET first_name=?, last_name=?, full_name=?, date_of_birth=?, email=?, age=?, gender=?, bmi_height_cm=?, bmi_weight_kg=?, vices=?, comorbidities=?, parental_hypertension=?, lifestyle=? WHERE patient_id=?";
+    $sql = "UPDATE patients SET first_name=?, last_name=?, full_name=?, date_of_birth=?, contact=?, address=?, email=?, age=?, gender=?, bmi_height_cm=?, bmi_weight_kg=?, vices=?, comorbidities=?, parental_hypertension=?, lifestyle=? WHERE patient_id=?";
 
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $patient_id]);
+    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $patient_id]);
     if ($executeQuery) {
         return [
             "success" => true,
@@ -564,6 +601,39 @@ function deletePatientAccountAndData($pdo, $patient_id, $password) {
         return [
             "success" => false,
             "message" => "Patient not found"
+        ];
+    }
+}
+
+function getBpList($pdo, $patient_id) {
+    $sql = "SELECT * FROM bp_readings WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$patient_id]);
+
+    if ($stmt->rowCount() > 0) {
+        $bp_readings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $bp_readings = array_map(function($bp_reading) {
+            return [
+                "readingId" => $bp_reading["reading_id"],
+                "patientId" => $bp_reading["patient_id"],
+                "dateTaken" => $bp_reading["date_taken"],
+                "timeTaken" => $bp_reading["time_taken"],
+                "systolic" => round($bp_reading["systolic"], 1),
+                "diastolic" => round($bp_reading["diastolic"], 1),
+                "pulseRate" => round($bp_reading["pulse_rate"], 1),
+                "comments" => $bp_reading["comments"]
+            ];
+        },  $bp_readings);
+
+        return [
+            "success" => true,
+            "bpList" => $bp_readings
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "No blood pressure data."
         ];
     }
 }

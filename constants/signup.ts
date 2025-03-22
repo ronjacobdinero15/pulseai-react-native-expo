@@ -1,13 +1,15 @@
-export type SignUpType = {
+export type PatientProfileType = {
   doctorId?: string
   patientId?: string
   firstName: string
   lastName: string
   fullName?: string
   dateOfBirth: string
+  contact: string
+  address: string
   email: string
-  password: string
-  passwordConfirm: string
+  password?: string
+  passwordConfirm?: string
   age: string
   gender: string
   vices: string[]
@@ -16,7 +18,7 @@ export type SignUpType = {
   comorbidities: string[]
   parentalHypertension: string
   lifestyle: string
-  needsOnboarding: boolean
+  needsOnboarding?: boolean
 }
 
 export const VICESOPTIONS: string[] = [

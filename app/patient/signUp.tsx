@@ -26,7 +26,7 @@ import {
   COMORBIDITIESOPTIONS,
   GENDEROPTIONS,
   LIFESTYLEOPTIONS,
-  SignUpType,
+  PatientProfileType,
   VICESOPTIONS,
 } from '../../constants/signup'
 import { registerPatient } from '../../services/apiAuth'
@@ -37,11 +37,13 @@ export default function SignUp() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignUpType>({
+  } = useForm<PatientProfileType>({
     defaultValues: {
       firstName: 'Ron Jacob',
       lastName: 'Dinero',
       dateOfBirth: 'March 15, 2003',
+      contact: '09123456789',
+      address: '1234 Street, City, Country',
       email: 'ronjacobdinero15@gmail.com',
       password: '12345',
       passwordConfirm: '12345',
@@ -61,7 +63,7 @@ export default function SignUp() {
     useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleRegistration = async (data: SignUpType) => {
+  const handleRegistration = async (data: PatientProfileType) => {
     setIsLoading(true)
     const res = await registerPatient(data)
 
@@ -213,6 +215,50 @@ export default function SignUp() {
             <MyText style={styles.errorLabel}>
               {errors.dateOfBirth.message}
             </MyText>
+          )}
+        </View>
+
+        <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Contact number:</MyText>
+
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <MyTextInput
+                placeholder="Contact number"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                autoCorrect={false}
+                maxLength={13}
+                keyboardType="phone-pad"
+              />
+            )}
+            name="contact"
+          />
+          {errors.contact && (
+            <MyText style={styles.errorLabel}>{errors.contact.message}</MyText>
+          )}
+        </View>
+
+        <View style={styles.inputControl}>
+          <MyText style={styles.inputLabel}>Address:</MyText>
+
+          <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <MyTextInput
+                placeholder="Address"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                maxLength={200}
+              />
+            )}
+            name="address"
+          />
+          {errors.address && (
+            <MyText style={styles.errorLabel}>{errors.address.message}</MyText>
           )}
         </View>
 

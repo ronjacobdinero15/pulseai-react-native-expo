@@ -23,16 +23,6 @@ export type addNewMedicationStatusType = {
   time: string
 }
 
-export type AddNewBpType = {
-  patientId: string
-  dateTaken: string
-  timeTaken: string
-  systolic: string
-  diastolic: string
-  pulseRate: string
-  comments: string
-}
-
 type MedicineType = {
   name: string
   icon: ImageSourcePropType

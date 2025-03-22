@@ -91,6 +91,14 @@ export default function Profile() {
     }
   }
 
+  const handleGenerateAndOpenPdf = async (patientId: string) => {
+    try {
+      await generateAndOpenPdf({ patientId })
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -122,7 +130,7 @@ export default function Profile() {
                   } else if (tab.name === 'Logout') {
                     userSignOut({ role: 'patient' })
                   } else if (tab.name === 'View my data') {
-                    generateAndOpenPdf(currentUser?.id!)
+                    handleGenerateAndOpenPdf(currentUser?.id!)
                   } else if (tab.name === 'Erase all my data') {
                     setShowAccountDeletionModal(true)
                   }

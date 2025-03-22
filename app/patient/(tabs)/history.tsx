@@ -10,7 +10,7 @@ import { COLORS } from '../../../constants/Colors'
 import { DateListType } from '../../../constants/dates'
 import { Medication } from '../../../constants/medication'
 import { useAuth } from '../../../contexts/AuthContext'
-import { getMedicationList } from '../../../services/apiMedication'
+import { getMedicationListForSelectedDate } from '../../../services/apiMedication'
 import { getPreviousDateRangeToDisplay } from '../../../utils/helpers'
 
 export default function History() {
@@ -39,7 +39,7 @@ export default function History() {
       'MM/DD/YYYY'
     )
     setIsLoading(true)
-    const res = await getMedicationList(patientId, formattedDate)
+    const res = await getMedicationListForSelectedDate(patientId, formattedDate)
 
     if (res.success) {
       setMedList(res.medications)
@@ -58,7 +58,7 @@ export default function History() {
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <MyText size="h3" style={{ color: COLORS.primary[500] }}>
-              History of Medications
+              History of Your Medications
             </MyText>
           </View>
 
@@ -80,7 +80,10 @@ export default function History() {
                 ]}
                 onPress={() => {
                   setSelectedDate(item?.formattedDate)
-                  getMedicationList(currentUser?.id!, item?.formattedDate)
+                  getMedicationListForSelectedDate(
+                    currentUser?.id!,
+                    item?.formattedDate
+                  )
                 }}
               >
                 <MyText

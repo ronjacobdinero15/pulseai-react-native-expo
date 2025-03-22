@@ -42,11 +42,6 @@ export default function SignIn() {
           role: 'doctor',
         })
 
-        Alert.alert('Success', res.message, [
-          {
-            text: 'Great',
-          },
-        ])
         router.replace('/doctor/(tabs)')
       } else {
         Alert.alert('Error', res.message)

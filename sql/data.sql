@@ -16,6 +16,8 @@ CREATE TABLE patients (
     last_name VARCHAR(50),
     full_name VARCHAR(200),
     date_of_birth VARCHAR(50),
+    contact VARCHAR(50),
+    address VARCHAR(256),
     email VARCHAR(50),
 	password VARCHAR(256),
     reset_token_hash VARCHAR(64) NULL DEFAULT NULL UNIQUE,

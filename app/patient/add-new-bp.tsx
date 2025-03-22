@@ -18,7 +18,7 @@ import MyTouchableOpacity from '../../components/MyTouchableOpacity'
 import { BpType } from '../../constants/bp'
 import { COLORS } from '../../constants/Colors'
 import { useAuth } from '../../contexts/AuthContext'
-import { addNewBp } from '../../services/apiMedication'
+import { addNewBp } from '../../services/apiBp'
 import { validateBpInput } from '../../utils/helpers'
 
 export default function AddNewBp() {
@@ -50,34 +50,34 @@ export default function AddNewBp() {
     pulseRate,
     comments,
   }: BpType) => {
-    if (showConfirmationModal === false) {
-      return setShowConfirmationModal(true)
-    } else {
-      setIsLoading(true)
-      const res = await addNewBp({
-        patientId: currentUser?.id!,
-        dateTaken: currentDate,
-        timeTaken: currentTime,
-        systolic,
-        diastolic,
-        pulseRate,
-        comments,
-      })
-      setIsLoading(false)
+    if (!showConfirmationModal) return setShowConfirmationModal(true)
 
-      if (res.success) {
-        Alert.alert('Success', res.message, [
-          {
-            text: 'OK',
-            onPress: () => {
-              router.back()
-              setRefresh(1)
-            },
+    setIsLoading(true)
+    const res = await addNewBp({
+      patientId: currentUser?.id!,
+      dateTaken: currentDate,
+      timeTaken: currentTime,
+      systolic,
+      diastolic,
+      pulseRate,
+      comments: comments || '',
+    })
+    setIsLoading(false)
+
+    console.log('res', res)
+
+    if (res.success) {
+      Alert.alert('Success', res.message, [
+        {
+          text: 'OK',
+          onPress: () => {
+            router.back()
+            setRefresh(1)
           },
-        ])
-      } else {
-        Alert.alert('Error', res.message)
-      }
+        },
+      ])
+    } else {
+      Alert.alert('Error', res.message)
     }
   }
 
@@ -125,6 +125,7 @@ export default function AddNewBp() {
             <MyTouchableOpacity
               style={[styles.modalBtn]}
               onPress={() => setShowConfirmationModal(false)}
+              disabled={isLoading}
             >
               <Ionicons
                 name="close"
@@ -321,9 +322,12 @@ export default function AddNewBp() {
             </View>
 
             <View style={{ marginBottom: 15, gap: 5 }}>
-              <MyText style={{ marginBottom: 5 }}>
-                Do you have any comments:
-              </MyText>
+              <View style={{ marginBottom: 5 }}>
+                <MyText>Do you have any comments :</MyText>
+                <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
+                  (e.g. medication changes, feeling unwell)
+                </MyText>
+              </View>
 
               <Controller
                 control={control}

@@ -27,8 +27,11 @@ function handleGet($pdo) {
         case 'getPatientsList':
             echo json_encode(getPatientsList($pdo, $_GET['doctor_id']));
             break;
+        case 'getMedicationListForSelectedDate':
+            echo json_encode(getMedicationListForSelectedDate($pdo, $_GET['patient_id'], $_GET['selected_date']));
+            break;
         case 'getMedicationList':
-            echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $_GET['selected_date']));
+            echo json_encode(getMedicationList($pdo, $_GET['patient_id']));
             break;
         case 'getBpForTodayList':
             echo json_encode(getBpForTodayList($pdo, $_GET['patient_id'], $_GET['date_taken']));
@@ -38,6 +41,9 @@ function handleGet($pdo) {
             break;
         case 'getDoctorProfile':
             echo json_encode(getDoctorProfile($pdo, $_GET['doctor_id']));
+            break;
+        case 'getBpList':
+            echo json_encode(getBpList($pdo, $_GET['patient_id']));
             break;
         default:
             echo json_encode(['error' => 'Invalid action']);
@@ -55,7 +61,7 @@ function handlePost($pdo) {
             echo json_encode(doctorLogin($pdo, $data['email'], $data['password']));
             break;
         case 'registerPatient':
-            echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
+            echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['contact'], $data['address'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
         case 'forgotPassword':
             echo json_encode(forgotPassword($pdo, $data['email']));
@@ -85,7 +91,7 @@ function handlePut($pdo) {
             echo json_encode(updatePatientNeedsOnboarding($pdo, $data['patient_id'], $data['needs_onboarding']));
             break;
         case 'updatePatientProfile':
-            echo json_encode(updatePatientProfile($pdo, $data['patient_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['email'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
+            echo json_encode(updatePatientProfile($pdo, $data['patient_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['contact'], $data['address'], $data['email'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
         case 'updateDoctorProfile':
             echo json_encode(updateDoctorProfile($pdo, $data['doctor_id'], $data['first_name'], $data['last_name'], $data['full_name'], $data['email']));

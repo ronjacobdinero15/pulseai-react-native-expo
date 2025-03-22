@@ -6,7 +6,7 @@ import { COLORS } from '../constants/Colors'
 import { DateListType } from '../constants/dates'
 import { Medication } from '../constants/medication'
 import { useAuth } from '../contexts/AuthContext'
-import { getMedicationList } from '../services/apiMedication'
+import { getMedicationListForSelectedDate } from '../services/apiMedication'
 import { getDatesRangeToDisplay } from '../utils/helpers'
 import EmptyMedication from './EmptyMedication'
 import MedicationCardItem from './MedicationCardItem'
@@ -39,7 +39,7 @@ function MedicationList() {
       'MM/DD/YYYY'
     )
     setIsLoading(true)
-    const res = await getMedicationList(patientId, formattedDate)
+    const res = await getMedicationListForSelectedDate(patientId, formattedDate)
     if (res.success) {
       setMedList(res.medications)
     }
@@ -66,12 +66,12 @@ function MedicationList() {
                 backgroundColor:
                   item?.formattedDate === selectedDate
                     ? COLORS.primary[500]
-                    : COLORS.secondary[200],
+                    : COLORS.primary[100],
               },
             ]}
             onPress={() => {
               setSelectedDate(item?.formattedDate)
-              // getMedicationList(currentUser?.id!, item?.formattedDate)
+              // getMedicationListForSelectedDate(currentUser?.id!, item?.formattedDate)
             }}
           >
             <MyText

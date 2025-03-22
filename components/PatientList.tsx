@@ -15,6 +15,14 @@ type PatientListProps = {
 function PatientList({ patients, isLoading }: PatientListProps) {
   const generateAndOpenPdf = usePatientPdfView()
 
+  const handleGenerateAndOpenPdf = async (patientId: string) => {
+    try {
+      await generateAndOpenPdf({ patientId })
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -49,7 +57,7 @@ function PatientList({ patients, isLoading }: PatientListProps) {
               <MyText>{item.fullName}</MyText>
               <MyTouchableOpacity
                 style={styles.generateBtn}
-                onPress={() => generateAndOpenPdf(item.patientId)}
+                onPress={() => handleGenerateAndOpenPdf(item.patientId)}
               >
                 <MyText style={{ color: 'white' }}>View</MyText>
               </MyTouchableOpacity>

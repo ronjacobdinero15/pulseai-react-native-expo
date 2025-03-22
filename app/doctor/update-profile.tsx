@@ -16,7 +16,7 @@ import MyTextInput from '../../components/MyTextInput'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
 import Spinner from '../../components/Spinner'
 import { COLORS } from '../../constants/Colors'
-import { SignUpType } from '../../constants/signup'
+import { PatientProfileType } from '../../constants/signup'
 import { useAuth } from '../../contexts/AuthContext'
 import { getDoctorProfile, updateDoctorProfile } from '../../services/apiAuth'
 
@@ -26,7 +26,7 @@ export default function UpdateProfile() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignUpType>({
+  } = useForm<PatientProfileType>({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -50,7 +50,7 @@ export default function UpdateProfile() {
     fetchUserProfile()
   }, [])
 
-  const handleUpdateProfile = async (data: SignUpType) => {
+  const handleUpdateProfile = async (data: PatientProfileType) => {
     setIsLoading(true)
     try {
       const res = await updateDoctorProfile({

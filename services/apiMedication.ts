@@ -1,8 +1,4 @@
-import {
-  AddNewBpType,
-  addNewMedicationStatusType,
-  Medication,
-} from '../constants/medication'
+import { addNewMedicationStatusType, Medication } from '../constants/medication'
 import { apiUrl } from '../constants/types'
 
 export async function addNewMedication({
@@ -43,12 +39,28 @@ export async function addNewMedication({
   return await res.json()
 }
 
-export async function getMedicationList(
+export async function getMedicationListForSelectedDate(
   patientId: string,
   selectedDate: string
 ) {
   const res = await fetch(
-    `${apiUrl}?action=getMedicationList&patient_id=${patientId}&selected_date=${selectedDate}`,
+    `${apiUrl}?action=getMedicationListForSelectedDate&patient_id=${patientId}&selected_date=${selectedDate}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
+
+  if (!res.ok) throw new Error('Error occurred getting medication list')
+
+  return await res.json()
+}
+
+export async function getMedicationList(patientId: string) {
+  const res = await fetch(
+    `${apiUrl}?action=getMedicationList&patient_id=${patientId}`,
     {
       method: 'GET',
       headers: {
@@ -82,58 +94,6 @@ export async function addNewMedicationStatus({
   })
 
   if (!res.ok) throw new Error('Error occurred updating medication status')
-
-  return await res.json()
-}
-
-export async function addNewBp({
-  patientId,
-  dateTaken,
-  timeTaken,
-  systolic,
-  diastolic,
-  pulseRate,
-  comments,
-}: AddNewBpType) {
-  const res = await fetch(`${apiUrl}?action=addNewBp`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      patient_id: patientId,
-      date_taken: dateTaken,
-      time_taken: timeTaken,
-      systolic,
-      diastolic,
-      pulse_rate: pulseRate,
-      comments,
-    }),
-  })
-
-  if (!res.ok) throw new Error('Error occurred adding new BP for today')
-
-  return await res.json()
-}
-
-export async function getBpForTodayList({
-  patientId,
-  dateTaken,
-}: {
-  patientId: string
-  dateTaken: string
-}) {
-  const res = await fetch(
-    `${apiUrl}?action=getBpForTodayList&patient_id=${patientId}&date_taken=${dateTaken}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
-
-  if (!res.ok) throw new Error('Error occurred fetching BP for today')
 
   return await res.json()
 }

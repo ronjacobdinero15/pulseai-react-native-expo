@@ -28,7 +28,7 @@ export default function SignIn() {
     formState: { errors },
   } = useForm<SignInType>({
     defaultValues: {
-      email: 'lemon@gmail.com',
+      email: '.v.@gmail.com',
       password: '12345',
     },
   })
@@ -51,18 +51,8 @@ export default function SignIn() {
 
         if (res.needsOnboarding === 1) {
           await updatePatientNeedsOnboarding(res.id, 0)
-          Alert.alert('Success', res.message, [
-            {
-              text: 'Great',
-            },
-          ])
           router.replace('/patient/onboarding-screen')
         } else {
-          Alert.alert('Success', res.message, [
-            {
-              text: 'Great',
-            },
-          ])
           router.replace('/patient/(tabs)')
         }
       } else {

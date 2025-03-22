@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import moment from 'moment'
 import React, { useEffect } from 'react'
-import { Alert, Image, StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import MedicationCardItem from '../../components/MedicationCardItem'
 import MyText from '../../components/MyText'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
@@ -80,10 +80,6 @@ export default function MedicationActionModal() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/images/notification.gif')}
-        style={styles.gif}
-      />
       <MyText size="h4">{medicine.selectedDate}</MyText>
       <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
         {medicine.selectedDate === medicine.endDate && isToday
@@ -102,7 +98,7 @@ export default function MedicationActionModal() {
         selectedDate={medicine?.selectedDate!}
       />
 
-      {!actionExists && isToday && (
+      {!actionExists && (isToday || isPastDate) && (
         <View style={styles.btnContainer}>
           <MyTouchableOpacity
             style={styles.closeBtn}
