@@ -1,5 +1,5 @@
-import React from 'react'
-import { FlatList, StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native'
 import { PatientType } from '../constants/account'
 import { COLORS } from '../constants/Colors'
 import usePatientPdfView from '../hooks/usePdfView'
@@ -14,12 +14,16 @@ type PatientListProps = {
 
 function PatientList({ patients, isLoading }: PatientListProps) {
   const generateAndOpenPdf = usePatientPdfView()
+  const [loadingPdfIds, setLoadingPdfIds] = useState<string[]>([])
 
   const handleGenerateAndOpenPdf = async (patientId: string) => {
+    setLoadingPdfIds(prev => [...prev, patientId])
     try {
       await generateAndOpenPdf({ patientId })
     } catch (error) {
       console.error('Error generating PDF:', error)
+    } finally {
+      setLoadingPdfIds(prev => prev.filter(id => id !== patientId))
     }
   }
 
@@ -53,13 +57,18 @@ function PatientList({ patients, isLoading }: PatientListProps) {
                 styles.patientContainer,
                 { borderBottomWidth: patients.length - 1 === index ? 0 : 1 },
               ]}
+              key={item.patientId}
             >
               <MyText>{item.fullName}</MyText>
               <MyTouchableOpacity
                 style={styles.generateBtn}
                 onPress={() => handleGenerateAndOpenPdf(item.patientId)}
               >
-                <MyText style={{ color: 'white' }}>View</MyText>
+                {loadingPdfIds.includes(item.patientId) ? (
+                  <ActivityIndicator size="large" color="white" />
+                ) : (
+                  <MyText style={{ color: 'white' }}>Access</MyText>
+                )}
               </MyTouchableOpacity>
             </View>
           )}
@@ -99,6 +108,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.primary[500],
     alignItems: 'center',
+    width: 100,
   },
 })
 

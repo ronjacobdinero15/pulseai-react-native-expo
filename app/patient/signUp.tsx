@@ -37,26 +37,7 @@ export default function SignUp() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<PatientProfileType>({
-    defaultValues: {
-      firstName: 'Ron Jacob',
-      lastName: 'Dinero',
-      dateOfBirth: 'March 15, 2003',
-      contact: '09123456789',
-      address: '1234 Street, City, Country',
-      email: 'ronjacobdinero15@gmail.com',
-      password: '12345',
-      passwordConfirm: '12345',
-      age: '20',
-      gender: 'Male',
-      vices: ['Alcohol'],
-      bmiHeightCm: '168',
-      bmiWeightKg: '60',
-      comorbidities: ['Diabetes'],
-      parentalHypertension: 'No',
-      lifestyle: 'Sedentary',
-    },
-  })
+  } = useForm<PatientProfileType>()
   const router = useRouter()
   const [showComplianceModal, setShowComplianceModal] = useState(true)
   const [toggleComplianceCheckbox, setToggleComplianceCheckbox] =
