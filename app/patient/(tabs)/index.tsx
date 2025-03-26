@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   addBpToday: {
-    backgroundColor: COLORS.success,
+    backgroundColor: COLORS.primary[500],
     padding: 10,
     borderRadius: 15,
     marginTop: 10,

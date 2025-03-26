@@ -355,6 +355,8 @@ function getPatientProfile($pdo, $patient_id) {
             "lastName" => $patient["last_name"],
             "fullName" => $patient["full_name"],
             "dateOfBirth" => $patient["date_of_birth"],
+            "contact" => $patient["contact"],
+            "address" => $patient["address"],
             "email" => $patient["email"],
             "age" => $patient["age"],
             "gender" => $patient["gender"],

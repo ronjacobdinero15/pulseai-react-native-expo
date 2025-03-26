@@ -80,7 +80,9 @@ export default function SignIn() {
           Sign in to PulseAI
         </MyText>
 
-        <MyText>Analyze your pulse rate with AI</MyText>
+        <MyText style={{ textAlign: 'center' }}>
+          Analyze your blood pressure data with AI
+        </MyText>
       </View>
 
       <View style={styles.form}>

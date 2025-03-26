@@ -45,16 +45,7 @@ function AddMedicationForm() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<Medication>({
-    defaultValues: {
-      medicationName: 'Shabu',
-      type: 'tablet',
-      dosage: '50ml',
-      frequency: '',
-      startDate: '',
-      endDate: '',
-    },
-  })
+  } = useForm<Medication>()
   const { currentUser, setRefresh } = useAuth()
   const router = useRouter()
 

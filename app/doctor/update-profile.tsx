@@ -26,14 +26,7 @@ export default function UpdateProfile() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<PatientProfileType>({
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      fullName: '',
-      email: '',
-    },
-  })
+  } = useForm<PatientProfileType>()
   const router = useRouter()
   const { isLoading, setIsLoading, currentUser, setCurrentUser } = useAuth()
 

@@ -98,8 +98,6 @@ export default function Profile() {
       await generateAndOpenPdf({ patientId })
     } catch (error) {
       console.error('Error generating PDF:', error)
-    } finally {
-      setIsLoadingPdf(false)
     }
   }
 
@@ -139,7 +137,6 @@ export default function Profile() {
                     setShowAccountDeletionModal(true)
                   }
                 }}
-                disabled={isLoadingPdf || isDeleting}
               >
                 <View style={styles.iconContainer}>
                   {tab.icon === 'delete' ? (
@@ -156,12 +153,7 @@ export default function Profile() {
                     />
                   )}
                 </View>
-
-                {isLoadingPdf && tab.name === 'View my data' ? (
-                  <ActivityIndicator size="large" color={COLORS.primary[500]} />
-                ) : (
-                  <MyText size="h4">{tab.name}</MyText>
-                )}
+                <MyText size="h4">{tab.name}</MyText>
               </MyTouchableOpacity>
             ))}
           </View>

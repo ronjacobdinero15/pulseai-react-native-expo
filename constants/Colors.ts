@@ -13,17 +13,16 @@ type ColorsType = {
 
 export const COLORS: ColorsType = {
   primary: {
-    100: '#cee9f0',
-    200: '#9cd3e0',
-    300: '#6bbdd1',
-    400: '#39a7c1',
-    500: '#0891b2', // title / accent
-    600: '#06748e',
-    700: '#05576b',
-    800: '#033a47',
-    900: '#021d24', // text
+    100: '#d4e3d9',
+    200: '#a9c7b4',
+    300: '#7eaa8e',
+    400: '#538e69',
+    500: '#287243',
+    600: '#205b36',
+    700: '#184428',
+    800: '#102e1b',
+    900: '#08170d',
   },
-  // #0074fd
   secondary: {
     100: '#f3f3f3', // inputs
     200: '#e6e6e6', // Health information
@@ -36,6 +35,6 @@ export const COLORS: ColorsType = {
     900: '#171717',
   },
   success: '#0adb70',
-  error: '#d71818',
+  error: '#d9544d',
   warning: '#f5d224',
 }

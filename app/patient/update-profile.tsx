@@ -36,24 +36,7 @@ export default function UpdateProfile() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<PatientProfileType>({
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      contact: '',
-      address: '',
-      email: '',
-      age: '',
-      gender: '',
-      vices: [],
-      bmiHeightCm: '',
-      bmiWeightKg: '',
-      comorbidities: [],
-      parentalHypertension: '',
-      lifestyle: '',
-    },
-  })
+  } = useForm<PatientProfileType>()
   const router = useRouter()
   const { isLoading, setIsLoading, currentUser, setCurrentUser } = useAuth()
 

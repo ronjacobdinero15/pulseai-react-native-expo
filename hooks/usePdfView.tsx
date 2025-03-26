@@ -92,7 +92,8 @@ const htmlTemplate = ({
       }
 
       .box {
-        background-color: #ddd;
+        background-color: #287641;
+        color: #fff;
         padding: 10px;
         border-radius: 5px;
       }
@@ -327,6 +328,8 @@ function usePatientPdfView() {
     const resBpList = await getBpList(patientId)
     const resPatientProfile = await getPatientProfile(patientId)
     const resMedicationList = await getMedicationList(patientId)
+
+    console.log(resPatientProfile.patient)
 
     return {
       patientProfile: resPatientProfile.patient,

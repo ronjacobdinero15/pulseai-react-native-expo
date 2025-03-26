@@ -16,9 +16,7 @@ export default function ForgotPassword() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignInType>({
-    defaultValues: { email: '' },
-  })
+  } = useForm<SignInType>()
   const { currentUser, isLoading, setIsLoading } = useAuth()
   const router = useRouter()
 
