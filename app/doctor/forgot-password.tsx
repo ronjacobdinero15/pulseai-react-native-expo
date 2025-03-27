@@ -32,7 +32,7 @@ export default function ForgotPassword() {
   const handleResetPassword = async ({ email }: { email: string }) => {
     setIsLoading(true)
     try {
-      const res = await forgotPassword({ email, tableName: 'patients' })
+      const res = await forgotPassword({ email, tableName: 'doctors' })
 
       if (res.success) {
         Alert.alert('Success', res.message, [

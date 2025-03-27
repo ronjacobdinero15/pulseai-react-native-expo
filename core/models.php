@@ -114,14 +114,14 @@ function updatePatientNeedsOnboarding($pdo, $patient_id, $needs_onboarding) {
     ]);
 }
 
-function forgotPassword($pdo, $email) {
+function forgotPassword($pdo, $email, $table_name) {
     date_default_timezone_set('Asia/Manila'); 
     
     $token = bin2hex(random_bytes(16));
     $token_hash = hash("sha256", $token);
     $expiry = date("Y-m-d H:i:s", time() + 60 * 30);
 
-    $sql = "UPDATE patients
+    $sql = "UPDATE $table_name
             SET reset_token_hash = ?, reset_token_expires_at = ?
             WHERE email = ?";
     $stmt = $pdo->prepare($sql);
@@ -134,7 +134,7 @@ function forgotPassword($pdo, $email) {
             $mail->addAddress($email);
             $mail->Subject = 'Password Reset';
             $mail->Body = <<<END
-Click <a href="http://tan-boar-707148.hostingersite.com/core/reset-password.php?token=$token">here</a> to reset your password.
+Click <a href="http://tan-boar-707148.hostingersite.com/core/reset-password.php?token=$token&table_name=$table_name">here</a> to reset your password.
 END;
             $mail->AltBody = 'reset password';
             $mail->send();

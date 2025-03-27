@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   reminderContainer: {
-    backgroundColor: COLORS.secondary[100],
+    backgroundColor: COLORS.primary[100],
     padding: 15,
     borderRadius: 15,
     marginTop: 10,

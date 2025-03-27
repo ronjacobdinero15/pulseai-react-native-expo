@@ -1,5 +1,6 @@
 <?php
 $token = $_POST["token"] ?? '';
+$table_name = $_POST["table_name"] ?? '';
 
 if (!$token) {
     die("Invalid token");
@@ -13,17 +14,17 @@ if (!$pdo) {
     die("Database connection failed");
 }
 
-$sql = "SELECT * FROM patients WHERE reset_token_hash = :token_hash";
+$sql = "SELECT * FROM $table_name WHERE reset_token_hash = :token_hash";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['token_hash' => $token_hash]);
 
-$patient = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($patient === false) {
+if ($user === false) {
     die("Token not found");
 }
 
-if (strtotime($patient["reset_token_expires_at"]) <= time()) {
+if (strtotime($user["reset_token_expires_at"]) <= time()) {
     die("Token has expired");
 }
 
@@ -45,16 +46,27 @@ if ($_POST["password"] !== $_POST["password_confirmation"]) {
 
 $password_hash = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
-$sql = "UPDATE patients
+$id_column = '';
+if ($table_name === 'doctors') {
+    $id_column = 'doctor_id';
+} elseif ($table_name === 'patients') {
+    $id_column = 'patient_id';
+} elseif ($table_name === 'admin') {
+    $id_column = 'admin_id';
+} else {
+    die("Invalid table name");
+}
+
+$sql = "UPDATE $table_name
         SET password = :password_hash,
             reset_token_hash = NULL,
             reset_token_expires_at = NULL
-        WHERE patient_id = :patient_id";
+        WHERE $id_column = :id";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([
     'password_hash' => $password_hash,
-    'patient_id' => $patient["patient_id"]
+    'id' => $user[$id_column]
 ]);
 
 echo "Password updated. Please return and login to the app";
