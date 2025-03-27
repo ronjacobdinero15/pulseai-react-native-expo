@@ -49,13 +49,19 @@ export async function registerPatient({
   return await res.json()
 }
 
-export async function forgotPassword(email: string) {
+export async function forgotPassword({
+  email,
+  tableName,
+}: {
+  email: string
+  tableName: string
+}) {
   const res = await fetch(`${apiUrl}?action=forgotPassword`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email: email.trim() }),
+    body: JSON.stringify({ email: email.trim(), table_name: tableName }),
   })
 
   if (!res.ok) throw new Error('Error occurred resetting your account password')

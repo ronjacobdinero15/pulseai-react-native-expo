@@ -1,5 +1,6 @@
 <?php
 $token = $_GET["token"] ?? '';
+$table_name = $_GET["table_name"] ?? '';
 
 if (!$token) {
     die("Invalid token");
@@ -13,7 +14,7 @@ if (!$pdo) {
     die("Database connection failed");
 }
 
-$sql = "SELECT * FROM patients WHERE reset_token_hash = :token_hash";
+$sql = "SELECT * FROM $table_name WHERE reset_token_hash = :token_hash";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['token_hash' => $token_hash]);
 
@@ -40,6 +41,7 @@ if (strtotime($user["reset_token_expires_at"]) <= time()) {
 
     <form method="post" action="process-reset-password.php">
         <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+        <input type="hidden" name="table_name" value="<?= htmlspecialchars($table_name) ?>">
 
         <label for="password">New password</label>
         <input type="password" id="password" name="password">

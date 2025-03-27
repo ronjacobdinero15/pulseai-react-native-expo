@@ -64,7 +64,7 @@ function handlePost($pdo) {
             echo json_encode(registerPatient($pdo, $data['first_name'], $data['last_name'], $data['full_name'], $data['date_of_birth'], $data['contact'], $data['address'], $data['email'], $data['password'], $data['age'], $data['gender'], $data['bmi_height_cm'], $data['bmi_weight_kg'], $data['vices'], $data['comorbidities'], $data['parental_hypertension'], $data['lifestyle']));
             break;
         case 'forgotPassword':
-            echo json_encode(forgotPassword($pdo, $data['email']));
+            echo json_encode(forgotPassword($pdo, $data['email'], $data['table_name']));
             break;
         case 'addNewMedication':
             echo json_encode(addNewMedication($pdo, $data['medication_id'], $data['patient_id'], $data['medication_name'], $data['type'], $data['dosage'], $data['frequency'], $data['start_date'], $data['end_date'], $data['reminder'], $data['dates'], $data['actions']));

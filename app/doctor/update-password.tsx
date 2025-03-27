@@ -146,7 +146,7 @@ export default function UpdatePassword() {
           )}
         </View>
 
-        <Link href="/patient/forgot-password" style={styles.forgotPassword}>
+        <Link href="/doctor/forgot-password" style={styles.forgotPassword}>
           Forgot your password?
         </Link>
 

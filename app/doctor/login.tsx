@@ -2,7 +2,16 @@ import { Ionicons } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ActivityIndicator, Alert, Image, StyleSheet, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import MyText from '../../components/MyText'
 import MyTextInput from '../../components/MyTextInput'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
@@ -57,137 +66,149 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          style={styles.headerImg}
-          source={require('../../assets/images/logo.png')}
-          alt="MyApp icon"
-        />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={'position'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+      >
+        <ScrollView>
+          <View style={styles.header}>
+            <Image
+              style={styles.headerImg}
+              source={require('../../assets/images/logo.png')}
+              alt="MyApp icon"
+            />
 
-        <MyText style={styles.title} size="h1">
-          Sign in to PulseAI
-        </MyText>
+            <MyText style={styles.title} size="h1">
+              Sign in to PulseAI
+            </MyText>
 
-        <MyText style={{ textAlign: 'center' }}>
-          Access detailed patient data and monitor blood pressure trends for
-          personalized care.
-        </MyText>
-      </View>
+            <MyText style={{ textAlign: 'center' }}>
+              Access detailed patient data and monitor blood pressure trends for
+              personalized care.
+            </MyText>
+          </View>
 
-      <View style={styles.form}>
-        <View style={styles.inputControl}>
-          <Controller
-            control={control}
-            rules={{
-              required: 'This field is required.',
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                message: 'Invalid email address.',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <MyTextInput
-                placeholder="Email address"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCorrect={false}
-                autoCapitalize="none"
-                keyboardType="email-address"
+          <View style={styles.form}>
+            <View style={styles.inputControl}>
+              <Controller
+                control={control}
+                rules={{
+                  required: 'This field is required.',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                    message: 'Invalid email address.',
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <MyTextInput
+                    placeholder="Email address"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                  />
+                )}
+                name="email"
               />
-            )}
-            name="email"
-          />
-          {errors.email && (
-            <MyText style={styles.errorLabel}>{errors.email.message}</MyText>
-          )}
-        </View>
+              {errors.email && (
+                <MyText style={styles.errorLabel}>
+                  {errors.email.message}
+                </MyText>
+              )}
+            </View>
 
-        <View style={styles.inputControl}>
-          <Controller
-            control={control}
-            rules={{
-              required: 'This field is required.',
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <MyTextInput
-                secureTextEntry={!showPassword}
-                placeholder="Password"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCorrect={false}
-                autoCapitalize="none"
+            <View style={styles.inputControl}>
+              <Controller
+                control={control}
+                rules={{
+                  required: 'This field is required.',
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <MyTextInput
+                    secureTextEntry={!showPassword}
+                    placeholder="Password"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                  />
+                )}
+                name="password"
               />
-            )}
-            name="password"
-          />
-          {errors.password && (
-            <MyText style={styles.errorLabel}>{errors.password.message}</MyText>
-          )}
-          {showPassword ? (
-            <MyTouchableOpacity
-              style={styles.showPasswordBtn}
-              onPress={() => setShowPassword(false)}
+              {errors.password && (
+                <MyText style={styles.errorLabel}>
+                  {errors.password.message}
+                </MyText>
+              )}
+              {showPassword ? (
+                <MyTouchableOpacity
+                  style={styles.showPasswordBtn}
+                  onPress={() => setShowPassword(false)}
+                >
+                  <Ionicons
+                    name="eye-outline"
+                    size={28}
+                    color={COLORS.primary[500]}
+                  />
+                </MyTouchableOpacity>
+              ) : (
+                <MyTouchableOpacity
+                  style={styles.showPasswordBtn}
+                  onPress={() => setShowPassword(true)}
+                >
+                  <Ionicons
+                    name="eye-off-outline"
+                    size={28}
+                    color={COLORS.primary[500]}
+                  />
+                </MyTouchableOpacity>
+              )}
+            </View>
+
+            <Link
+              href="/doctor/forgot-password"
+              style={[styles.links, { textAlign: 'right' }]}
             >
-              <Ionicons
-                name="eye-outline"
-                size={28}
-                color={COLORS.primary[500]}
-              />
-            </MyTouchableOpacity>
-          ) : (
-            <MyTouchableOpacity
-              style={styles.showPasswordBtn}
-              onPress={() => setShowPassword(true)}
+              Forgot your password?
+            </Link>
+
+            <View style={styles.formAction}>
+              <MyTouchableOpacity
+                onPress={handleSubmit(handleLogin)}
+                style={styles.btn}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="large" color="white" />
+                ) : (
+                  <MyText size="h4" style={{ color: 'white' }}>
+                    Sign in
+                  </MyText>
+                )}
+              </MyTouchableOpacity>
+            </View>
+
+            <Link
+              href="/"
+              style={[
+                styles.links,
+                { textAlign: 'center', color: COLORS.primary[500] },
+              ]}
             >
-              <Ionicons
-                name="eye-off-outline"
-                size={28}
-                color={COLORS.primary[500]}
-              />
-            </MyTouchableOpacity>
-          )}
-        </View>
+              Switch to patient login
+            </Link>
 
-        <Link
-          href="/patient/forgot-password"
-          style={[styles.links, { textAlign: 'right' }]}
-        >
-          Forgot your password?
-        </Link>
-
-        <View style={styles.formAction}>
-          <MyTouchableOpacity
-            onPress={handleSubmit(handleLogin)}
-            style={styles.btn}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="large" color="white" />
-            ) : (
-              <MyText size="h4" style={{ color: 'white' }}>
-                Sign in
+            <View style={styles.needHelp}>
+              <MyText style={styles.needHelpText}>
+                To create a doctor account, please contact the IT department
               </MyText>
-            )}
-          </MyTouchableOpacity>
-        </View>
-
-        <Link
-          href="/"
-          style={[
-            styles.links,
-            { textAlign: 'center', color: COLORS.primary[500] },
-          ]}
-        >
-          Switch to patient login
-        </Link>
-
-        <View style={styles.needHelp}>
-          <MyText style={styles.needHelpText}>
-            To create a doctor account, please contact the IT department
-          </MyText>
-        </View>
-      </View>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   )
 }
