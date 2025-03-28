@@ -14,7 +14,7 @@ type MultipleSelectListCheckboxProps = {
 const MultipleSelectListCheckbox: React.FC<MultipleSelectListCheckboxProps> = ({
   label,
   data,
-  value,
+  value = [],
   onChange,
   onBlur,
 }) => {
@@ -23,7 +23,7 @@ const MultipleSelectListCheckbox: React.FC<MultipleSelectListCheckboxProps> = ({
   const handleSelected = (val: string[] | ((prev: string[]) => string[])) => {
     const newVal = typeof val === 'function' ? val(selected) : val
     setSelected(newVal)
-    onChange(newVal)
+    onChange(newVal || [])
     onBlur()
   }
 
