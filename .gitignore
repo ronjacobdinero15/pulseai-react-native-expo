@@ -41,8 +41,8 @@ yarn-error.*
 .vscode
 
 app-example
-vendor
-core
-sql
-data.sql
-accounts.txt
+# vendor
+# core
+# sql
+# data.sql
+# accounts.txt

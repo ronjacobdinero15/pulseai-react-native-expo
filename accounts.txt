@@ -1,0 +1,11 @@
+ADMIN:
+pleasereplacethisemail@gmail.com
+Qwerty@123
+
+DOCTOR:
+ronjacobdinero15@gmail.com
+Qwerty@123
+
+PATIENT:
+ronjacobdinero15@gmail.com
+Qwerty@123
