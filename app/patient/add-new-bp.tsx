@@ -64,8 +64,6 @@ export default function AddNewBp() {
     })
     setIsLoading(false)
 
-    console.log('res', res)
-
     if (res.success) {
       Alert.alert('Success', res.message, [
         {
@@ -157,214 +155,164 @@ export default function AddNewBp() {
           </View>
 
           <View style={styles.body}>
-            <View style={styles.inputControl}>
+            {/* Column for Labels */}
+            <View style={styles.labelContainer}>
               <MyText style={styles.inputLabel}>Date today:</MyText>
+              <MyText style={styles.inputLabel}>Time taken:</MyText>
+              <MyText style={styles.inputLabel}>Systolic:</MyText>
+              <MyText style={styles.inputLabel}>Diastolic:</MyText>
+              <MyText style={styles.inputLabel}>Pulse Rate:</MyText>
+            </View>
 
+            <View style={styles.inputColumn}>
               <MyTextInput
                 value={currentDate}
                 style={styles.disabledInput}
                 editable={false}
               />
-            </View>
-
-            <View style={styles.inputControl}>
-              <MyText style={styles.inputLabel}>Time taken:</MyText>
-
               <MyTextInput
                 value={currentTime}
                 style={styles.disabledInput}
                 editable={false}
               />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <View style={styles.inputControl}>
-                <MyText style={styles.inputLabel}>Systolic:</MyText>
-
-                <View style={styles.dataContainer}>
-                  <Controller
-                    control={control}
-                    rules={{
-                      required: 'This field is required.',
-                      maxLength: {
-                        value: 4,
-                        message: 'Invalid input.',
-                      },
-                      minLength: {
-                        value: 2,
-                        message: 'Invalid input.',
-                      },
-                      validate: validateBpInput,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <MyTextInput
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        maxLength={4}
-                        keyboardType="numeric"
-                        style={styles.input}
-                      />
-                    )}
-                    name="systolic"
-                  />
-
-                  <MyText>mmHg</MyText>
-                </View>
-              </View>
-
-              <View style={styles.errorContainer}>
-                <View style={{ width: '40%' }} />
-
-                <View style={{ flex: 1 }}>
-                  {errors.systolic && (
-                    <MyText style={styles.errorLabel}>
-                      {errors.systolic.message}
-                    </MyText>
+              {/* SYSTOLIC */}
+              <View style={styles.inputContainer}>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: 'This field is required.',
+                    maxLength: {
+                      value: 4,
+                      message: 'Invalid input.',
+                    },
+                    minLength: {
+                      value: 2,
+                      message: 'Invalid input.',
+                    },
+                    validate: validateBpInput,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <MyTextInput
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      maxLength={4}
+                      keyboardType="numeric"
+                      style={styles.input}
+                    />
                   )}
-                </View>
+                  name="systolic"
+                />
+
+                <MyText>mmHg</MyText>
               </View>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <View style={styles.inputControl}>
-                <MyText style={styles.inputLabel}>Diastolic:</MyText>
-
-                <View style={styles.dataContainer}>
-                  <Controller
-                    control={control}
-                    rules={{
-                      required: 'This field is required.',
-                      maxLength: {
-                        value: 4,
-                        message: 'Invalid input.',
-                      },
-                      minLength: {
-                        value: 2,
-                        message: 'Invalid input.',
-                      },
-                      validate: validateBpInput,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <MyTextInput
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        maxLength={4}
-                        keyboardType="numeric"
-                        style={styles.input}
-                      />
-                    )}
-                    name="diastolic"
-                  />
-                  <MyText>mmHg</MyText>
-                </View>
-              </View>
-
-              <View style={styles.errorContainer}>
-                <View style={{ width: '40%' }} />
-                <View>
-                  {errors.diastolic && (
-                    <MyText style={styles.errorLabel}>
-                      {errors.diastolic.message}
-                    </MyText>
+              {/* DIASTOLIC */}
+              <View style={styles.inputContainer}>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: 'This field is required.',
+                    maxLength: {
+                      value: 4,
+                      message: 'Invalid input.',
+                    },
+                    minLength: {
+                      value: 2,
+                      message: 'Invalid input.',
+                    },
+                    validate: validateBpInput,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <MyTextInput
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      maxLength={4}
+                      keyboardType="numeric"
+                      style={styles.input}
+                    />
                   )}
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <View style={styles.inputControl}>
-                <MyText style={styles.inputLabel}>Pulse Rate:</MyText>
-
-                <View style={styles.dataContainer}>
-                  <Controller
-                    control={control}
-                    rules={{
-                      required: 'This field is required.',
-                      maxLength: {
-                        value: 4,
-                        message: 'Invalid input.',
-                      },
-                      minLength: {
-                        value: 2,
-                        message: 'Invalid input.',
-                      },
-                      validate: validateBpInput,
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <MyTextInput
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        maxLength={2}
-                        keyboardType="numeric"
-                        style={styles.input}
-                      />
-                    )}
-                    name="pulseRate"
-                  />
-                  <MyText>/min</MyText>
-                </View>
+                  name="diastolic"
+                />
+                <MyText>mmHg</MyText>
               </View>
 
-              <View style={styles.errorContainer}>
-                <View style={{ width: '40%' }} />
-
-                <View style={{ flex: 1 }}>
-                  {errors.pulseRate && (
-                    <MyText style={styles.errorLabel}>
-                      {errors.pulseRate.message}
-                    </MyText>
+              {/* PULSE RATE */}
+              <View style={styles.inputContainer}>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: 'This field is required.',
+                    maxLength: {
+                      value: 2,
+                      message: 'Invalid input.',
+                    },
+                    minLength: {
+                      value: 1,
+                      message: 'Invalid input.',
+                    },
+                    validate: validateBpInput,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <MyTextInput
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      maxLength={2}
+                      keyboardType="numeric"
+                      style={styles.input}
+                    />
                   )}
-                </View>
+                  name="pulseRate"
+                />
+                <MyText style={{ textAlign: 'left' }}>/min</MyText>
               </View>
             </View>
-
-            <View style={{ marginBottom: 15, gap: 5 }}>
-              <View style={{ marginBottom: 5 }}>
-                <MyText>Do you have any comments :</MyText>
-                <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
-                  (e.g. medication changes, feeling unwell)
-                </MyText>
-              </View>
-
-              <Controller
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <MyTextInput
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                    style={styles.multilineInput}
-                    numberOfLines={6}
-                    multiline
-                  />
-                )}
-                name="comments"
-              />
-              {errors.comments && (
-                <MyText style={styles.errorLabel}>
-                  {errors.comments.message}
-                </MyText>
-              )}
-            </View>
-
-            <MyTouchableOpacity
-              style={[styles.btn]}
-              onPress={handleSubmit(handleAddNewBp)}
-              disabled={isLoading}
-            >
-              <MyText
-                size="h4"
-                style={{
-                  color: 'white',
-                }}
-              >
-                Add New BP Record
-              </MyText>
-            </MyTouchableOpacity>
           </View>
+
+          <View style={{ marginBottom: 15, gap: 5 }}>
+            <View style={{ marginBottom: 5 }}>
+              <MyText>Do you have any comments :</MyText>
+              <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
+                (e.g. medication changes, feeling unwell)
+              </MyText>
+            </View>
+
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <MyTextInput
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  style={styles.multilineInput}
+                  numberOfLines={6}
+                  multiline
+                />
+              )}
+              name="comments"
+            />
+            {errors.comments && (
+              <MyText style={styles.errorLabel}>
+                {errors.comments.message}
+              </MyText>
+            )}
+          </View>
+
+          <MyTouchableOpacity
+            style={[styles.btn]}
+            onPress={handleSubmit(handleAddNewBp)}
+            disabled={isLoading}
+          >
+            <MyText
+              size="h4"
+              style={{
+                color: 'white',
+              }}
+            >
+              Add New BP Record
+            </MyText>
+          </MyTouchableOpacity>
         </View>
       }
     />
@@ -393,39 +341,51 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 60,
     gap: 10,
   },
-  inputContainer: {
+  labelContainer: {
+    flex: 1,
+    flexDirection: 'column',
     gap: 5,
+    marginTop: 10,
   },
-  inputControl: {
-    gap: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
+  inputColumn: {
+    flex: 1,
+    flexDirection: 'column',
+    gap: 10,
   },
   inputLabel: {
+    height: 50,
     marginBottom: 5,
-    width: '40%',
+    fontSize: 16,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
   },
   input: {
-    width: '25%',
+    width: '50%',
     textAlign: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.secondary[200],
+    borderRadius: 8,
+    padding: 10,
   },
   multilineInput: {
     height: 160,
     textAlignVertical: 'top',
   },
   disabledInput: {
-    flex: 1,
     backgroundColor: COLORS.secondary[100],
     borderWidth: 0,
-  },
-  dataContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    width: '100%',
+    borderRadius: 8,
+    padding: 10,
+    height: 50,
+    color: COLORS.secondary[500],
   },
   errorLabel: {
     color: COLORS.error,
@@ -441,11 +401,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
     backgroundColor: COLORS.primary[500],
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    gap: 5,
-    alignItems: 'center',
   },
   modalBtn: {
     borderRadius: 8,

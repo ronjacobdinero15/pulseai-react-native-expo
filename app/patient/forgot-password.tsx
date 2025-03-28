@@ -26,7 +26,6 @@ export default function ForgotPassword() {
         email: currentUser?.email!,
       })
     }
-    console.log()
   }, [])
 
   const handleResetPassword = async ({ email }: { email: string }) => {

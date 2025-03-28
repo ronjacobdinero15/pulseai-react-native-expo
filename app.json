@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "accessesContactNotes": false
+      "accessesContactNotes": false,
+      "bundleIdentifier": "com.ronjacobdinero15.thesis",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

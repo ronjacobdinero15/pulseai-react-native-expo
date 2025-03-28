@@ -25,13 +25,13 @@ export default function History() {
 
   useEffect(() => {
     getDateList()
-    fetchMedicationList(currentUser!.id!)
+    if (currentUser?.id || refresh === 1) fetchMedicationList(currentUser!.id!)
   }, [selectedDate, refresh])
 
   const getDateList = () => {
     const dates = getPreviousDateRangeToDisplay()
     setDateRange(dates)
-    fetchMedicationList(currentUser!.id!)
+    if (currentUser?.id) fetchMedicationList(currentUser!.id!)
   }
 
   const fetchMedicationList = async (patientId: string) => {

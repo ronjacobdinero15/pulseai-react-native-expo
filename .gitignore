@@ -44,3 +44,5 @@ app-example
 vendor
 core
 sql
+data.sql
+accounts.txt
