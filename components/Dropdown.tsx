@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-    fontWeight: '400',
-    color: COLORS.secondary[700],
+    fontWeight: '500',
+    color: COLORS.secondary[900],
     lineHeight: 25,
   },
 })

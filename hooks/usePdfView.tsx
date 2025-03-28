@@ -332,8 +332,6 @@ function usePatientPdfView() {
     const resPatientProfile = await getPatientProfile(patientId)
     const resMedicationList = await getMedicationList(patientId)
 
-    console.log(resPatientProfile.patient)
-
     return {
       patientProfile: resPatientProfile.patient,
       bpList: resBpList.bpList || [],

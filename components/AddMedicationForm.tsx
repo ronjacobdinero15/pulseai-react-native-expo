@@ -459,6 +459,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   input: {
+    width: '100%',
     color: COLORS.secondary[900],
     marginLeft: 10,
     marginRight: 10,

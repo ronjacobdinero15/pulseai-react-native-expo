@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     position: 'absolute',
-    top: Platform.select({ ios: 50, android: 25 }),
+    top: Platform.select({ ios: 50, android: 25, web: 25 }),
     left: 25,
-    zIndex: 1,
+    zIndex: 50,
   },
 })
 
