@@ -41,3 +41,6 @@ yarn-error.*
 .vscode
 
 app-example
+vendor
+core
+sql
