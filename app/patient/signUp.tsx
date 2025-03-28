@@ -477,7 +477,7 @@ export default function SignUp() {
               <MultipleSelectListCheckbox
                 label="Vices"
                 data={VICESOPTIONS}
-                value={value}
+                value={value || []}
                 onChange={onChange}
                 onBlur={onBlur}
               />
@@ -499,7 +499,7 @@ export default function SignUp() {
               <MultipleSelectListCheckbox
                 label="Comorbidities"
                 data={COMORBIDITIESOPTIONS}
-                value={value}
+                value={value || []}
                 onChange={onChange}
                 onBlur={onBlur}
               />

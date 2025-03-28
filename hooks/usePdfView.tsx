@@ -259,7 +259,10 @@ const htmlTemplate = ({
                     // Create a row for each scheduled date (only for past dates)
                     const rows = dates
                       .filter((medDate: string) =>
-                        moment(medDate, 'MM/DD/YYYY').isBefore(moment(), 'day')
+                        moment(medDate, 'MM/DD/YYYY').isSameOrBefore(
+                          moment(),
+                          'day'
+                        )
                       )
                       .map((medDate: string) => {
                         const action = actions.find(
