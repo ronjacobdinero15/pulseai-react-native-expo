@@ -653,6 +653,8 @@ function adminLogin($pdo, $email, $password) {
         $passwordFromDB = $adminInfoRow['password'];
 
         if (password_verify($password, $passwordFromDB)) {
+            $_SESSION['admin_id'] = $adminIDFromDB;
+            
             return [
                 "id"      =>  $adminIDFromDB,
                 "message" => "Login successful!",
