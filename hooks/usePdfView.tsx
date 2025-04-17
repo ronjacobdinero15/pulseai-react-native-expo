@@ -3,18 +3,21 @@ import * as IntentLauncher from 'expo-intent-launcher'
 import * as Print from 'expo-print'
 import moment from 'moment'
 import { Alert, Linking, Platform } from 'react-native'
-import { BpType } from '../constants/bp'
-import { Medication } from '../constants/medication'
-import { PatientProfileType } from '../constants/signup'
+import type { BpType } from '../constants/bp'
+import type { Medication } from '../constants/medication'
+import type { PatientProfileType } from '../constants/signup'
 import { getPatientProfile } from '../services/apiAuth'
 import { getBpList } from '../services/apiBp'
 import { getMedicationList } from '../services/apiMedication'
+import type { reportType } from '../constants/types'
 
 type htmlTemplateType = {
   patientId: string
   patientProfile: PatientProfileType
   bpList: BpType[]
   medicationList: Medication[]
+  startDate: string | null
+  endDate: string | null
 }
 
 const htmlTemplate = ({
@@ -22,6 +25,8 @@ const htmlTemplate = ({
   patientProfile,
   bpList,
   medicationList,
+  startDate,
+  endDate,
 }: htmlTemplateType) => `
 <!DOCTYPE html>
 <html>
@@ -109,6 +114,13 @@ const htmlTemplate = ({
         gap: 50px;
       }
 
+      .report-period {
+        text-align: center;
+        margin: 10px 0;
+        font-style: italic;
+        color: #555;
+      }
+
       @media print {
         body {
           margin: 10mm;
@@ -125,6 +137,16 @@ const htmlTemplate = ({
   </head>
   <body>
     <h2 style="text-align: center;">Patient Health Summary Report</h2>
+    ${
+      startDate && endDate
+        ? `
+    <p class="report-period">Report Period: ${moment(
+      startDate,
+      'MM/DD/YYYY'
+    ).format('ll')} - ${moment(endDate, 'MM/DD/YYYY').format('ll')}</p>
+    `
+        : ''
+    }
     <div>
       <div class="container">
         <div style="padding: 10px;">
@@ -250,33 +272,24 @@ const htmlTemplate = ({
             ? medicationList
                 .reduce(
                   (acc, medication) => {
-                    const dates = medication.dates
-                      ? JSON.parse(JSON.stringify(medication.dates))
-                      : []
-                    const actions = medication.actions
-                      ? JSON.parse(JSON.stringify(medication.actions))
-                      : []
-                    // Create a row for each scheduled date (only for past dates)
-                    const rows = dates
-                      .filter((medDate: string) =>
-                        moment(medDate, 'MM/DD/YYYY').isSameOrBefore(
-                          moment(),
-                          'day'
-                        )
+                    const dates = medication.dates || []
+                    const actions = medication.actions || []
+
+                    // Create a row for each scheduled date
+                    // Note: We're not filtering for past dates here since our PHP function already filters by date range
+                    const rows = dates.map((medDate: string) => {
+                      const action = actions.find(
+                        (a: { date: string }) => a.date === medDate
                       )
-                      .map((medDate: string) => {
-                        const action = actions.find(
-                          (a: { date: string }) => a.date === medDate
-                        )
-                        return {
-                          date: medDate,
-                          status: action ? action.status : 'Missed',
-                          time: action ? action.time : '‒',
-                          medicationName: medication.medicationName,
-                          startDate: medication.startDate,
-                          endDate: medication.endDate,
-                        }
-                      })
+                      return {
+                        date: medDate,
+                        status: action ? action.status : 'Missed',
+                        time: action ? action.time : '‒',
+                        medicationName: medication.medicationName,
+                        startDate: medication.startDate,
+                        endDate: medication.endDate,
+                      }
+                    })
                     return acc.concat(rows)
                   },
                   [] as Array<{
@@ -327,10 +340,18 @@ const htmlTemplate = ({
 </html>`
 
 function usePatientPdfView() {
-  const fetchPatientInfo = async (patientId: string) => {
-    const resBpList = await getBpList(patientId)
+  const fetchPatientInfo = async ({
+    patientId,
+    startDate,
+    endDate,
+  }: reportType) => {
     const resPatientProfile = await getPatientProfile(patientId)
-    const resMedicationList = await getMedicationList(patientId)
+    const resBpList = await getBpList({ patientId, startDate, endDate })
+    const resMedicationList = await getMedicationList({
+      patientId,
+      startDate,
+      endDate,
+    })
 
     return {
       patientProfile: resPatientProfile.patient,
@@ -339,10 +360,13 @@ function usePatientPdfView() {
     }
   }
 
-  const generateAndOpenPdf = async ({ patientId }: { patientId: string }) => {
-    await fetchPatientInfo(patientId)
+  const generateAndOpenPdf = async ({
+    patientId,
+    startDate = null,
+    endDate = null,
+  }: reportType) => {
+    const data = await fetchPatientInfo({ patientId, startDate, endDate })
 
-    const data = await fetchPatientInfo(patientId)
     if (!data || !data.patientProfile) {
       Alert.alert('Error', 'Patient profile is not available.')
       return
@@ -356,6 +380,8 @@ function usePatientPdfView() {
           patientProfile: data.patientProfile,
           bpList: data.bpList,
           medicationList: data.medicationList,
+          startDate,
+          endDate,
         }),
         base64: false,
       })

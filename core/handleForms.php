@@ -31,7 +31,16 @@ function handleGet($pdo) {
             echo json_encode(getMedicationListForSelectedDate($pdo, $_GET['patient_id'], $_GET['selected_date']));
             break;
         case 'getMedicationList':
-            echo json_encode(getMedicationList($pdo, $_GET['patient_id']));
+            $start_date = $_GET['start_date'] ?? null;
+            $end_date = $_GET['end_date'] ?? null;
+            
+            echo json_encode(getMedicationList($pdo, $_GET['patient_id'], $start_date, $end_date));
+            break;
+        case 'getBpList':
+            $start_date = $_GET['start_date'] ?? null;
+            $end_date = $_GET['end_date'] ?? null;
+            
+            echo json_encode(getBpList($pdo, $_GET['patient_id'], $start_date, $end_date));
             break;
         case 'getBpForTodayList':
             echo json_encode(getBpForTodayList($pdo, $_GET['patient_id'], $_GET['date_taken']));
@@ -41,9 +50,6 @@ function handleGet($pdo) {
             break;
         case 'getDoctorProfile':
             echo json_encode(getDoctorProfile($pdo, $_GET['doctor_id']));
-            break;
-        case 'getBpList':
-            echo json_encode(getBpList($pdo, $_GET['patient_id']));
             break;
         case 'getAllDoctors':
             echo json_encode(getAllDoctors($pdo));

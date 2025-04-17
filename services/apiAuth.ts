@@ -1,6 +1,6 @@
 import { PasswordType, SignInType } from '../constants/account'
 import { PatientProfileType } from '../constants/signup'
-import { apiUrl } from '../constants/types'
+import { apiUrl } from '../constants/url'
 
 export async function registerPatient({
   firstName,

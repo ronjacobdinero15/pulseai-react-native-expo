@@ -1,5 +1,6 @@
 import { BpType } from '../constants/bp'
-import { apiUrl } from '../constants/types'
+import { reportType } from '../constants/types'
+import { apiUrl } from '../constants/url'
 
 export async function addNewBp({
   patientId,
@@ -53,16 +54,21 @@ export async function getBpForTodayList({
   return await res.json()
 }
 
-export async function getBpList(patientId: string) {
-  const res = await fetch(
-    `${apiUrl}?action=getBpList&patient_id=${patientId}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+export async function getBpList({ patientId, startDate, endDate }: reportType) {
+  const url = new URL(`${apiUrl}?action=getBpList`)
+  url.searchParams.append('patient_id', patientId)
+
+  if (startDate && endDate) {
+    url.searchParams.append('start_date', startDate)
+    url.searchParams.append('end_date', endDate)
+  }
+
+  const res = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 
   if (!res.ok) throw new Error('Error occurred fetching BP list')
 
