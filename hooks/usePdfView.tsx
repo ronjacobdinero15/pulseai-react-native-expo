@@ -10,6 +10,50 @@ import { getPatientProfile } from '../services/apiAuth'
 import { getBpList } from '../services/apiBp'
 import { getMedicationList } from '../services/apiMedication'
 import type { reportType } from '../constants/types'
+import { GoogleGenAI } from '@google/genai'
+
+// --- 1) Your Gemini API key here (no extra npm install needed) ---
+const GEMINI_API_KEY = 'AIzaSyD4yqJrdxrWSeIyBAwXcdZayJ2fXP2my3Q'
+
+// Helper to call Gemini text model
+async function fetchGeminiAnalysis(prompt: string): Promise<string> {
+  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
+
+  const model = 'gemini-2.0-flash'
+
+  const contents = [
+    {
+      role: 'user',
+      parts: [
+        {
+          text: prompt,
+        },
+      ],
+    },
+  ]
+
+  try {
+    const response = await ai.models.generateContentStream({
+      model,
+      contents,
+      config: {
+        responseMimeType: 'text/plain',
+      },
+    })
+
+    let output = ''
+    for await (const chunk of response) {
+      if (chunk.text) {
+        output += chunk.text
+      }
+    }
+
+    return output.trim() || 'No AI analysis available.'
+  } catch (err) {
+    console.error('[Gemini SDK Error]', err)
+    return 'AI analysis unavailable.'
+  }
+}
 
 type htmlTemplateType = {
   patientId: string
@@ -18,6 +62,7 @@ type htmlTemplateType = {
   medicationList: Medication[]
   startDate: string | null
   endDate: string | null
+  analysisHtml: string
 }
 
 const htmlTemplate = ({
@@ -27,6 +72,7 @@ const htmlTemplate = ({
   medicationList,
   startDate,
   endDate,
+  analysisHtml,
 }: htmlTemplateType) => `
 <!DOCTYPE html>
 <html>
@@ -336,6 +382,12 @@ const htmlTemplate = ({
         }
       </tbody>
     </table>
+    <!-- AI Analysis Section -->
+    <div class="box">
+      <h3 class="title">AI‑Generated Analysis</h3>
+      <div>${analysisHtml}</div>
+    </div>
+
   </body>
 </html>`
 
@@ -364,54 +416,97 @@ function usePatientPdfView() {
     patientId,
     startDate = null,
     endDate = null,
-  }: reportType) => {
+    returnHtml = false,
+  }: reportType & {
+    returnHtml?: boolean
+  }) => {
     const data = await fetchPatientInfo({ patientId, startDate, endDate })
 
-    if (!data || !data.patientProfile) {
+    if (!data?.patientProfile) {
       Alert.alert('Error', 'Patient profile is not available.')
       return
     }
 
-    try {
-      // Generate the PDF from HTML
-      const { uri } = await Print.printToFileAsync({
-        html: htmlTemplate({
-          patientId,
-          patientProfile: data.patientProfile,
-          bpList: data.bpList,
-          medicationList: data.medicationList,
-          startDate,
-          endDate,
-        }),
-        base64: false,
-      })
+    const prompt = `
+  Patient ID: ${patientId}
+  Age: ${data.patientProfile.age}
+  Gender: ${data.patientProfile.gender}
+  Height: ${data.patientProfile.bmiHeightCm} cm
+  Weight: ${data.patientProfile.bmiWeightKg} kg
+  BP readings: ${data.bpList
+    .map((b: BpType) => `${b.dateTaken}: ${b.systolic}/${b.diastolic}`)
+    .join('; ')}
+  Medications: ${data.medicationList
+    .map((m: Medication) => m.medicationName)
+    .join(', ')}
+  
+  Provide a concise clinical interpretation and recommendations based on the data above.
+  `
 
-      // Create a new file path with the patient id as the name
+    // 🔥 Log and Alert patanggal na lang to for debugging purposes lang
+    console.log('🔥 Gemini Prompt:', prompt)
+
+    // Gemini call (v1beta model & proper structure)
+    let analysisText = 'AI analysis unavailable.' //default when AI is not available
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        }
+      )
+
+      const json = await res.json()
+      console.log('🌟 Gemini API Response:', JSON.stringify(json, null, 2))
+
+      analysisText =
+        json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+        'No AI analysis available.'
+    } catch (err) {
+      console.warn('Gemini error:', err)
+    }
+
+    const analysisHtml = analysisText
+      .split('\n')
+      .map(line => `<p>${line}</p>`)
+      .join('')
+
+    const html = htmlTemplate({
+      patientId,
+      patientProfile: data.patientProfile,
+      bpList: data.bpList,
+      medicationList: data.medicationList,
+      startDate,
+      endDate,
+      analysisHtml,
+    })
+
+    if (returnHtml) return html
+
+    try {
+      const { uri } = await Print.printToFileAsync({ html, base64: false })
       const newUri =
         FileSystem.documentDirectory +
         `PatientID_${patientId}_BP_Summary_Report.pdf`
+      await FileSystem.moveAsync({ from: uri, to: newUri })
 
-      // Move/rename the file
-      await FileSystem.moveAsync({
-        from: uri,
-        to: newUri,
-      })
-
-      // Then open the renamed file
-      let uriToOpen = newUri
       if (Platform.OS === 'android') {
-        uriToOpen = await FileSystem.getContentUriAsync(newUri)
+        const contentUri = await FileSystem.getContentUriAsync(newUri)
         await IntentLauncher.startActivityAsync('android.intent.action.VIEW', {
-          data: uriToOpen,
-          flags: 1, // FLAG_GRANT_READ_URI_PERMISSION
+          data: contentUri,
+          flags: 1,
           type: 'application/pdf',
         })
       } else {
-        await Linking.openURL(uriToOpen)
+        await Linking.openURL(newUri)
       }
-    } catch (error) {
-      console.error('Error generating or opening PDF:', error)
-      Alert.alert('Error', 'Failed to generate or open the PDF')
+    } catch (e) {
+      console.error(e)
+      Alert.alert('Error', 'Failed to generate/open PDF.')
     }
   }
 
