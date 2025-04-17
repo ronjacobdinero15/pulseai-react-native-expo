@@ -1,5 +1,7 @@
+import moment from 'moment'
 import { addNewMedicationStatusType, Medication } from '../constants/medication'
-import { apiUrl } from '../constants/types'
+import { reportType } from '../constants/types'
+import { apiUrl } from '../constants/url'
 
 export async function addNewMedication({
   medicationId,
@@ -58,16 +60,31 @@ export async function getMedicationListForSelectedDate(
   return await res.json()
 }
 
-export async function getMedicationList(patientId: string) {
-  const res = await fetch(
-    `${apiUrl}?action=getMedicationList&patient_id=${patientId}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+export async function getMedicationList({
+  patientId,
+  startDate,
+  endDate,
+}: reportType) {
+  const url = new URL(`${apiUrl}?action=getMedicationList`)
+  url.searchParams.append('patient_id', patientId)
+
+  if (startDate && endDate) {
+    url.searchParams.append(
+      'start_date',
+      moment(startDate, 'MM/DD/YYYY').format('ll')
+    )
+    url.searchParams.append(
+      'end_date',
+      moment(endDate, 'MM/DD/YYYY').format('ll')
+    )
+  }
+
+  const res = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 
   if (!res.ok) throw new Error('Error occurred getting medication list')
 

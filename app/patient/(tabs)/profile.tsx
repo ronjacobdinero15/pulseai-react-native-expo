@@ -22,13 +22,15 @@ import { deletePatientAccountAndData } from '../../../services/apiAuth'
 type Tab = {
   name: string
   icon: 'settings' | 'key' | 'exit' | 'delete' | 'file-tray-stacked-outline'
-  path?: '/patient/update-profile' | '/patient/update-password'
+  path?:
+    | '/patient/update-profile'
+    | '/patient/update-password'
+    | '/patient/generate-report'
 }
 
 export default function Profile() {
   const { currentUser, userSignOut } = useAuth()
   const router = useRouter()
-  const generateAndOpenPdf = usePatientPdfView()
   const [showAccountDeletionModal, setShowAccountDeletionModal] =
     useState(false)
   const [showPasswordConfirmModal, setShowPasswordConfirmModal] =
@@ -36,7 +38,6 @@ export default function Profile() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isLoadingPdf, setIsLoadingPdf] = useState(false)
 
   const tabs: Tab[] = [
     {
@@ -54,8 +55,9 @@ export default function Profile() {
       icon: 'exit',
     },
     {
-      name: 'View my data',
+      name: 'Generate BP report',
       icon: 'file-tray-stacked-outline',
+      path: '/patient/generate-report',
     },
     {
       name: 'Erase all my data',
@@ -92,17 +94,6 @@ export default function Profile() {
     }
   }
 
-  const handleGenerateAndOpenPdf = async (patientId: string) => {
-    setIsLoadingPdf(true)
-    try {
-      await generateAndOpenPdf({ patientId })
-    } catch (error) {
-      console.error('Error generating PDF:', error)
-    } finally {
-      setIsLoadingPdf(false)
-    }
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -133,13 +124,11 @@ export default function Profile() {
                     router.push(tab.path)
                   } else if (tab.name === 'Logout') {
                     userSignOut({ role: 'patient' })
-                  } else if (tab.name === 'View my data') {
-                    handleGenerateAndOpenPdf(currentUser?.id!)
                   } else if (tab.name === 'Erase all my data') {
                     setShowAccountDeletionModal(true)
                   }
                 }}
-                disabled={isLoadingPdf || isDeleting}
+                disabled={isDeleting}
               >
                 <View style={styles.iconContainer}>
                   {tab.icon === 'delete' ? (
@@ -157,11 +146,7 @@ export default function Profile() {
                   )}
                 </View>
 
-                {isLoadingPdf && tab.name === 'View my data' ? (
-                  <ActivityIndicator size="large" color={COLORS.primary[500]} />
-                ) : (
-                  <MyText size="h4">{tab.name}</MyText>
-                )}
+                <MyText size="h4">{tab.name}</MyText>
               </MyTouchableOpacity>
             ))}
           </View>

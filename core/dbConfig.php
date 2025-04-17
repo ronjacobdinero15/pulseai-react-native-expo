@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
@@ -27,4 +25,16 @@ try {
 }
 
 return $pdo;
+
+// TESTING
+// $host = "localhost";
+// $user = "root";
+// $password = "";
+// $dbname = "thesis";
+// $dsn = "mysql:host={$host};dbname={$dbname}";
+
+// $pdo = new PDO($dsn,$user,$password);
+// $pdo->exec("SET time_zone = '+08:00';"); 
 ?>
+
+

@@ -212,42 +212,6 @@ function getMedicationListForSelectedDate($pdo, $patient_id, $selected_date) {
     }
 }
 
-function getMedicationList($pdo, $patient_id) {
-    $sql = "SELECT * FROM medications WHERE patient_id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$patient_id]);
-
-    if ($stmt->rowCount() > 0) {
-        $medications = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $medications = array_map(function($medication) {
-            return [
-                "medicationId" => $medication["medication_id"],
-                "patientId" => $medication["patient_id"],
-                "medicationName" => $medication["medication_name"],
-                "type" => $medication["type"],
-                "dosage" => $medication["dosage"],
-                "frequency" => $medication["frequency"],
-                "startDate" => $medication["start_date"],
-                "endDate" => $medication["end_date"],
-                "reminder" => $medication["reminder"],
-                "dates"   => json_decode($medication["dates"]),
-                "actions" => json_decode($medication["actions"])
-            ];
-        },  $medications);
-
-        return [
-            "success" => true,
-            "medications" => $medications
-        ];
-    } else {
-        return [
-            "success" => false,
-            "message" => "No medications found."
-        ];
-    }
-}
-
 function addNewMedicationStatus($pdo, $medication_id, $date, $status, $time) {
     $sql = "SELECT actions FROM medications WHERE medication_id = ?";
     $stmt = $pdo->prepare($sql);
@@ -607,14 +571,152 @@ function deletePatientAccountAndData($pdo, $patient_id, $password) {
     }
 }
 
-function getBpList($pdo, $patient_id) {
+function getMedicationList($pdo, $patient_id, $start_date = null, $end_date = null) {
+    $sql = "SELECT * FROM medications WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$patient_id]);
+    
+    if ($stmt->rowCount() > 0) {
+        $medications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // If date range is specified, filter the dates in each medication
+        if ($start_date && $end_date) {
+            $start_moment = new DateTime($start_date);
+            $end_moment = new DateTime($end_date);
+
+            $end_moment->setTime(23, 59, 59);
+            
+            $medications = array_map(function($medication) use ($start_moment, $end_moment) {
+                $all_dates = json_decode($medication["dates"], true);
+                $all_actions = json_decode($medication["actions"], true);
+                
+                // Filter dates within the range
+                $filtered_dates = [];
+                if (is_array($all_dates)) {
+                    foreach ($all_dates as $date) {
+                        $date_moment = DateTime::createFromFormat('m/d/Y', $date);
+                        if ($date_moment && $date_moment >= $start_moment && $date_moment <= $end_moment) {
+                            $filtered_dates[] = $date;
+                        }
+                    }
+                }
+                
+                // Filter actions that correspond to the filtered dates
+                $filtered_actions = [];
+                if (is_array($all_actions)) {
+                    foreach ($all_actions as $action) {
+                        if (in_array($action['date'], $filtered_dates)) {
+                            $filtered_actions[] = $action;
+                        }
+                    }
+                }
+                
+                return [
+                    "medicationId" => $medication["medication_id"],
+                    "patientId" => $medication["patient_id"],
+                    "medicationName" => $medication["medication_name"],
+                    "type" => $medication["type"],
+                    "dosage" => $medication["dosage"],
+                    "frequency" => $medication["frequency"],
+                    "startDate" => $medication["start_date"],
+                    "endDate" => $medication["end_date"],
+                    "reminder" => $medication["reminder"],
+                    "dates" => $filtered_dates,
+                    "actions" => $filtered_actions
+                ];
+            }, $medications);
+            
+            // Remove medications that have no dates in the range
+            $medications = array_filter($medications, function($med) {
+                return !empty($med["dates"]);
+            });
+            
+            // Re-index array after filtering
+            $medications = array_values($medications);
+        } else {
+            // If no date range, just format the data
+            $medications = array_map(function($medication) {
+                return [
+                    "medicationId" => $medication["medication_id"],
+                    "patientId" => $medication["patient_id"],
+                    "medicationName" => $medication["medication_name"],
+                    "type" => $medication["type"],
+                    "dosage" => $medication["dosage"],
+                    "frequency" => $medication["frequency"],
+                    "startDate" => $medication["start_date"],
+                    "endDate" => $medication["end_date"],
+                    "reminder" => $medication["reminder"],
+                    "dates" => json_decode($medication["dates"]),
+                    "actions" => json_decode($medication["actions"])
+                ];
+            }, $medications);
+        }
+        
+        return [
+            "success" => true,
+            "medications" => $medications
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "No medications found."
+        ];
+    }
+}
+
+function getBpList($pdo, $patient_id, $start_date = null, $end_date = null) {
+    // Get all BP readings for the patient
     $sql = "SELECT * FROM bp_readings WHERE patient_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$patient_id]);
 
     if ($stmt->rowCount() > 0) {
         $bp_readings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        
+        // If date range is specified, filter the readings
+        if ($start_date && $end_date) {
+            // Convert start and end dates to DateTime objects for comparison
+            $start_moment = new DateTime($start_date);
+            $end_moment = new DateTime($end_date);
+            
+            // Set the end date to the end of the day for inclusive comparison
+            $end_moment->setTime(23, 59, 59);
+            
+            // Filter readings within the date range
+            $filtered_readings = [];
+            
+            foreach ($bp_readings as $reading) {
+                // Convert date_taken (e.g., "Mar 28, 2025") to a DateTime object
+                $reading_date = DateTime::createFromFormat('M j, Y', $reading["date_taken"]);
+                
+                // If date parsing fails, try alternative formats
+                if (!$reading_date) {
+                    // Try other possible formats
+                    $formats = ['F j, Y', 'M d, Y', 'Y-m-d', 'm/d/Y'];
+                    
+                    foreach ($formats as $format) {
+                        $reading_date = DateTime::createFromFormat($format, $reading["date_taken"]);
+                        if ($reading_date) break;
+                    }
+                    
+                    // If still can't parse, skip this reading
+                    if (!$reading_date) continue;
+                }
+                
+                // Set time to beginning of day for fair comparison
+                $reading_date->setTime(0, 0, 0);
+                
+                // Check if the reading date is within the specified range
+                if ($reading_date >= $start_moment && $reading_date <= $end_moment) {
+                    $filtered_readings[] = $reading;
+                }
+            }
+            
+            // Use the filtered readings
+            $bp_readings = $filtered_readings;
+        }
+        
+        // Format the readings for response
         $bp_readings = array_map(function($bp_reading) {
             return [
                 "readingId" => $bp_reading["reading_id"],
@@ -626,7 +728,7 @@ function getBpList($pdo, $patient_id) {
                 "pulseRate" => round($bp_reading["pulse_rate"], 1),
                 "comments" => $bp_reading["comments"]
             ];
-        },  $bp_readings);
+        }, $bp_readings);
 
         return [
             "success" => true,

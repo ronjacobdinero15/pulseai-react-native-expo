@@ -1,1 +1,7 @@
-export const apiUrl = process.env.EXPO_PUBLIC_DB_URL
+export interface reportType {
+  patientId: string
+  reportType?: string
+  startDate?: string | null
+  endDate?: string | null
+  includeMedication?: string
+}
