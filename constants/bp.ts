@@ -8,3 +8,9 @@ export type BpType = {
   pulseRate: string
   comments?: string
 }
+
+export type BpAverages = {
+  systolic: number
+  diastolic: number
+  pulseRate: number
+}
