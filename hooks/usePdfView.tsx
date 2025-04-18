@@ -6,55 +6,13 @@ import { Alert, Linking, Platform } from 'react-native'
 import type { BpType } from '../constants/bp'
 import type { Medication } from '../constants/medication'
 import type { PatientProfileType } from '../constants/signup'
+import type { reportType } from '../constants/types'
 import { getPatientProfile } from '../services/apiAuth'
 import { getBpList } from '../services/apiBp'
 import { getMedicationList } from '../services/apiMedication'
-import type { reportType } from '../constants/types'
-import { GoogleGenAI } from '@google/genai'
 import { calculateBpAverage } from '../utils/helpers'
 
-// --- 1) Your Gemini API key here (no extra npm install needed) ---
-const GEMINI_API_KEY = 'AIzaSyD4yqJrdxrWSeIyBAwXcdZayJ2fXP2my3Q'
-
-// Helper to call Gemini text model
-async function fetchGeminiAnalysis(prompt: string): Promise<string> {
-  const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
-
-  const model = 'gemini-2.0-flash'
-
-  const contents = [
-    {
-      role: 'user',
-      parts: [
-        {
-          text: prompt,
-        },
-      ],
-    },
-  ]
-
-  try {
-    const response = await ai.models.generateContentStream({
-      model,
-      contents,
-      config: {
-        responseMimeType: 'text/plain',
-      },
-    })
-
-    let output = ''
-    for await (const chunk of response) {
-      if (chunk.text) {
-        output += chunk.text
-      }
-    }
-
-    return output.trim() || 'No AI analysis available.'
-  } catch (err) {
-    console.error('[Gemini SDK Error]', err)
-    return 'AI analysis unavailable.'
-  }
-}
+export const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY
 
 type htmlTemplateType = {
   patientId: string
