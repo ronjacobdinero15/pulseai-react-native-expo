@@ -1,25 +1,18 @@
-import React, { useState } from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-  ActivityIndicator,
-} from 'react-native'
-import MyTouchableOpacity from '../../components/MyTouchableOpacity'
-import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-import { COLORS } from '../../constants/Colors'
-import MyText from '../../components/MyText'
-import DropdownComponent from '../../components/Dropdown'
-import { Controller, useForm, useWatch } from 'react-hook-form'
-import moment from 'moment'
-import { formatDate, formatDateForText } from '../../utils/helpers'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+import { Link, useRouter } from 'expo-router'
+import moment from 'moment'
+import React, { useState } from 'react'
+import { Controller, useForm, useWatch } from 'react-hook-form'
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native'
+import DropdownComponent from '../../components/Dropdown'
+import MyText from '../../components/MyText'
+import MyTouchableOpacity from '../../components/MyTouchableOpacity'
+import { COLORS } from '../../constants/Colors'
+import { reportType } from '../../constants/types'
 import { useAuth } from '../../contexts/AuthContext'
 import usePatientPdfView from '../../hooks/usePdfView'
-import { reportType } from '../../constants/types'
-// import RadioButton from '../../components/RadioButton'
+import { formatDate, formatDateForText } from '../../utils/helpers'
 
 const REPORT_DATE_RANGE = [
   {
@@ -65,6 +58,7 @@ export default function GenerateReport() {
     setIsGeneratingPdf(true)
     try {
       await generateAndOpenPdf({ patientId, startDate, endDate })
+      reset()
     } catch (error) {
       console.error('Error generating PDF:', error)
     } finally {
@@ -114,7 +108,7 @@ export default function GenerateReport() {
 
         {reportType === 'custom' && (
           <View>
-            <MyText style={styles.inputLabel}>Select start date:</MyText>
+            <MyText style={styles.inputLabel}>Select range:</MyText>
 
             <View style={styles.dateGroup}>
               {/* START DATE */}
@@ -124,9 +118,9 @@ export default function GenerateReport() {
                   name="startDate"
                   rules={{
                     required: 'Required.',
-                    validate: value =>
+                    validate: (value, fieldValues) =>
                       moment(value, 'MM/DD/YYYY').isBefore(
-                        moment(endDate, 'MM/DD/YYYY')
+                        moment(fieldValues.endDate, 'MM/DD/YYYY')
                       ) || 'Start date must be before end date.',
                   }}
                   render={({ field: { onChange, value } }) => (
@@ -225,27 +219,35 @@ export default function GenerateReport() {
           </View>
         )}
 
-        {/* <View style={styles.inputControl}>
-          <MyText>Include medication history report?</MyText>
-
-          <Controller
-            control={control}
-            rules={{ required: 'This field is required.' }}
-            render={({ field: { onChange, value } }) => (
-              <RadioButton
-                selected={value}
-                options={['Yes', 'No']}
-                handleRadioPress={onChange}
-              />
-            )}
-            name="includeMedication"
-          />
-          {errors.includeMedication && (
-            <MyText style={styles.errorLabel}>
-              {errors.includeMedication.message}
-            </MyText>
-          )}
-        </View> */}
+        <View
+          style={{
+            backgroundColor: COLORS.secondary[100],
+            padding: 15,
+            borderRadius: 8,
+            marginTop: reportType === 'custom' ? 20 : 0,
+          }}
+        >
+          <Link
+            href="https://www.acc.org/latest-in-cardiology/ten-points-to-remember/2017/11/09/11/41/2017-guideline-for-high-blood-pressure-in-adults"
+            style={{
+              textAlign: 'center',
+              color: COLORS.primary[500],
+              fontSize: 16,
+              fontWeight: 'bold',
+            }}
+          >
+            Source : ACC/AHA
+          </Link>
+          <MyText size="h6" style={{ fontStyle: 'italic' }}>
+            To make sure we get an accurate picture of your blood pressure,
+            we’ll use the average of at least two readings taken on two
+            different places to estimate the individual’s level of BP.
+            Out-of-office and self-monitoring of BP measurements are recommended
+            to confirm the diagnosis of hypertension and for titration of
+            BP-lowering medication, in conjunction with clinical interventions
+            and telehealth counseling.
+          </MyText>
+        </View>
 
         <MyTouchableOpacity
           style={[

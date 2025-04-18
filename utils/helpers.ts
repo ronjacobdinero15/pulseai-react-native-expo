@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { DateListType } from '../constants/dates'
+import { BpAverages, BpType } from '../constants/bp'
 
 export const formatDateForText = (timestamp: string) => {
   return moment(timestamp, 'MM/DD/YYYY').format('ll')
@@ -79,4 +80,23 @@ export const validateBpInput = (value: string) => {
   }
 
   return true
+}
+
+export const calculateBpAverage = (readings: BpAverages[]) => {
+  if (readings.length === 0) return { systolic: 0, diastolic: 0, pulse_rate: 0 }
+
+  const totals = readings.reduce(
+    (acc, { systolic, diastolic, pulseRate }) => ({
+      systolic: acc.systolic + systolic,
+      diastolic: acc.diastolic + diastolic,
+      pulseRate: acc.pulseRate + pulseRate,
+    }),
+    { systolic: 0, diastolic: 0, pulseRate: 0 }
+  )
+  const n = readings.length
+  return {
+    systolic: (totals.systolic / n).toFixed(1),
+    diastolic: (totals.diastolic / n).toFixed(1),
+    pulseRate: (totals.pulseRate / n).toFixed(1),
+  }
 }
