@@ -18,6 +18,8 @@ import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
 import usePatientPdfView from '../../../hooks/usePdfView'
 import { deletePatientAccountAndData } from '../../../services/apiAuth'
+import ChatBot from '../../../components/ChatBot'
+
 
 type Tab = {
   name: string
@@ -31,6 +33,8 @@ type Tab = {
 export default function Profile() {
   const { currentUser, userSignOut } = useAuth()
   const router = useRouter()
+  const [showChat, setShowChat] = useState(false)
+
   const [showAccountDeletionModal, setShowAccountDeletionModal] =
     useState(false)
   const [showPasswordConfirmModal, setShowPasswordConfirmModal] =
@@ -148,9 +152,30 @@ export default function Profile() {
 
                 <MyText size="h4">{tab.name}</MyText>
               </MyTouchableOpacity>
+              
             ))}
+              <MyTouchableOpacity
+                style={[styles.tabBtn, styles.divider]}
+                onPress={() => setShowChat(true)}
+              >
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                  name="chatbubble-ellipses"
+                  size={35}
+                  color={COLORS.primary[500]}
+                />
+                </View>
+                <MyText size="h4">Chat with AI</MyText>
+              </MyTouchableOpacity>
+            
           </View>
         }
+      />
+
+      <ChatBot
+        visible={showChat}
+        onClose={() => setShowChat(false)}
+        patientId={currentUser!.id!}
       />
 
       <MyModal
