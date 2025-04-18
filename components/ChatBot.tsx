@@ -60,9 +60,7 @@ Gender: ${profile.gender}
 Height: ${profile.bmiHeightCm} cm
 Weight: ${profile.bmiWeightKg} kg
 BP readings: ${bpList.map(b => `${b.dateTaken}: ${b.systolic}/${b.diastolic}`).join('; ')}
-Medications: ${medicationList.map(m => m.medicationName).join(', ')}
-
-Provide a concise clinical interpretation and recommendations based on the data above.`
+Medications: ${medicationList.map(m => m.medicationName).join(', ')}`
 }
 
 export default function ChatBot({
