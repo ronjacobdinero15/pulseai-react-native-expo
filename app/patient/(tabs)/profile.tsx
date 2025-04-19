@@ -20,10 +20,15 @@ import usePatientPdfView from '../../../hooks/usePdfView'
 import { deletePatientAccountAndData } from '../../../services/apiAuth'
 import ChatBot from '../../../components/ChatBot'
 
-
 type Tab = {
   name: string
-  icon: 'settings' | 'key' | 'exit' | 'delete' | 'file-tray-stacked-outline'
+  icon:
+    | 'settings'
+    | 'key'
+    | 'exit'
+    | 'delete'
+    | 'file-tray-stacked-outline'
+    | 'chatbubble-ellipses'
   path?:
     | '/patient/update-profile'
     | '/patient/update-password'
@@ -64,6 +69,10 @@ export default function Profile() {
       path: '/patient/generate-report',
     },
     {
+      name: 'Chat with AI',
+      icon: 'chatbubble-ellipses',
+    },
+    {
       name: 'Erase all my data',
       icon: 'delete',
     },
@@ -99,171 +108,178 @@ export default function Profile() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Image
-          source={require('../../../assets/images/smiley.png')}
-          style={{ width: 60, height: 60 }}
-        />
-        <MyText size="h2">{currentUser?.firstName}</MyText>
-        <MyText style={{ color: COLORS.secondary[400] }}>
-          {currentUser?.email}
-        </MyText>
-      </View>
+    <FlatList
+      data={[]}
+      renderItem={() => null}
+      style={styles.mainContainer}
+      ListHeaderComponent={
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <Image
+              source={require('../../../assets/images/smiley.png')}
+              style={{ width: 60, height: 60 }}
+            />
+            <MyText size="h2">{currentUser?.firstName}</MyText>
+            <MyText style={{ color: COLORS.secondary[400] }}>
+              {currentUser?.email}
+            </MyText>
+          </View>
 
-      <FlatList
-        data={[]}
-        renderItem={() => null}
-        ListHeaderComponent={
-          <View style={styles.tabsContainer}>
-            {tabs.map(tab => (
-              <MyTouchableOpacity
-                key={tab.name}
-                style={[
-                  styles.tabBtn,
-                  tab.icon === 'file-tray-stacked-outline' && styles.divider,
-                ]}
-                onPress={() => {
-                  if (tab.path) {
-                    router.push(tab.path)
-                  } else if (tab.name === 'Logout') {
-                    userSignOut({ role: 'patient' })
-                  } else if (tab.name === 'Erase all my data') {
-                    setShowAccountDeletionModal(true)
-                  }
-                }}
-                disabled={isDeleting}
-              >
-                <View style={styles.iconContainer}>
-                  {tab.icon === 'delete' ? (
-                    <AntDesign
-                      name="delete"
-                      size={35}
-                      color={COLORS.primary[500]}
-                    />
-                  ) : (
-                    <Ionicons
-                      name={tab.icon}
-                      size={35}
-                      color={COLORS.primary[500]}
-                    />
+          <FlatList
+            data={[]}
+            renderItem={() => null}
+            ListHeaderComponent={
+              <View style={styles.tabsContainer}>
+                {tabs.map(tab => (
+                  <MyTouchableOpacity
+                    key={tab.name}
+                    style={[
+                      styles.tabBtn,
+                      tab.icon === 'file-tray-stacked-outline' &&
+                        styles.divider,
+                    ]}
+                    onPress={() => {
+                      if (tab.path) {
+                        router.push(tab.path)
+                      } else if (tab.name === 'Logout') {
+                        userSignOut({ role: 'patient' })
+                      } else if (tab.name === 'Erase all my data') {
+                        setShowAccountDeletionModal(true)
+                      } else if (tab.name === 'Chat with AI') {
+                        setShowChat(true)
+                      }
+                    }}
+                    disabled={isDeleting}
+                  >
+                    <View style={styles.iconContainer}>
+                      {tab.icon === 'delete' ? (
+                        <AntDesign
+                          name="delete"
+                          size={35}
+                          color={COLORS.primary[500]}
+                        />
+                      ) : (
+                        <Ionicons
+                          name={tab.icon}
+                          size={35}
+                          color={COLORS.primary[500]}
+                        />
+                      )}
+                    </View>
+
+                    <MyText size="h4">{tab.name}</MyText>
+                  </MyTouchableOpacity>
+                ))}
+              </View>
+            }
+          />
+
+          <ChatBot
+            visible={showChat}
+            onClose={() => setShowChat(false)}
+            patientId={currentUser!.id!}
+          />
+
+          <MyModal
+            visible={showAccountDeletionModal}
+            title="Confirm Account Deletion"
+            onRequestClose={() => setShowAccountDeletionModal(false)}
+          >
+            {showPasswordConfirmModal ? (
+              <View style={styles.modalContent}>
+                <View style={{ marginBottom: 10 }}>
+                  <MyTextInput
+                    placeholder="Enter your password"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={text => {
+                      setPassword(text)
+                      setError('')
+                    }}
+                    style={styles.passwordInput}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                  />
+                  {error && (
+                    <MyText style={{ color: COLORS.error }}>{error}</MyText>
                   )}
                 </View>
 
-                <MyText size="h4">{tab.name}</MyText>
-              </MyTouchableOpacity>
-              
-            ))}
-              <MyTouchableOpacity
-                style={[styles.tabBtn, styles.divider]}
-                onPress={() => setShowChat(true)}
-              >
-                <View style={styles.iconContainer}>
-                  <Ionicons
-                  name="chatbubble-ellipses"
-                  size={35}
-                  color={COLORS.primary[500]}
-                />
+                <View style={styles.modalButtons}>
+                  <MyTouchableOpacity
+                    onPress={() => {
+                      setShowAccountDeletionModal(false)
+                      setShowPasswordConfirmModal(false)
+                    }}
+                    style={[
+                      styles.modalButton,
+                      { borderWidth: 1, borderColor: COLORS.secondary[200] },
+                    ]}
+                  >
+                    <MyText>Cancel</MyText>
+                  </MyTouchableOpacity>
+                  <MyTouchableOpacity
+                    onPress={handleDeletePatientAccount}
+                    style={[
+                      styles.modalButton,
+                      { backgroundColor: COLORS.error },
+                    ]}
+                  >
+                    {isDeleting ? (
+                      <ActivityIndicator size="large" color="white" />
+                    ) : (
+                      <MyText style={{ color: 'white' }}>Delete</MyText>
+                    )}
+                  </MyTouchableOpacity>
                 </View>
-                <MyText size="h4">Chat with AI</MyText>
-              </MyTouchableOpacity>
-            
-          </View>
-        }
-      />
+              </View>
+            ) : (
+              <View style={styles.modalContent}>
+                <MyText style={{ textAlign: 'center', marginBottom: 20 }}>
+                  Are you sure you want to delete your account? This action
+                  cannot be undone.
+                </MyText>
 
-      <ChatBot
-        visible={showChat}
-        onClose={() => setShowChat(false)}
-        patientId={currentUser!.id!}
-      />
-
-      <MyModal
-        visible={showAccountDeletionModal}
-        title="Confirm Account Deletion"
-        onRequestClose={() => setShowAccountDeletionModal(false)}
-      >
-        {showPasswordConfirmModal ? (
-          <View style={styles.modalContent}>
-            <View style={{ marginBottom: 10 }}>
-              <MyTextInput
-                placeholder="Enter your password"
-                secureTextEntry
-                value={password}
-                onChangeText={text => {
-                  setPassword(text)
-                  setError('')
-                }}
-                style={styles.passwordInput}
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-              {error && (
-                <MyText style={{ color: COLORS.error }}>{error}</MyText>
-              )}
-            </View>
-
-            <View style={styles.modalButtons}>
-              <MyTouchableOpacity
-                onPress={() => {
-                  setShowAccountDeletionModal(false)
-                  setShowPasswordConfirmModal(false)
-                }}
-                style={[
-                  styles.modalButton,
-                  { borderWidth: 1, borderColor: COLORS.secondary[200] },
-                ]}
-              >
-                <MyText>Cancel</MyText>
-              </MyTouchableOpacity>
-              <MyTouchableOpacity
-                onPress={handleDeletePatientAccount}
-                style={[styles.modalButton, { backgroundColor: COLORS.error }]}
-              >
-                {isDeleting ? (
-                  <ActivityIndicator size="large" color="white" />
-                ) : (
-                  <MyText style={{ color: 'white' }}>Delete</MyText>
-                )}
-              </MyTouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.modalContent}>
-            <MyText style={{ textAlign: 'center', marginBottom: 20 }}>
-              Are you sure you want to delete your account? This action cannot
-              be undone.
-            </MyText>
-
-            <View style={styles.modalButtons}>
-              <MyTouchableOpacity
-                onPress={() => setShowAccountDeletionModal(false)}
-                style={[
-                  styles.modalButton,
-                  { borderWidth: 1, borderColor: COLORS.secondary[200] },
-                ]}
-              >
-                <MyText>No</MyText>
-              </MyTouchableOpacity>
-              <MyTouchableOpacity
-                onPress={() => setShowPasswordConfirmModal(true)}
-                style={[styles.modalButton, { backgroundColor: COLORS.error }]}
-              >
-                <MyText style={{ color: 'white' }}>Continue</MyText>
-              </MyTouchableOpacity>
-            </View>
-          </View>
-        )}
-      </MyModal>
-    </View>
+                <View style={styles.modalButtons}>
+                  <MyTouchableOpacity
+                    onPress={() => setShowAccountDeletionModal(false)}
+                    style={[
+                      styles.modalButton,
+                      { borderWidth: 1, borderColor: COLORS.secondary[200] },
+                    ]}
+                  >
+                    <MyText>No</MyText>
+                  </MyTouchableOpacity>
+                  <MyTouchableOpacity
+                    onPress={() => setShowPasswordConfirmModal(true)}
+                    style={[
+                      styles.modalButton,
+                      { backgroundColor: COLORS.error },
+                    ]}
+                  >
+                    <MyText style={{ color: 'white' }}>Continue</MyText>
+                  </MyTouchableOpacity>
+                </View>
+              </View>
+            )}
+          </MyModal>
+        </View>
+      }
+    />
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  container: {
+    flex: 1,
+    height: '100%',
+    backgroundColor: 'white',
     padding: 25,
+    marginBottom: 100,
   },
   headerContainer: {
     marginTop: 50,

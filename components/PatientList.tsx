@@ -6,6 +6,7 @@ import usePatientPdfView from '../hooks/usePdfView'
 import MyText from './MyText'
 import MyTouchableOpacity from './MyTouchableOpacity'
 import Spinner from './Spinner'
+import { router } from 'expo-router'
 
 type PatientListProps = {
   patients: PatientType[]
@@ -62,7 +63,11 @@ function PatientList({ patients, isLoading }: PatientListProps) {
               <MyText>{item.fullName}</MyText>
               <MyTouchableOpacity
                 style={styles.generateBtn}
-                onPress={() => handleGenerateAndOpenPdf(item.patientId)}
+                onPress={() =>
+                  router.push(
+                    `/doctor/generate-report?patientIdFromDoctor=${item.patientId}`
+                  )
+                }
               >
                 {loadingPdfIds.includes(item.patientId) ? (
                   <ActivityIndicator size="large" color="white" />

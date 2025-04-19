@@ -19,6 +19,7 @@ import { getMedicationList } from '../services/apiMedication'
 import type { BpType } from '../constants/bp'
 import type { Medication } from '../constants/medication'
 import type { PatientProfileType } from '../constants/signup'
+import MyTextInput from './MyTextInput'
 
 // direct Gemini via REST
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY!
@@ -59,7 +60,9 @@ Age: ${profile.age}
 Gender: ${profile.gender}
 Height: ${profile.bmiHeightCm} cm
 Weight: ${profile.bmiWeightKg} kg
-BP readings: ${bpList.map(b => `${b.dateTaken}: ${b.systolic}/${b.diastolic}`).join('; ')}
+BP readings: ${bpList
+    .map(b => `${b.dateTaken}: ${b.systolic}/${b.diastolic}`)
+    .join('; ')}
 Medications: ${medicationList.map(m => m.medicationName).join(', ')}`
 }
 
@@ -119,7 +122,10 @@ export default function ChatBot({
       <View style={styles.container}>
         <View style={styles.header}>
           <MyText size="h3">Chat about your data</MyText>
-          <MyTouchableOpacity onPress={onClose}>
+          <MyTouchableOpacity
+            onPress={onClose}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
             <Ionicons name="close" size={28} color={COLORS.error} />
           </MyTouchableOpacity>
         </View>
@@ -134,17 +140,16 @@ export default function ChatBot({
                 <View
                   style={[
                     styles.bubble,
-                    item.role === 'user'
-                      ? styles.userBubble
-                      : styles.aiBubble,
+                    item.role === 'user' ? styles.userBubble : styles.aiBubble,
                   ]}
                 >
                   <MyText>{item.text}</MyText>
                 </View>
               )}
             />
+
             <View style={styles.inputRow}>
-              <TextInput
+              <MyTextInput
                 style={styles.input}
                 value={input}
                 onChangeText={setInput}
@@ -162,13 +167,22 @@ export default function ChatBot({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'white', padding: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  body: { flex: 1, marginTop: 12 },
+  body: {
+    flex: 1,
+    marginTop: 12,
+    marginHorizontal: 16,
+  },
   bubble: {
     marginVertical: 4,
     padding: 8,
@@ -188,17 +202,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopWidth: 1,
     borderColor: COLORS.secondary[200],
-    paddingTop: 8,
+    paddingVertical: 16,
   },
   input: {
     flex: 1,
     padding: 10,
     borderWidth: 1,
     borderColor: COLORS.secondary[200],
-    borderRadius: 20,
   },
   sendBtn: {
     marginLeft: 8,
-    padding: 8,
+    paddingHorizontal: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 })

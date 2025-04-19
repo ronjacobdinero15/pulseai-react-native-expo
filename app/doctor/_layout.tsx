@@ -5,6 +5,7 @@ export default function DoctorLayout() {
     <Stack screenOptions={{ headerShown: false }} initialRouteName="login">
       <Stack.Screen name="login" />
       <Stack.Screen name="forgot-password" />
+      <Stack.Screen name="generate-report" />
       <Stack.Screen name="update-password" />
       <Stack.Screen name="update-profile" />
 
