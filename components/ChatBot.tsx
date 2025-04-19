@@ -1,28 +1,19 @@
-// components/ChatBot.tsx
-
-import React, { useState, useEffect } from 'react'
-import {
-  Modal,
-  View,
-  FlatList,
-  TextInput,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import MyTouchableOpacity from './MyTouchableOpacity'
-import MyText from './MyText'
+import React, { useEffect, useState } from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { COLORS } from '../constants/Colors'
-import { getPatientProfile } from '../services/apiAuth'
-import { getBpList } from '../services/apiBp'
-import { getMedicationList } from '../services/apiMedication'
-import type { BpType } from '../constants/bp'
-import type { Medication } from '../constants/medication'
-import type { PatientProfileType } from '../constants/signup'
+import { useAiPrompt } from '../hooks/useAiPrompt'
+import MyText from './MyText'
 import MyTextInput from './MyTextInput'
+import MyTouchableOpacity from './MyTouchableOpacity'
 
-// direct Gemini via REST
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY!
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY
 
 async function fetchGeminiChat(
   prompt: string,
@@ -49,23 +40,6 @@ async function fetchGeminiChat(
   }
 }
 
-function buildBasePrompt(
-  patientId: string,
-  profile: PatientProfileType,
-  bpList: BpType[],
-  medicationList: Medication[]
-): string {
-  return `Patient ID: ${patientId}
-Age: ${profile.age}
-Gender: ${profile.gender}
-Height: ${profile.bmiHeightCm} cm
-Weight: ${profile.bmiWeightKg} kg
-BP readings: ${bpList
-    .map(b => `${b.dateTaken}: ${b.systolic}/${b.diastolic}`)
-    .join('; ')}
-Medications: ${medicationList.map(m => m.medicationName).join(', ')}`
-}
-
 export default function ChatBot({
   visible,
   onClose,
@@ -75,6 +49,7 @@ export default function ChatBot({
   onClose: () => void
   patientId: string
 }) {
+  const { fetchPatientInfo } = useAiPrompt()
   const [loading, setLoading] = useState(true)
   const [basePrompt, setBasePrompt] = useState<string>('')
   const [messages, setMessages] = useState<
@@ -86,19 +61,14 @@ export default function ChatBot({
     if (!visible) return
     ;(async () => {
       setLoading(true)
-      const resP = await getPatientProfile(patientId)
-      // 🛠️ Pass an object, not a string
-      const resB = await getBpList({ patientId })
-      const resM = await getMedicationList({ patientId })
-      const prompt = buildBasePrompt(
-        patientId,
-        resP.patient,
-        resB.bpList || [],
-        resM.medications || []
-      )
-      console.log('[ChatBot] Base prompt:', prompt)
-      setBasePrompt(prompt)
-      setLoading(false)
+      try {
+        const { prompt } = await fetchPatientInfo({ patientId })
+        setBasePrompt(prompt)
+      } catch (error) {
+        console.error('[ChatBot] 🔴 Error fetching patient info:', error)
+      } finally {
+        setLoading(false)
+      }
     })()
   }, [visible, patientId])
 

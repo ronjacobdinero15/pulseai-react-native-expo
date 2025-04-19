@@ -10,15 +10,14 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+import ChatBot from '../../../components/ChatBot'
 import MyModal from '../../../components/MyModal'
 import MyText from '../../../components/MyText'
 import MyTextInput from '../../../components/MyTextInput'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
-import usePatientPdfView from '../../../hooks/usePdfView'
 import { deletePatientAccountAndData } from '../../../services/apiAuth'
-import ChatBot from '../../../components/ChatBot'
 
 type Tab = {
   name: string
