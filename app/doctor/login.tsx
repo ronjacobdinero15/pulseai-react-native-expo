@@ -28,12 +28,7 @@ export default function SignIn() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<SignInType>({
-    defaultValues: {
-      email: 'ronjacobdinero15@gmail.com',
-      password: 'Qwerty@123',
-    },
-  })
+  } = useForm<SignInType>()
 
   const router = useRouter()
   const { userSignIn, isLoading, setIsLoading } = useAuth()
