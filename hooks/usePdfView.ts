@@ -3,8 +3,8 @@ import * as IntentLauncher from 'expo-intent-launcher'
 import * as Print from 'expo-print'
 import { Alert, Linking, Platform } from 'react-native'
 import PdfReport from '../components/PdfReport'
-import type { BpType } from '../constants/bp'
 import type { reportType } from '../constants/types'
+import { updateGenerateReport } from '../services/apiAuth'
 import { useAiPrompt } from './useAiPrompt'
 
 export const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY
@@ -79,6 +79,7 @@ function usePatientPdfView() {
     if (returnHtml) return html
 
     try {
+      // GENERATE PDF
       const { uri } = await Print.printToFileAsync({ html, base64: false })
       const newUri =
         FileSystem.documentDirectory +

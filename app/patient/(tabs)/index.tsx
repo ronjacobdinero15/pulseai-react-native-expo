@@ -9,7 +9,9 @@ import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import Spinner from '../../../components/Spinner'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
+import { getPatientProfile } from '../../../services/apiAuth'
 import { getBpForTodayList } from '../../../services/apiBp'
+import SurveyModal from '../../../components/SurveyModal'
 
 export default function HomeScreen() {
   const [bpList, setBpList] = useState([])
@@ -21,6 +23,7 @@ export default function HomeScreen() {
   const [openGuideAccordion, setOpenGuideAccordion] = useState(false)
   const router = useRouter()
   const { currentUser, refresh, setRefresh } = useAuth()
+  const [isSurveyModalVisible, setSurveyModalVisible] = useState(false)
 
   useEffect(() => {
     const fetchBp = async () => {
@@ -36,7 +39,17 @@ export default function HomeScreen() {
       }
       setRefresh(0)
     }
+
+    const fetchIfPatientDidSurvey = async () => {
+      const data = await getPatientProfile(currentUser?.id!)
+
+      if (!data.patient.didAnsweredSurvey) {
+        setSurveyModalVisible(true)
+      }
+    }
+
     fetchBp()
+    fetchIfPatientDidSurvey()
   }, [refresh])
 
   if (isLoading) return <Spinner />
@@ -48,6 +61,12 @@ export default function HomeScreen() {
       style={styles.mainContainer}
       ListHeaderComponent={
         <View style={styles.container}>
+          <SurveyModal
+            visible={isSurveyModalVisible}
+            onClose={() => setSurveyModalVisible(false)}
+            patientId={currentUser?.id!}
+          />
+
           <View style={styles.headerContainer}>
             <MyText
               size="h2"

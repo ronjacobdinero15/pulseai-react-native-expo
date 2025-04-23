@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { Link, useRouter } from 'expo-router'
+import { useSearchParams } from 'expo-router/build/hooks'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
@@ -13,7 +14,6 @@ import { reportType } from '../../constants/types'
 import { useAuth } from '../../contexts/AuthContext'
 import usePatientPdfView from '../../hooks/usePdfView'
 import { formatDate, formatDateForText } from '../../utils/helpers'
-import { useSearchParams } from 'expo-router/build/hooks'
 
 const REPORT_DATE_RANGE = [
   {

@@ -85,6 +85,30 @@ export async function updatePatientNeedsOnboarding(
   })
 }
 
+export async function updateGenerateReport(patientId: string) {
+  await fetch(`${apiUrl}?action=updateGenerateReport`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      patient_id: patientId,
+    }),
+  })
+}
+
+export async function updateSurveyAnswered(patientId: string) {
+  await fetch(`${apiUrl}?action=updateSurveyAnswered`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      patient_id: patientId,
+    }),
+  })
+}
+
 export async function getPatientProfile(patientId: string) {
   const res = await fetch(
     `${apiUrl}?action=getPatientProfile&patient_id=${patientId}`,

@@ -114,6 +114,22 @@ function updatePatientNeedsOnboarding($pdo, $patient_id, $needs_onboarding) {
     ]);
 }
 
+function updateGenerateReport($pdo, $patient_id) {
+    $sql = "UPDATE patients SET did_generate_report = 1 WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $patient_id
+    ]);
+}
+
+function updateSurveyAnswered($pdo, $patient_id) {
+    $sql = "UPDATE patients SET did_answered_survey = 1 WHERE patient_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $patient_id
+    ]);
+}
+
 function forgotPassword($pdo, $email, $table_name) {
     date_default_timezone_set('Asia/Manila'); 
     
@@ -329,7 +345,9 @@ function getPatientProfile($pdo, $patient_id) {
             "vices" => json_decode($patient["vices"], true),
             "comorbidities" => json_decode($patient["comorbidities"], true),
             "parentalHypertension" => $patient["parental_hypertension"],
-            "lifestyle" => $patient["lifestyle"]
+            "lifestyle" => $patient["lifestyle"],
+            "didGenerateReport"=> $patient["did_generate_report"],
+            "didAnsweredSurvey"=> $patient["did_answered_survey"]
         ];
 
         return [

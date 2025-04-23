@@ -416,7 +416,7 @@ function PdfReport({
                 </tr>
               </tbody>
             </table>
-            <a href="https://www.philippinesocietyofhypertension.org.ph/ClinicalPracticeGuidelines.pdf" target="_blank" style="color: #00a6f4; text-decoration: underline;">Philippine Society of Hypertension Guidelines</a>
+            <a href="https://www.philippinesocietyofhypertension.org.ph/ClinicalPracticeGuidelines.pdf" target="_blank" style="color: #00a6f4; text-decoration: underline;">Reference: Philippine Society of Hypertension Guidelines</a>
           </div>
           
           <div class="disclaimer">

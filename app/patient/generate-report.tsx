@@ -12,7 +12,9 @@ import { COLORS } from '../../constants/Colors'
 import { reportType } from '../../constants/types'
 import { useAuth } from '../../contexts/AuthContext'
 import usePatientPdfView from '../../hooks/usePdfView'
+import { getPatientProfile, updateGenerateReport } from '../../services/apiAuth'
 import { formatDate, formatDateForText } from '../../utils/helpers'
+import SurveyModal from '../../components/SurveyModal'
 
 const REPORT_DATE_RANGE = [
   {
@@ -43,6 +45,7 @@ export default function GenerateReport() {
   const router = useRouter()
   const { currentUser } = useAuth()
   const patientId = currentUser?.id!
+  const [isSurveyModalVisible, setSurveyModalVisible] = useState(false)
 
   const generateAndOpenPdf = usePatientPdfView()
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
@@ -58,16 +61,27 @@ export default function GenerateReport() {
     setIsGeneratingPdf(true)
     try {
       await generateAndOpenPdf({ patientId, startDate, endDate })
+      await updateGenerateReport(patientId)
       reset()
     } catch (error) {
       console.error('Error generating PDF:', error)
     } finally {
       setIsGeneratingPdf(false)
+      const data = await getPatientProfile(patientId)
+
+      if (!data.patient.didAnsweredSurvey) {
+        setSurveyModalVisible(true)
+      }
     }
   }
 
   return (
     <View style={styles.container}>
+      <SurveyModal
+        visible={isSurveyModalVisible}
+        onClose={() => setSurveyModalVisible(false)}
+        patientId={patientId}
+      />
       <View style={styles.headerContainer}>
         <MyTouchableOpacity
           style={styles.backBtn}

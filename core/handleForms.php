@@ -132,6 +132,12 @@ function handlePut($pdo) {
         case 'updateAdminPassword':
             echo json_encode(updateAdminPassword($pdo, $data['admin_id'], $data['old_password'], $data['new_password']));
             break;
+        case 'updateGenerateReport':
+            echo json_encode(updateGenerateReport($pdo, $data['patient_id']));
+            break;
+        case 'updateSurveyAnswered':
+            echo json_encode(updateSurveyAnswered($pdo, $data['patient_id']));
+            break;
         default:
             echo json_encode(['error' => 'Invalid action']);
     }

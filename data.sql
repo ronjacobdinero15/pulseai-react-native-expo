@@ -31,6 +31,8 @@ CREATE TABLE patients (
     parental_hypertension VARCHAR(50),
     lifestyle VARCHAR(50),
     needs_onboarding BOOLEAN DEFAULT TRUE,
+    did_generate_report BOOLEAN DEFAULT FALSE,
+    did_answer_survey BOOLEAN DEFAULT FALSE,
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
