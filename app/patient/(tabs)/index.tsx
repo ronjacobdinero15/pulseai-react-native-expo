@@ -43,7 +43,7 @@ export default function HomeScreen() {
     const fetchIfPatientDidSurvey = async () => {
       const data = await getPatientProfile(currentUser?.id!)
 
-      if (!data.patient.didAnsweredSurvey) {
+      if (!data.patient.didAnsweredSurvey && data.patient.didGenerateReport) {
         setSurveyModalVisible(true)
       }
     }
