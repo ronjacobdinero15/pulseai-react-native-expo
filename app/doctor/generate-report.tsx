@@ -72,7 +72,7 @@ export default function GenerateReport() {
       <View style={styles.headerContainer}>
         <MyTouchableOpacity
           style={styles.backBtn}
-          onPress={() => router.replace('/patient/(tabs)/profile')}
+          onPress={() => router.replace('/doctor/(tabs)/profile')}
         >
           <Ionicons name="arrow-back" size={24} color={COLORS.primary[500]} />
         </MyTouchableOpacity>
