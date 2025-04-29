@@ -176,96 +176,119 @@ export default function AddNewBp() {
                 editable={false}
               />
               {/* SYSTOLIC */}
-              <View style={styles.inputContainer}>
-                <Controller
-                  control={control}
-                  rules={{
-                    required: 'This field is required.',
-                    maxLength: {
-                      value: 4,
-                      message: 'Invalid input.',
-                    },
-                    minLength: {
-                      value: 2,
-                      message: 'Invalid input.',
-                    },
-                    validate: validateBpInput,
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <MyTextInput
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      maxLength={4}
-                      keyboardType="numeric"
-                      style={styles.input}
-                    />
-                  )}
-                  name="systolic"
-                />
+              {/* TODO: FIX */}
+              <View>
+                <View style={styles.inputContainer}>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'Required.',
+                      maxLength: {
+                        value: 4,
+                        message: 'Invalid input.',
+                      },
+                      minLength: {
+                        value: 2,
+                        message: 'Invalid input.',
+                      },
+                      validate: validateBpInput,
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        maxLength={4}
+                        keyboardType="numeric"
+                        style={styles.input}
+                      />
+                    )}
+                    name="systolic"
+                  />
 
-                <MyText>mmHg</MyText>
+                  <MyText>mmHg</MyText>
+                </View>
+                {errors.systolic && (
+                  <MyText style={[styles.errorLabel, { width: '100%' }]}>
+                    {errors.systolic.message}
+                  </MyText>
+                )}
               </View>
+
               {/* DIASTOLIC */}
-              <View style={styles.inputContainer}>
-                <Controller
-                  control={control}
-                  rules={{
-                    required: 'This field is required.',
-                    maxLength: {
-                      value: 4,
-                      message: 'Invalid input.',
-                    },
-                    minLength: {
-                      value: 2,
-                      message: 'Invalid input.',
-                    },
-                    validate: validateBpInput,
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <MyTextInput
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      maxLength={4}
-                      keyboardType="numeric"
-                      style={styles.input}
-                    />
-                  )}
-                  name="diastolic"
-                />
-                <MyText>mmHg</MyText>
+              <View>
+                <View style={styles.inputContainer}>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'Required.',
+                      maxLength: {
+                        value: 4,
+                        message: 'Invalid input.',
+                      },
+                      minLength: {
+                        value: 2,
+                        message: 'Invalid input.',
+                      },
+                      validate: validateBpInput,
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        maxLength={4}
+                        keyboardType="numeric"
+                        style={styles.input}
+                      />
+                    )}
+                    name="diastolic"
+                  />
+                  <MyText>mmHg</MyText>
+                </View>
+                {errors.diastolic && (
+                  <MyText style={styles.errorLabel}>
+                    {errors.diastolic.message}
+                  </MyText>
+                )}
               </View>
 
               {/* PULSE RATE */}
-              <View style={styles.inputContainer}>
-                <Controller
-                  control={control}
-                  rules={{
-                    required: 'This field is required.',
-                    maxLength: {
-                      value: 2,
-                      message: 'Invalid input.',
-                    },
-                    minLength: {
-                      value: 1,
-                      message: 'Invalid input.',
-                    },
-                    validate: validateBpInput,
-                  }}
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <MyTextInput
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                      maxLength={2}
-                      keyboardType="numeric"
-                      style={styles.input}
-                    />
-                  )}
-                  name="pulseRate"
-                />
-                <MyText style={{ textAlign: 'left' }}>/min</MyText>
+              <View>
+                <View style={styles.inputContainer}>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: 'Required.',
+                      maxLength: {
+                        value: 3,
+                        message: 'Invalid input.',
+                      },
+                      minLength: {
+                        value: 2,
+                        message: 'Invalid input.',
+                      },
+                      validate: validateBpInput,
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <MyTextInput
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        maxLength={3}
+                        keyboardType="numeric"
+                        style={styles.input}
+                      />
+                    )}
+                    name="pulseRate"
+                  />
+                  <MyText style={{ textAlign: 'left' }}>/min</MyText>
+                </View>
+                {errors.pulseRate && (
+                  <MyText style={styles.errorLabel}>
+                    {errors.pulseRate.message}
+                  </MyText>
+                )}
               </View>
             </View>
           </View>

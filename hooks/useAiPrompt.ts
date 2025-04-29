@@ -42,7 +42,6 @@ export function useAiPrompt() {
       } = await resPatientProfile.patient
 
       const prompt = `
-            First Name: ${firstName},
             Age: ${age}
             Gender: ${gender}
             Height: ${bmiHeightCm} cm

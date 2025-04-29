@@ -303,36 +303,6 @@ export default function SignUp() {
           )}
         </View>
 
-        <View style={styles.inputControl}>
-          <MyText style={styles.inputLabel}>Confirm new password:</MyText>
-
-          <Controller
-            control={control}
-            rules={{
-              required: 'This field is required.',
-              validate: (value, fieldValues) =>
-                value === fieldValues.password || 'Passwords do not match',
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <MyTextInput
-                secureTextEntry
-                placeholder="Confirm Password"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-            )}
-            name="passwordConfirm"
-          />
-          {errors.passwordConfirm && (
-            <MyText style={styles.errorLabel}>
-              {errors.passwordConfirm.message}
-            </MyText>
-          )}
-        </View>
-
         <View style={styles.healthInfo}>
           <View style={styles.divider} />
 
@@ -406,25 +376,21 @@ export default function SignUp() {
         </View>
 
         <View style={styles.inputControl}>
-          <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
+          <MyText style={styles.inputLabel}>
+            BMI (height in feet, inches/cm):
+          </MyText>
 
           <Controller
             control={control}
             rules={{
               required: 'This field is required.',
-              minLength: {
-                value: 2,
-                message: 'Invalid BMI.',
-              },
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MyTextInput
-                placeholder="BMI (height in cm)"
+                placeholder="BMI (height feet, inches/in cm)"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                keyboardType="numeric"
-                maxLength={3}
               />
             )}
             name="bmiHeightCm"
@@ -472,7 +438,6 @@ export default function SignUp() {
 
           <Controller
             control={control}
-            rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Vices"
@@ -494,7 +459,6 @@ export default function SignUp() {
 
           <Controller
             control={control}
-            rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Comorbidities"

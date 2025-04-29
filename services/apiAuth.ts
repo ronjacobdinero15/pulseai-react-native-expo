@@ -12,10 +12,10 @@ export async function registerPatient({
   password,
   age,
   gender,
-  vices,
+  vices = [],
   bmiHeightCm,
   bmiWeightKg,
-  comorbidities,
+  comorbidities = [],
   parentalHypertension,
   lifestyle,
 }: PatientProfileType) {
@@ -153,8 +153,8 @@ export async function updatePatientProfile({
   gender,
   bmiHeightCm,
   bmiWeightKg,
-  vices,
-  comorbidities,
+  vices = [''],
+  comorbidities = [''],
   parentalHypertension,
   lifestyle,
 }: PatientProfileType) {

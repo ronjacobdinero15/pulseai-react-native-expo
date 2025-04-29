@@ -9,7 +9,7 @@ export type PatientProfileType = {
   address: string
   email: string
   password?: string
-  passwordConfirm?: string
+  // passwordConfirm?: string
   age: string
   gender: string
   vices: string[]

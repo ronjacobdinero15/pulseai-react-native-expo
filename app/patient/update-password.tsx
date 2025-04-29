@@ -118,34 +118,6 @@ export default function UpdatePassword() {
           )}
         </View>
 
-        <View style={styles.inputControl}>
-          <Controller
-            control={control}
-            rules={{
-              required: 'This field is required.',
-              validate: (value, fieldValues) =>
-                value === fieldValues.newPassword || 'Passwords do not match',
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <MyTextInput
-                secureTextEntry
-                placeholder="Re-type your new password"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
-            )}
-            name="confirmNewPassword"
-          />
-          {errors.confirmNewPassword && (
-            <MyText style={styles.errorLabel}>
-              {errors.confirmNewPassword.message}
-            </MyText>
-          )}
-        </View>
-
         <Link href="/patient/forgot-password" style={styles.forgotPassword}>
           Forgot your password?
         </Link>

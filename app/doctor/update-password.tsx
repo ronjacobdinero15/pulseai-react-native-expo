@@ -118,7 +118,7 @@ export default function UpdatePassword() {
           )}
         </View>
 
-        <View style={styles.inputControl}>
+        {/* <View style={styles.inputControl}>
           <Controller
             control={control}
             rules={{
@@ -144,7 +144,7 @@ export default function UpdatePassword() {
               {errors.confirmNewPassword.message}
             </MyText>
           )}
-        </View>
+        </View> */}
 
         <Link href="/doctor/forgot-password" style={styles.forgotPassword}>
           Forgot your password?

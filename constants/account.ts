@@ -9,7 +9,7 @@ export type PasswordType = {
   patientId?: string
   oldPassword: string
   newPassword: string
-  confirmNewPassword?: string
+  // confirmNewPassword?: string
 }
 
 export type PatientType = {

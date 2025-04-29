@@ -46,7 +46,7 @@ export default function UpdateProfile() {
       const res = await getPatientProfile(currentUser?.id!)
 
       if (res.success) {
-        reset(res.patient)
+        reset({ ...res.patient, vices: [], comorbidities: [] })
       }
       setIsLoading(false)
     }
@@ -358,24 +358,21 @@ export default function UpdateProfile() {
                 </View>
 
                 <View style={styles.inputControl}>
-                  <MyText style={styles.inputLabel}>BMI (height in cm):</MyText>
+                  <MyText style={styles.inputLabel}>
+                    BMI (height in feet, inches/cm):
+                  </MyText>
+
                   <Controller
                     control={control}
                     rules={{
                       required: 'This field is required.',
-                      minLength: {
-                        value: 2,
-                        message: 'Invalid BMI.',
-                      },
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <MyTextInput
-                        placeholder="BMI (height in cm)"
+                        placeholder="BMI (height feet, inches/in cm)"
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
-                        keyboardType="numeric"
-                        maxLength={3}
                       />
                     )}
                     name="bmiHeightCm"
@@ -394,10 +391,6 @@ export default function UpdateProfile() {
                     control={control}
                     rules={{
                       required: 'This field is required.',
-                      minLength: {
-                        value: 2,
-                        message: 'Invalid BMI.',
-                      },
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <MyTextInput
@@ -405,8 +398,6 @@ export default function UpdateProfile() {
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
-                        keyboardType="numeric"
-                        maxLength={4}
                       />
                     )}
                     name="bmiWeightKg"
@@ -420,14 +411,14 @@ export default function UpdateProfile() {
 
                 <View style={styles.inputControl}>
                   <MyText style={styles.inputLabel}>Vices:</MyText>
+
                   <Controller
                     control={control}
-                    rules={{ required: 'This field is required.' }}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <MultipleSelectListCheckbox
                         label="Vices"
                         data={VICESOPTIONS}
-                        value={value}
+                        value={value || []}
                         onChange={onChange}
                         onBlur={onBlur}
                       />
@@ -446,7 +437,6 @@ export default function UpdateProfile() {
 
                   <Controller
                     control={control}
-                    rules={{ required: 'This field is required.' }}
                     render={({ field: { onChange, onBlur, value } }) => (
                       <MultipleSelectListCheckbox
                         label="Comorbidities"

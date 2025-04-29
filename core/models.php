@@ -2,7 +2,7 @@
 
 require_once 'dbConfig.php';
 
-function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices = [], $comorbidities = [], $parental_hypertension, $lifestyle) {
     $checkUserSql = "SELECT * FROM patients WHERE email = ?";
     $checkUserSqlStmt = $pdo->prepare($checkUserSql);
     $checkUserSqlStmt->execute([$email]);
@@ -388,7 +388,7 @@ function getDoctorProfile($pdo, $doctor_id) {
     }
 }
 
-function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices, $comorbidities, $parental_hypertension, $lifestyle) {
+function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices = [], $comorbidities = [], $parental_hypertension, $lifestyle) {
     // Encode JSON fields since they can contain arrays
     $vices_json = json_encode($vices);
     $comorbidities_json = json_encode($comorbidities);
