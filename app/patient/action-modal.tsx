@@ -196,14 +196,8 @@ export default function MedicationActionModal() {
         <>
           <MyText size="h4" style={{ textAlign: 'center', marginBottom: 16 }}>
             Deleting this medication will remove all future entries, and past
-            entries if hasn't been clicked as missed or taken, you will no
+            entries (if hasn't been clicked as missed or taken), you will no
             longer be able to view or update their status.
-            <MyText size="h4" style={{ fontWeight: 'bold' }}>
-              However, past entries can still be updated and will remain stored
-              in the database.
-            </MyText>
-            Only entries starting from today that have not been updated yet will
-            be deleted.
           </MyText>
 
           <MyTouchableOpacity
