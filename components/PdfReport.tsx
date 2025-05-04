@@ -299,17 +299,27 @@ function PdfReport({
           </tr>
         </thead>
         <tbody>
-          ${
-            medicationList.length > 0
-              ? medicationList
-                  .reduce(
-                    (acc, medication) => {
-                      const dates = medication.dates || []
-                      const actions = medication.actions || []
+        ${
+          medicationList.length > 0
+            ? medicationList
+                .reduce(
+                  (acc, medication) => {
+                    const dates = medication.dates || []
+                    const actions = medication.actions || []
+                    const today = moment().startOf('day')
 
-                      // Create a row for each scheduled date
-                      // Note: We're not filtering for past dates here since our PHP function already filters by date range
-                      const rows = dates.map((medDate: string) => {
+                    const rows = dates
+                      // Filter out future dates without actions
+                      .filter((medDate: string) => {
+                        const dateMoment = moment(medDate, 'MM/DD/YYYY')
+                        const isFuture = dateMoment.isAfter(today)
+                        const hasAction = actions.some(
+                          (a: { date: string }) => a.date === medDate
+                        )
+                        return !isFuture || hasAction
+                      })
+                      // Create table rows
+                      .map((medDate: string) => {
                         const action = actions.find(
                           (a: { date: string }) => a.date === medDate
                         )
@@ -322,25 +332,26 @@ function PdfReport({
                           endDate: medication.endDate,
                         }
                       })
-                      return acc.concat(rows)
-                    },
-                    [] as Array<{
-                      date: string
-                      status: string
-                      time: string
-                      medicationName: string
-                      startDate: string
-                      endDate: string
-                    }>
+
+                    return acc.concat(rows)
+                  },
+                  [] as Array<{
+                    date: string
+                    status: string
+                    time: string
+                    medicationName: string
+                    startDate: string
+                    endDate: string
+                  }>
+                )
+                // Sort the combined rows by date
+                .sort((a, b) =>
+                  moment(a.date, 'MM/DD/YYYY').diff(
+                    moment(b.date, 'MM/DD/YYYY')
                   )
-                  // Sort the combined rows by date
-                  .sort((a, b) =>
-                    moment(a.date, 'MM/DD/YYYY').diff(
-                      moment(b.date, 'MM/DD/YYYY')
-                    )
-                  )
-                  .map(
-                    row => `
+                )
+                .map(
+                  row => `
                       <tr>
                         <td style="white-space: nowrap;">${moment(
                           row.date,
@@ -359,15 +370,15 @@ function PdfReport({
                         )}</td>
                       </tr>
                     `
-                  )
-                  .join('')
-              : `
+                )
+                .join('')
+            : `
                   <tr>
                     <td colspan="6" style="text-align: center; padding: 16px;">
                       No data available
                     </td>
                   </tr>`
-          }
+        }
         </tbody>
       </table>
 
