@@ -767,53 +767,48 @@ function deleteMedicationById($pdo, $medication_id, $date_today) {
     $medication = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$medication) {
-        return [
-            "success" => false,
-            "message" => "Medication not found"
-        ];
+        return ["success" => false, "message" => "Medication not found"];
     }
 
-    // 2. Process dates
+    // 2. Process dates and actions
     $dates = json_decode($medication['dates'], true);
     $actions = json_decode($medication['actions'] ?? '[]', true);
     $today = DateTime::createFromFormat('m/d/Y', $date_today);
 
+    // Filter dates
     $filteredDates = array_filter($dates, function($date) use ($today, $actions) {
         $dateObj = DateTime::createFromFormat('m/d/Y', $date);
         
-        // Keep dates before today
+        // Keep historical dates regardless of actions
         if ($dateObj < $today) return true;
         
-        // Keep dates >= today only if they exist in actions
+        // Keep future dates only with actions
         foreach ($actions as $action) {
             if ($action['date'] === $date) return true;
         }
         return false;
     });
 
-    // 3. Check if all dates were removed
-    if (empty($filteredDates)) {
-        // Delete the entire row
+    // 3. Delete if no actions remain or all dates removed
+    if (empty($actions) || empty($filteredDates)) {
         $deleteStmt = $pdo->prepare("DELETE FROM medications WHERE medication_id = ?");
         $success = $deleteStmt->execute([$medication_id]);
         
         return $success 
             ? ["success" => true, "message" => "Medication deleted successfully"]
             : ["success" => false, "message" => "Failed to delete medication"];
-    } else {    
-        // 4. Update dates and end_date if dates remain
-        $sortedDates = array_values($filteredDates);
-        $end_date = end($sortedDates);
-        
-        $updateStmt = $pdo->prepare("UPDATE medications 
-                                    SET dates = ?, end_date = ?
-                                    WHERE medication_id = ?");
-        $success = $updateStmt->execute([
-            json_encode($sortedDates),
-            $end_date,
-            $medication_id
-        ]);
     }
+
+    // 4. Update remaining dates and end_date
+    $sortedDates = array_values($filteredDates);
+    $updateStmt = $pdo->prepare("UPDATE medications 
+                                SET dates = ?, end_date = ?
+                                WHERE medication_id = ?");
+    $success = $updateStmt->execute([
+        json_encode($sortedDates),
+        end($sortedDates), // New end_date
+        $medication_id
+    ]);
 
     return $success 
         ? ["success" => true, "message" => "Future medications cleared successfully"]
