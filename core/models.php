@@ -760,6 +760,66 @@ function getBpList($pdo, $patient_id, $start_date = null, $end_date = null) {
     }
 }
 
+function deleteMedicationById($pdo, $medication_id, $date_today) {
+    // 1. Get current medication data
+    $stmt = $pdo->prepare("SELECT dates, actions FROM medications WHERE medication_id = ?");
+    $stmt->execute([$medication_id]);
+    $medication = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$medication) {
+        return [
+            "success" => false,
+            "message" => "Medication not found"
+        ];
+    }
+
+    // 2. Process dates
+    $dates = json_decode($medication['dates'], true);
+    $actions = json_decode($medication['actions'] ?? '[]', true);
+    $today = DateTime::createFromFormat('m/d/Y', $date_today);
+
+    $filteredDates = array_filter($dates, function($date) use ($today, $actions) {
+        $dateObj = DateTime::createFromFormat('m/d/Y', $date);
+        
+        // Keep dates before today
+        if ($dateObj < $today) return true;
+        
+        // Keep dates >= today only if they exist in actions
+        foreach ($actions as $action) {
+            if ($action['date'] === $date) return true;
+        }
+        return false;
+    });
+
+    // 3. Check if all dates were removed
+    if (empty($filteredDates)) {
+        // Delete the entire row
+        $deleteStmt = $pdo->prepare("DELETE FROM medications WHERE medication_id = ?");
+        $success = $deleteStmt->execute([$medication_id]);
+        
+        return $success 
+            ? ["success" => true, "message" => "Medication deleted successfully"]
+            : ["success" => false, "message" => "Failed to delete medication"];
+    } else {    
+        // 4. Update dates and end_date if dates remain
+        $sortedDates = array_values($filteredDates);
+        $end_date = end($sortedDates);
+        
+        $updateStmt = $pdo->prepare("UPDATE medications 
+                                    SET dates = ?, end_date = ?
+                                    WHERE medication_id = ?");
+        $success = $updateStmt->execute([
+            json_encode($sortedDates),
+            $end_date,
+            $medication_id
+        ]);
+    }
+
+    return $success 
+        ? ["success" => true, "message" => "Future medications cleared successfully"]
+        : ["success" => false, "message" => "Failed to update medications"];
+}
+
 // ADMIN FUNCTIONS
 function adminLogin($pdo, $email, $password) {
     $sql = "SELECT * FROM admin WHERE email = ?";

@@ -10,29 +10,26 @@ function MedicationHeader() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <MyText style={{ color: COLORS.primary[500] }} size="h3">
-          Medications
-        </MyText>
-        <MyTouchableOpacity
-          onPress={() => router.push('/patient/add-new-medication')}
-          style={styles.btn}
-        >
-          <Ionicons
-            name="add-circle-outline"
-            size={40}
-            color={COLORS.primary[500]}
-          />
-        </MyTouchableOpacity>
-      </View>
+      <MyText style={{ color: COLORS.primary[500] }} size="h3">
+        Medications
+      </MyText>
+      <MyTouchableOpacity
+        onPress={() => router.push('/patient/add-new-medication')}
+        style={styles.btn}
+      >
+        <Ionicons
+          name="add-circle-outline"
+          size={40}
+          color={COLORS.primary[500]}
+        />
+      </MyTouchableOpacity>
     </View>
   )
 }
 export default MedicationHeader
 
 const styles = StyleSheet.create({
-  container: {},
-  headerContainer: {
+  container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

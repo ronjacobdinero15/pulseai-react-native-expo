@@ -138,6 +138,9 @@ function handlePut($pdo) {
         case 'updateSurveyAnswered':
             echo json_encode(updateSurveyAnswered($pdo, $data['patient_id']));
             break;
+        case 'deleteMedicationById':
+            echo json_encode(deleteMedicationById($pdo, $_GET['medication_id'], $_GET['date_today']));
+            break;
         default:
             echo json_encode(['error' => 'Invalid action']);
     }

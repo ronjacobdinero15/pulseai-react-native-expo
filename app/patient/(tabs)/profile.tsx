@@ -18,6 +18,7 @@ import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
 import { deletePatientAccountAndData } from '../../../services/apiAuth'
+import { useChat } from '../../../contexts/ChatContext'
 
 type Tab = {
   name: string
@@ -37,7 +38,6 @@ type Tab = {
 export default function Profile() {
   const { currentUser, userSignOut } = useAuth()
   const router = useRouter()
-  const [showChat, setShowChat] = useState(false)
 
   const [showAccountDeletionModal, setShowAccountDeletionModal] =
     useState(false)
@@ -46,6 +46,7 @@ export default function Profile() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
+  const { showChat, hideChat, chatVisible } = useChat()
 
   const tabs: Tab[] = [
     {
@@ -145,7 +146,7 @@ export default function Profile() {
                       } else if (tab.name === 'Erase all my data') {
                         setShowAccountDeletionModal(true)
                       } else if (tab.name === 'Chat with AI') {
-                        setShowChat(true)
+                        showChat()
                       }
                     }}
                     disabled={isDeleting}
@@ -173,11 +174,7 @@ export default function Profile() {
             }
           />
 
-          <ChatBot
-            visible={showChat}
-            onClose={() => setShowChat(false)}
-            patientId={currentUser!.id!}
-          />
+          <ChatBot visible={chatVisible} onClose={hideChat} />
 
           <MyModal
             visible={showAccountDeletionModal}

@@ -8,9 +8,16 @@ type MyModalProps = {
   title: string
   children: React.ReactNode
   onRequestClose?: () => void
+  deletion?: boolean
 }
 
-function MyModal({ visible, title, children, onRequestClose }: MyModalProps) {
+function MyModal({
+  visible,
+  title,
+  children,
+  onRequestClose,
+  deletion,
+}: MyModalProps) {
   return (
     <Modal
       animationType="fade"
@@ -23,7 +30,13 @@ function MyModal({ visible, title, children, onRequestClose }: MyModalProps) {
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.modalContainer}>
             <View style={styles.modalView}>
-              <MyText size="h4" style={styles.modalTitle}>
+              <MyText
+                size="h4"
+                style={[
+                  styles.modalTitle,
+                  { color: deletion ? COLORS.error : COLORS.primary[500] },
+                ]}
+              >
                 {title}
               </MyText>
               {children}
@@ -63,7 +76,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     marginBottom: 20,
-    color: COLORS.primary[500],
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 17,

@@ -4,4 +4,5 @@ export interface reportType {
   startDate?: string | null
   endDate?: string | null
   includeMedication?: string
+  isPdf?: boolean
 }

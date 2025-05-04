@@ -26,6 +26,7 @@ export default function AddNewBp() {
     control,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<BpType>()
   const router = useRouter()
@@ -92,8 +93,33 @@ export default function AddNewBp() {
             title="Notice"
             onRequestClose={() => setShowConfirmationModal(false)}
           >
-            <MyText size="h4" style={{ textAlign: 'center' }}>
+            <MyText size="h4" style={{ textAlign: 'center', marginBottom: 10 }}>
               Are you sure you want to submit your BP?
+            </MyText>
+
+            <MyText
+              size="h4"
+              style={{ color: COLORS.primary[500], fontWeight: 700 }}
+            >
+              Systolic: {getValues().systolic}
+            </MyText>
+            <MyText
+              size="h4"
+              style={{ color: COLORS.primary[500], fontWeight: 700 }}
+            >
+              Diastolic: {getValues().diastolic}
+            </MyText>
+            <MyText
+              size="h4"
+              style={{ color: COLORS.primary[500], fontWeight: 700 }}
+            >
+              Pulse Rate: {getValues().pulseRate}
+            </MyText>
+            <MyText
+              size="h4"
+              style={{ color: COLORS.primary[500], fontWeight: 700 }}
+            >
+              Comments: {getValues().comments || 'None'}
             </MyText>
 
             <MyTouchableOpacity
@@ -160,8 +186,22 @@ export default function AddNewBp() {
               <MyText style={styles.inputLabel}>Date today:</MyText>
               <MyText style={styles.inputLabel}>Time taken:</MyText>
               <MyText style={styles.inputLabel}>Systolic:</MyText>
-              <MyText style={styles.inputLabel}>Diastolic:</MyText>
-              <MyText style={styles.inputLabel}>Pulse Rate:</MyText>
+              <MyText
+                style={[
+                  styles.inputLabel,
+                  { marginTop: errors.systolic ? 25 : 0 },
+                ]}
+              >
+                Diastolic:
+              </MyText>
+              <MyText
+                style={[
+                  styles.inputLabel,
+                  { marginTop: errors.systolic ? 25 : 0 },
+                ]}
+              >
+                Pulse Rate:
+              </MyText>
             </View>
 
             <View style={styles.inputColumn}>

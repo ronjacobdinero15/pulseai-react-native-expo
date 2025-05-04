@@ -7,11 +7,12 @@ import BpIndexTable from '../../../components/BpIndexTable'
 import MyText from '../../../components/MyText'
 import MyTouchableOpacity from '../../../components/MyTouchableOpacity'
 import Spinner from '../../../components/Spinner'
+import SurveyModal from '../../../components/SurveyModal'
 import { COLORS } from '../../../constants/Colors'
 import { useAuth } from '../../../contexts/AuthContext'
 import { getPatientProfile } from '../../../services/apiAuth'
 import { getBpForTodayList } from '../../../services/apiBp'
-import SurveyModal from '../../../components/SurveyModal'
+import ChatBtn from '../../../components/ChatBtn'
 
 export default function HomeScreen() {
   const [bpList, setBpList] = useState([])
@@ -55,290 +56,291 @@ export default function HomeScreen() {
   if (isLoading) return <Spinner />
 
   return (
-    <FlatList
-      data={[]}
-      renderItem={() => null}
-      style={styles.mainContainer}
-      ListHeaderComponent={
-        <View style={styles.container}>
-          <SurveyModal
-            visible={isSurveyModalVisible}
-            onClose={() => setSurveyModalVisible(false)}
-            patientId={currentUser?.id!}
-          />
+    <>
+      <ChatBtn />
 
-          <View style={styles.headerContainer}>
-            <MyText
-              size="h2"
-              style={[
-                styles.dateToday,
-                {
-                  color: COLORS.primary[500],
-                },
-              ]}
-            >
-              {moment().format('LL')}
-            </MyText>
-          </View>
-
-          {bpList.length > 0 ? (
-            <View style={{ gap: 20 }}>
-              <BpIndexTable bpList={bpList} isLoading={isLoading} />
-
-              <MyTouchableOpacity
-                style={styles.addBpToday}
-                onPress={() => router.push('/patient/add-new-bp')}
-              >
-                <MyText style={{ color: 'white' }}>ADD MORE BP RECORD</MyText>
-              </MyTouchableOpacity>
-            </View>
-          ) : (
-            <View>
+      <FlatList
+        data={[]}
+        renderItem={() => null}
+        style={styles.mainContainer}
+        ListHeaderComponent={
+          <View style={styles.container}>
+            <SurveyModal
+              visible={isSurveyModalVisible}
+              onClose={() => setSurveyModalVisible(false)}
+              patientId={currentUser?.id!}
+            />
+            <View style={styles.headerContainer}>
               <MyText
-                size="h3"
-                style={{ marginVertical: 20, textAlign: 'center' }}
+                size="h2"
+                style={[
+                  styles.dateToday,
+                  {
+                    color: COLORS.primary[500],
+                  },
+                ]}
               >
-                What is your BP for today?
+                {moment().format('LL')}
               </MyText>
-
-              <MyTouchableOpacity
-                style={styles.addBpToday}
-                onPress={() => router.push('/patient/add-new-bp')}
-              >
-                <MyText style={{ color: 'white' }}>ADD BP RECORD TODAY</MyText>
-              </MyTouchableOpacity>
             </View>
-          )}
-
-          <View style={styles.questionsContainer}>
-            <MyTouchableOpacity
-              style={styles.reminderContainer}
-              onPress={() => setOpenHelpAccordion(open => !open)}
-            >
-              <View style={styles.reminderHeaderContainer}>
-                <MyText style={{ fontSize: 14 }}>
-                  Need help reading your BP?
-                </MyText>
-                <Ionicons
-                  name="chevron-down"
-                  size={24}
-                  color={COLORS.secondary[900]}
-                />
+            {bpList.length > 0 ? (
+              <View style={{ gap: 20 }}>
+                <BpIndexTable bpList={bpList} isLoading={isLoading} />
+                <MyTouchableOpacity
+                  style={styles.addBpToday}
+                  onPress={() => router.push('/patient/add-new-bp')}
+                >
+                  <MyText style={{ color: 'white' }}>ADD MORE BP RECORD</MyText>
+                </MyTouchableOpacity>
               </View>
-              {openHelpAccordion && (
-                <View style={styles.reminderTextContainer}>
-                  <View>
-                    <MyText
-                      style={[
-                        styles.reminderText,
-                        {
-                          fontWeight: 'bold',
-                        },
-                      ]}
-                    >
-                      Systolic (Top Number):
-                    </MyText>
+            ) : (
+              <View>
+                <MyText
+                  size="h3"
+                  style={{ marginVertical: 20, textAlign: 'center' }}
+                >
+                  What is your BP for today?
+                </MyText>
+                <MyTouchableOpacity
+                  style={styles.addBpToday}
+                  onPress={() => router.push('/patient/add-new-bp')}
+                >
+                  <MyText style={{ color: 'white' }}>
+                    ADD BP RECORD TODAY
+                  </MyText>
+                </MyTouchableOpacity>
+              </View>
+            )}
+            <View style={styles.questionsContainer}>
+              <MyTouchableOpacity
+                style={styles.reminderContainer}
+                onPress={() => setOpenHelpAccordion(open => !open)}
+              >
+                <View style={styles.reminderHeaderContainer}>
+                  <MyText style={{ fontSize: 14 }}>
+                    Need help reading your BP?
+                  </MyText>
+                  <Ionicons
+                    name="chevron-down"
+                    size={24}
+                    color={COLORS.secondary[900]}
+                  />
+                </View>
+                {openHelpAccordion && (
+                  <View style={styles.reminderTextContainer}>
                     <View>
-                      <MyText style={styles.reminderText}>
-                        <MyText style={{ color: COLORS.primary[500] }}>
-                          &bull;
+                      <MyText
+                        style={[
+                          styles.reminderText,
+                          {
+                            fontWeight: 'bold',
+                          },
+                        ]}
+                      >
+                        Systolic (Top Number):
+                      </MyText>
+                      <View>
+                        <MyText style={styles.reminderText}>
+                          <MyText style={{ color: COLORS.primary[500] }}>
+                            &bull;
+                          </MyText>
+                          Pressure when your heart beats
                         </MyText>
-                        Pressure when your heart beats
+                        <MyText style={styles.reminderText}>
+                          <MyText style={{ color: COLORS.primary[500] }}>
+                            &bull;
+                          </MyText>
+                          First number = Systolic (e.g., 120)
+                        </MyText>
+                      </View>
+                    </View>
+                    <View>
+                      <MyText
+                        style={[
+                          styles.reminderText,
+                          {
+                            fontWeight: 'bold',
+                          },
+                        ]}
+                      >
+                        Diastolic (Bottom Number):
                       </MyText>
                       <MyText style={styles.reminderText}>
                         <MyText style={{ color: COLORS.primary[500] }}>
                           &bull;
                         </MyText>
-                        First number = Systolic (e.g., 120)
+                        Pressure between heartbeats
+                      </MyText>
+                      <MyText style={styles.reminderText}>
+                        <MyText style={{ color: COLORS.primary[500] }}>
+                          &bull;
+                        </MyText>
+                        Second number = Diastolic (e.g., 80)
                       </MyText>
                     </View>
                   </View>
-                  <View>
-                    <MyText
-                      style={[
-                        styles.reminderText,
-                        {
-                          fontWeight: 'bold',
-                        },
-                      ]}
-                    >
-                      Diastolic (Bottom Number):
-                    </MyText>
+                )}
+              </MyTouchableOpacity>
+              <MyTouchableOpacity
+                style={styles.reminderContainer}
+                onPress={() => setOpenWhenToTakeAccordion(open => !open)}
+              >
+                <View style={styles.reminderHeaderContainer}>
+                  <MyText style={{ fontSize: 14 }}>Reminders</MyText>
+                  <Ionicons
+                    name="chevron-down"
+                    size={24}
+                    color={COLORS.secondary[900]}
+                  />
+                </View>
+                {openWhenToTakeAccordion && (
+                  <View style={styles.reminderTextContainer}>
                     <MyText style={styles.reminderText}>
                       <MyText style={{ color: COLORS.primary[500] }}>
                         &bull;
                       </MyText>
-                      Pressure between heartbeats
-                    </MyText>
-                    <MyText style={styles.reminderText}>
-                      <MyText style={{ color: COLORS.primary[500] }}>
-                        &bull;
-                      </MyText>
-                      Second number = Diastolic (e.g., 80)
+                      It is a prerequisite to have a BP monitoring device at
+                      home, that detects systolic, diastolic, and pulse rate.
                     </MyText>
                   </View>
+                )}
+              </MyTouchableOpacity>
+              <MyTouchableOpacity
+                style={styles.reminderContainer}
+                onPress={() => setMeasuringTheRightWayAccordion(open => !open)}
+              >
+                <View style={styles.reminderHeaderContainer}>
+                  <MyText style={{ fontSize: 14 }}>Instructions</MyText>
+                  <Ionicons
+                    name="chevron-down"
+                    size={24}
+                    color={COLORS.secondary[900]}
+                  />
                 </View>
-              )}
-            </MyTouchableOpacity>
-
-            <MyTouchableOpacity
-              style={styles.reminderContainer}
-              onPress={() => setOpenWhenToTakeAccordion(open => !open)}
-            >
-              <View style={styles.reminderHeaderContainer}>
-                <MyText style={{ fontSize: 14 }}>Reminders</MyText>
-                <Ionicons
-                  name="chevron-down"
-                  size={24}
-                  color={COLORS.secondary[900]}
-                />
-              </View>
-              {openWhenToTakeAccordion && (
-                <View style={styles.reminderTextContainer}>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
+                {openMeasuringTheRightWayAccordion && (
+                  <View style={styles.reminderTextContainer}>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Measure your blood pressure twice a day—morning and late
+                      afternoon—at about the same times every day for 7
+                      consecutive days (unless you have been advised otherwise).
                     </MyText>
-                    It is a prerequisite to have a BP monitoring device at home,
-                    that detects systolic, diastolic, and pulse rate.
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      On each occasion take a minimum of two readings, leaving
+                      at least a minute between each. If the first two readings
+                      are very different, take 2 or 3 further readings.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      In the comments section, you should also write down
+                      anything that could have affected your reading, such as
+                      feeling unwell or changes in your medication.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      For best results, sit comfortably with both feet on the
+                      floor for at least two minutes before taking a
+                      measurement.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      When you measure your blood pressure, rest your arm on a
+                      table so the blood pressure cuff is at about the same
+                      height as your heart.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Take your blood pressure measurement before taking your
+                      blood pressure medication.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Measure at least two hours after a meal.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Wait at least one hour after drinking coffee or smoking
+                      before measuring.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Wait at least 30 minutes after exercise before taking a
+                      measurement.
+                    </MyText>
+                    <MyText style={styles.reminderText}>
+                      <MyText style={{ color: COLORS.primary[500] }}>
+                        &bull;
+                      </MyText>
+                      Record your blood pressure in this app and show it to your
+                      doctor at EAC Medical Center – Cavite during every visit.
+                    </MyText>
+                  </View>
+                )}
+              </MyTouchableOpacity>
+              <MyTouchableOpacity
+                style={styles.reminderContainer}
+                onPress={() => setOpenGuideAccordion(open => !open)}
+              >
+                <View style={styles.reminderHeaderContainer}>
+                  <MyText style={{ fontSize: 14 }}>
+                    What will happen to your BP?
                   </MyText>
+                  <Ionicons
+                    name="chevron-down"
+                    size={24}
+                    color={COLORS.secondary[900]}
+                  />
                 </View>
-              )}
-            </MyTouchableOpacity>
-
-            <MyTouchableOpacity
-              style={styles.reminderContainer}
-              onPress={() => setMeasuringTheRightWayAccordion(open => !open)}
-            >
-              <View style={styles.reminderHeaderContainer}>
-                <MyText style={{ fontSize: 14 }}>Instructions</MyText>
-                <Ionicons
-                  name="chevron-down"
-                  size={24}
-                  color={COLORS.secondary[900]}
-                />
-              </View>
-              {openMeasuringTheRightWayAccordion && (
-                <View style={styles.reminderTextContainer}>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
+                {openGuideAccordion && (
+                  <View style={styles.reminderTextContainer}>
+                    <MyText style={styles.reminderText}>
+                      Your BP readings will be used to analyze patterns for over
+                      a few days, weeks, or months of using our app. This will
+                      essentially make it easier for our cardiologists to
+                      understand your BP patterns and current medications and
+                      better help you with your current treatment.
                     </MyText>
-                    Measure your blood pressure twice a day—morning and late
-                    afternoon—at about the same times every day for 7
-                    consecutive days (unless you have been advised otherwise).
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    On each occasion take a minimum of two readings, leaving at
-                    least a minute between each. If the first two readings are
-                    very different, take 2 or 3 further readings.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    In the comments section, you should also write down anything
-                    that could have affected your reading, such as feeling
-                    unwell or changes in your medication.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    For best results, sit comfortably with both feet on the
-                    floor for at least two minutes before taking a measurement.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    When you measure your blood pressure, rest your arm on a
-                    table so the blood pressure cuff is at about the same height
-                    as your heart.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    Take your blood pressure measurement before taking your
-                    blood pressure medication.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    Measure at least two hours after a meal.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    Wait at least one hour after drinking coffee or smoking
-                    before measuring.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    Wait at least 30 minutes after exercise before taking a
-                    measurement.
-                  </MyText>
-                  <MyText style={styles.reminderText}>
-                    <MyText style={{ color: COLORS.primary[500] }}>
-                      &bull;
-                    </MyText>
-                    Record your blood pressure in this app and show it to your
-                    doctor at EAC Medical Center – Cavite during every visit.
-                  </MyText>
-                </View>
-              )}
-            </MyTouchableOpacity>
-
-            <MyTouchableOpacity
-              style={styles.reminderContainer}
-              onPress={() => setOpenGuideAccordion(open => !open)}
-            >
-              <View style={styles.reminderHeaderContainer}>
-                <MyText style={{ fontSize: 14 }}>
-                  What will happen to your BP?
-                </MyText>
-                <Ionicons
-                  name="chevron-down"
-                  size={24}
-                  color={COLORS.secondary[900]}
-                />
-              </View>
-              {openGuideAccordion && (
-                <View style={styles.reminderTextContainer}>
-                  <MyText style={styles.reminderText}>
-                    Your BP readings will be used to analyze patterns for over a
-                    few days, weeks, or months of using our app. This will
-                    essentially make it easier for our cardiologists to
-                    understand your BP patterns and current medications and
-                    better help you with your current treatment.
-                  </MyText>
-                </View>
-              )}
-            </MyTouchableOpacity>
+                  </View>
+                )}
+              </MyTouchableOpacity>
+            </View>
           </View>
-        </View>
-      }
-    />
+        }
+      />
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: 'white',
-  },
   container: {
     flex: 1,
     backgroundColor: 'white',
     padding: 25,
-    marginBottom: 100,
+    position: 'relative',
+    marginBottom: 120,
+  },
+  mainContainer: {
+    backgroundColor: 'white',
+    flex: 1,
   },
   headerContainer: {
     alignItems: 'center',

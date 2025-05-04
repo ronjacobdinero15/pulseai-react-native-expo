@@ -127,3 +127,22 @@ export async function getAllPatients() {
 
   return await res.json()
 }
+
+export async function deleteMedicationById({
+  medicationId,
+  dateToday,
+}: {
+  medicationId: string
+  dateToday: string
+}) {
+  const res = await fetch(
+    `${apiUrl}?action=deleteMedicationById&medication_id=${medicationId}&date_today=${dateToday}`,
+    {
+      method: 'PUT',
+    }
+  )
+
+  if (!res.ok) throw new Error('Error occurred fetching all patients')
+
+  return await res.json()
+}

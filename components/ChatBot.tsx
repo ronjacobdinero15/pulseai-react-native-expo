@@ -12,6 +12,8 @@ import { useAiPrompt } from '../hooks/useAiPrompt'
 import MyText from './MyText'
 import MyTextInput from './MyTextInput'
 import MyTouchableOpacity from './MyTouchableOpacity'
+import { useAuth } from '../contexts/AuthContext'
+import { useChat } from '../contexts/ChatContext'
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY
 
@@ -20,7 +22,7 @@ async function fetchGeminiChat(
   question: string
 ): Promise<string> {
   console.log('[ChatBot] ▶️ Sending request to Gemini')
-  const fullPrompt = `${prompt}\n\nQuestion: ${question}`
+  const fullPrompt = `Guidelines: ${prompt}\n\nQuestion: ${question} Answer:`
   try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -43,48 +45,59 @@ async function fetchGeminiChat(
 export default function ChatBot({
   visible,
   onClose,
-  patientId,
 }: {
   visible: boolean
   onClose: () => void
-  patientId: string
 }) {
-  const { fetchPatientInfo } = useAiPrompt()
-  const [loading, setLoading] = useState(true)
-  const [basePrompt, setBasePrompt] = useState<string>('')
-  const [messages, setMessages] = useState<
-    { role: 'user' | 'assistant'; text: string }[]
-  >([])
+  const {
+    messages,
+    addMessage,
+    replaceLastMessage,
+    basePrompt,
+    setBasePrompt,
+    loading,
+    setLoading,
+  } = useChat()
   const [input, setInput] = useState('')
+  const { currentUser } = useAuth()
+  const { fetchPatientInfo } = useAiPrompt()
 
   useEffect(() => {
-    if (!visible) return
-    ;(async () => {
+    if (!visible || basePrompt) return
+
+    const loadPrompt = async () => {
       setLoading(true)
       try {
-        const { prompt } = await fetchPatientInfo({ patientId })
+        const { prompt } = await fetchPatientInfo({
+          patientId: currentUser?.id!,
+        })
         setBasePrompt(prompt)
       } catch (error) {
         console.error('[ChatBot] 🔴 Error fetching patient info:', error)
       } finally {
         setLoading(false)
       }
-    })()
-  }, [visible, patientId])
+    }
+
+    loadPrompt()
+  }, [visible, currentUser?.id!])
 
   const send = async () => {
     if (!input.trim()) return
     const q = input.trim()
-    setMessages(prev => [...prev, { role: 'user', text: q }])
-    setInput('')
-    setMessages(prev => [...prev, { role: 'assistant', text: '…thinking…' }])
 
+    // Add user message
+    addMessage({ role: 'user', text: q })
+    setInput('')
+
+    // Add temporary thinking message
+    addMessage({ role: 'assistant', text: '…thinking…' })
+
+    // Get AI response
     const resp = await fetchGeminiChat(basePrompt, q)
-    setMessages(prev => {
-      const copy = [...prev]
-      copy.pop()
-      return [...copy, { role: 'assistant', text: resp }]
-    })
+
+    // Replace temporary message with actual response
+    replaceLastMessage({ role: 'assistant', text: resp })
   }
 
   return (
@@ -124,6 +137,7 @@ export default function ChatBot({
                 value={input}
                 onChangeText={setInput}
                 placeholder="Ask a question…"
+                onSubmitEditing={send}
               />
               <MyTouchableOpacity onPress={send} style={styles.sendBtn}>
                 <Ionicons name="send" size={24} color={COLORS.primary[500]} />

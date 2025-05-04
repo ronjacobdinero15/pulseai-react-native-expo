@@ -1,20 +1,29 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import moment from 'moment'
-import React, { useEffect } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Alert, Platform, StyleSheet, View } from 'react-native'
 import MedicationCardItem from '../../components/MedicationCardItem'
 import MyText from '../../components/MyText'
 import MyTouchableOpacity from '../../components/MyTouchableOpacity'
 import { COLORS } from '../../constants/Colors'
 import { Medication } from '../../constants/medication'
 import { useAuth } from '../../contexts/AuthContext'
-import { addNewMedicationStatus } from '../../services/apiMedication'
+import {
+  addNewMedicationStatus,
+  deleteMedicationById,
+} from '../../services/apiMedication'
+import { AntDesign } from '@expo/vector-icons'
+import MyModal from '../../components/MyModal'
 
 export default function MedicationActionModal() {
   const params = useLocalSearchParams()
   const router = useRouter()
   const { setRefresh } = useAuth()
+  const [
+    isMedicationDeletionModalVisible,
+    setIsMedicationDeletionModalVisible,
+  ] = useState(false)
 
   useEffect(() => {}, [params.selectedDate])
 
@@ -78,8 +87,50 @@ export default function MedicationActionModal() {
     }
   }
 
+  const handleDeleteMedication = async (medicationId: string) => {
+    const res = await deleteMedicationById({
+      medicationId: medicine.medicationId,
+      dateToday: moment().format('L'),
+    })
+
+    if (res.success) {
+      Alert.alert('Success', res.message, [
+        {
+          text: 'OK',
+          onPress: () => {
+            router.back()
+            setRefresh(1)
+          },
+        },
+      ])
+    } else {
+      Alert.alert('Error', res.message, [
+        {
+          text: 'OK',
+          onPress: () => {
+            router.back()
+            setRefresh(1)
+          },
+        },
+      ])
+    }
+  }
+
   return (
     <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <MyTouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color={COLORS.primary[500]} />
+        </MyTouchableOpacity>
+
+        <MyText size="h3" style={{ color: COLORS.primary[500] }}>
+          Medication Status
+        </MyText>
+      </View>
+
       <MyText size="h4">{medicine.selectedDate}</MyText>
       <MyText size="h6" style={{ color: COLORS.secondary[500] }}>
         {medicine.selectedDate === medicine.endDate && isToday
@@ -136,8 +187,52 @@ export default function MedicationActionModal() {
           : ''}
       </MyText>
 
-      <MyTouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-        <Ionicons name="close-circle" size={50} color={COLORS.secondary[200]} />
+      <MyModal
+        visible={isMedicationDeletionModalVisible}
+        title="Confirm medication deletion"
+        onRequestClose={() => setIsMedicationDeletionModalVisible(false)}
+        deletion={true}
+      >
+        <>
+          <MyText size="h4" style={{ textAlign: 'center', marginBottom: 16 }}>
+            Deleting this medication will remove all future entries, and you
+            will no longer be able to view or update their status.
+            <MyText size="h4" style={{ fontWeight: 'bold' }}>
+              However, past entries can still be updated and will remain stored
+              in the database.
+            </MyText>
+            Only entries starting from today that have not been updated yet will
+            be deleted.
+          </MyText>
+
+          <MyTouchableOpacity
+            style={[styles.modalBtn, { backgroundColor: COLORS.error }]}
+            onPress={() => handleDeleteMedication(medicine.medicationId)}
+          >
+            <MyText size="h4" style={{ color: 'white' }}>
+              Delete Medication
+            </MyText>
+          </MyTouchableOpacity>
+        </>
+
+        <MyTouchableOpacity
+          style={styles.modalBtn}
+          onPress={() => setIsMedicationDeletionModalVisible(false)}
+        >
+          <MyText size="h4" style={{ color: COLORS.primary[500] }}>
+            Cancel
+          </MyText>
+        </MyTouchableOpacity>
+      </MyModal>
+
+      <MyTouchableOpacity
+        style={styles.deleteBtn}
+        onPress={() => setIsMedicationDeletionModalVisible(true)}
+      >
+        <AntDesign name="delete" size={35} color="white" />
+        <MyText style={{ color: 'white', fontWeight: 'bold' }} size="h4">
+          Delete Medication
+        </MyText>
       </MyTouchableOpacity>
     </View>
   )
@@ -150,6 +245,15 @@ const styles = StyleSheet.create({
     padding: 25,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: Platform.select({ ios: 50, android: 25 }),
+    left: 25,
+    zIndex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   gif: {
     width: 80,
@@ -180,7 +284,21 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.success,
   },
   backBtn: {
+    justifyContent: 'center',
+  },
+  deleteBtn: {
     position: 'absolute',
     bottom: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 10,
+    backgroundColor: COLORS.error,
+  },
+  modalBtn: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginVertical: 8,
   },
 })
