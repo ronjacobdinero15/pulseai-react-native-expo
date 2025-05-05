@@ -27,6 +27,7 @@ export const VICESOPTIONS: string[] = [
   'Drugs',
   'Others',
   'None',
+  'Prefer not to say',
 ]
 
 export const COMORBIDITIESOPTIONS: string[] = [
@@ -36,6 +37,7 @@ export const COMORBIDITIESOPTIONS: string[] = [
   'High cholesterol',
   'Others',
   'None',
+  'Prefer not to say',
 ]
 
 // REQUIRED TO HAVE LABEL AND VALUE

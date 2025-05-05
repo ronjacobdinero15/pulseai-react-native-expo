@@ -438,6 +438,7 @@ export default function SignUp() {
 
           <Controller
             control={control}
+            rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Vices"
@@ -459,6 +460,7 @@ export default function SignUp() {
 
           <Controller
             control={control}
+            rules={{ required: 'This field is required.' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <MultipleSelectListCheckbox
                 label="Comorbidities"
