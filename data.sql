@@ -4,6 +4,7 @@ CREATE TABLE doctors (
     last_name VARCHAR(256),
     full_name VARCHAR(256),
     email VARCHAR(256),
+    email_hash VARCHAR(64) UNIQUE,
 	password VARCHAR(256),
     reset_token_hash VARCHAR(64) NULL DEFAULT NULL UNIQUE,
     reset_token_expires_at DATETIME NULL DEFAULT NULL,
@@ -19,6 +20,7 @@ CREATE TABLE patients (
     contact VARCHAR(50),
     address VARCHAR(256),
     email VARCHAR(256),
+    email_hash VARCHAR(64) UNIQUE,
 	password VARCHAR(256),
     reset_token_hash VARCHAR(64) NULL DEFAULT NULL UNIQUE,
     reset_token_expires_at DATETIME NULL DEFAULT NULL,
@@ -67,6 +69,7 @@ CREATE TABLE bp_readings (
 CREATE TABLE admin (
 	admin_id INT AUTO_INCREMENT PRIMARY KEY,
 	email VARCHAR(256),
+    email_hash VARCHAR(64) UNIQUE,
 	password VARCHAR(256),
 	reset_token_hash VARCHAR(64) NULL DEFAULT NULL UNIQUE,
 	reset_token_expires_at DATETIME NULL DEFAULT NULL,

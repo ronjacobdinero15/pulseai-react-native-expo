@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
@@ -8,6 +9,8 @@ $host = $_ENV['EXPO_PUBLIC_DB_HOSTNAME'];
 $user = $_ENV['EXPO_PUBLIC_DB_USERNAME'];
 $password = $_ENV['EXPO_PUBLIC_DB_PASSWORD'];
 $dbname = $_ENV['EXPO_PUBLIC_DB_NAME'];
+
+$encryption_key = $_ENV['EXPO_PUBLIC_ENCRYPTION_KEY'];
 
 try {
     $pdo = new PDO(

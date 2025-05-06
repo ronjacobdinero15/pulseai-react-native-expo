@@ -1,23 +1,32 @@
 <?php  
 
+require_once 'encryption.php'; 
 require_once 'dbConfig.php';
 
 function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices = [], $comorbidities = [], $parental_hypertension, $lifestyle) {
-    $checkUserSql = "SELECT * FROM patients WHERE email = ?";
+    global $encryption_key;
+
+    $email_hash = hash('sha256', $email);
+    
+    $checkUserSql = "SELECT * FROM patients WHERE email_hash = ?";
     $checkUserSqlStmt = $pdo->prepare($checkUserSql);
-    $checkUserSqlStmt->execute([$email]);
+    $checkUserSqlStmt->execute([$email_hash]);
 
     if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO patients (first_name,last_name,full_name,date_of_birth,contact,address,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $sql = "INSERT INTO patients (first_name,last_name,full_name,date_of_birth,contact,address,email,password,age,gender,bmi_height_cm,bmi_weight_kg,vices,comorbidities,parental_hypertension,lifestyle,email_hash) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt = $pdo->prepare($sql);
 
         // Encode JSON fields since they can contain arrays
         $vices_json = json_encode($vices);
         $comorbidities_json = json_encode($comorbidities);
         
+        $encrypted_first_name = encryptData($first_name, $encryption_key);
+        $encrypted_last_name = encryptData($last_name, $encryption_key);
+        $encrypted_full_name = encryptData($full_name, $encryption_key);
+        $encrypted_email = encryptData($email, $encryption_key);
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle]);
+        $executeQuery = $stmt->execute([$encrypted_first_name, $encrypted_last_name, $encrypted_full_name, $date_of_birth, $contact, $address, $encrypted_email, $password_hash, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $email_hash]);
 
         if ($executeQuery) {
             return [
@@ -39,19 +48,24 @@ function registerPatient($pdo, $first_name, $last_name, $full_name, $date_of_bir
 }
 
 function patientLogin($pdo, $email, $password) {
-    $sql = "SELECT * FROM patients WHERE email = ?";
+    global $encryption_key;
+
+    $email_hash = hash('sha256', $email);
+
+    $sql = "SELECT * FROM patients WHERE email_hash = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$email]); 
+    $stmt->execute([$email_hash]); 
 
     if ($stmt->rowCount() == 1) {
         $patientInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
-        $patientIDFromDB = $patientInfoRow['patient_id']; 
-        $emailFromDB = $patientInfoRow['email']; 
+
+        $patientInfoRow['first_name'] = decryptData($patientInfoRow['first_name'], $encryption_key);
+        $patientInfoRow['email'] = decryptData($patientInfoRow['email'], $encryption_key);
         $passwordFromDB = $patientInfoRow['password'];
 
         if (password_verify($password, $passwordFromDB)) {
             return [
-                "id"      =>  $patientIDFromDB,
+                "id"      =>  $patientInfoRow['patient_id'],
                 "firstName" => $patientInfoRow['first_name'],
                 "message" => "Login successful!",
                 "needsOnboarding" => $patientInfoRow['needs_onboarding'],
@@ -73,20 +87,22 @@ function patientLogin($pdo, $email, $password) {
 }
 
 function doctorLogin($pdo, $email, $password) {
-    $sql = "SELECT * FROM doctors WHERE email = ?";
+    global $encryption_key;
+    
+    $email_hash = hash('sha256', $email);
+    
+    $sql = "SELECT * FROM doctors WHERE email_hash = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$email]); 
-
+    $stmt->execute([$email_hash]); 
+    
     if ($stmt->rowCount() == 1) {
         $doctorInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
-        $doctorIDFromDB = $doctorInfoRow['doctor_id']; 
-        $emailFromDB = $doctorInfoRow['email']; 
-        $passwordFromDB = $doctorInfoRow['password'];
+        $passwordFromDB = $doctorInfoRow['password']; 
 
         if (password_verify($password, $passwordFromDB)) {
             return [
-                "id"      =>  $doctorIDFromDB,
-                "firstName" => $doctorInfoRow['first_name'],
+                "id"      =>  $doctorInfoRow['doctor_id'],
+                "firstName" => decryptData($doctorInfoRow['first_name'], $encryption_key),
                 "message" => "Login successful!",
                 "userRole"    => "doctor",
                 "success" => true, 
@@ -131,7 +147,11 @@ function updateSurveyAnswered($pdo, $patient_id) {
 }
 
 function forgotPassword($pdo, $email, $table_name) {
-    date_default_timezone_set('Asia/Manila'); 
+    global $encryption_key;
+    
+    date_default_timezone_set('Asia/Manila');
+    
+    $email_hash = hash('sha256', $email);
     
     $token = bin2hex(random_bytes(16));
     $token_hash = hash("sha256", $token);
@@ -139,9 +159,9 @@ function forgotPassword($pdo, $email, $table_name) {
 
     $sql = "UPDATE $table_name
             SET reset_token_hash = ?, reset_token_expires_at = ?
-            WHERE email = ?";
+            WHERE email_hash = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$token_hash, $expiry, $email]);
+    $stmt->execute([$token_hash, $expiry, $email_hash]);
 
     if ($stmt->rowCount() > 0) {
         $mail = require __DIR__ . "/mailer.php";
@@ -288,7 +308,6 @@ function addNewBp($pdo, $patient_id, $date_taken, $time_taken, $systolic, $diast
     }
 }
 
-
 function getBpForTodayList($pdo, $patient_id, $date_taken) {
     $sql = "SELECT * FROM bp_readings WHERE patient_id = ? AND date_taken = ?";
     $stmt = $pdo->prepare($sql);
@@ -323,6 +342,8 @@ function getBpForTodayList($pdo, $patient_id, $date_taken) {
 }
 
 function getPatientProfile($pdo, $patient_id) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM patients WHERE patient_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$patient_id]);
@@ -331,13 +352,13 @@ function getPatientProfile($pdo, $patient_id) {
         $patient = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $patient = [
-            "firstName" => $patient["first_name"],
-            "lastName" => $patient["last_name"],
-            "fullName" => $patient["full_name"],
+            "firstName" => decryptData($patient["first_name"], $encryption_key),
+            "lastName" => decryptData($patient["last_name"], $encryption_key),
+            "fullName" => decryptData($patient["full_name"], $encryption_key),
             "dateOfBirth" => $patient["date_of_birth"],
             "contact" => $patient["contact"],
             "address" => $patient["address"],
-            "email" => $patient["email"],
+            "email" => decryptData($patient["email"], $encryption_key),
             "age" => $patient["age"],
             "gender" => $patient["gender"],
             "bmiHeightCm" => $patient["bmi_height_cm"],
@@ -363,6 +384,8 @@ function getPatientProfile($pdo, $patient_id) {
 }
 
 function getDoctorProfile($pdo, $doctor_id) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM doctors WHERE doctor_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$doctor_id]);
@@ -371,9 +394,9 @@ function getDoctorProfile($pdo, $doctor_id) {
         $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $doctor = [
-            "firstName" => $doctor["first_name"],
-            "lastName" => $doctor["last_name"],
-            "email" => $doctor["email"]
+            "firstName" => decryptData($doctor["first_name"], $encryption_key),
+            "lastName" => decryptData($doctor["last_name"], $encryption_key),
+            "email" => decryptData($doctor["email"], $encryption_key)
         ];
 
         return [
@@ -389,14 +412,23 @@ function getDoctorProfile($pdo, $doctor_id) {
 }
 
 function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices = [], $comorbidities = [], $parental_hypertension, $lifestyle) {
+    global $encryption_key;
+    
+    $encrypted_first_name = encryptData($first_name, $encryption_key);
+    $encrypted_last_name = encryptData($last_name, $encryption_key);
+    $encrypted_full_name = encryptData($full_name, $encryption_key);
+    $encrypted_email = encryptData($email, $encryption_key);
+
+    $email_hash = hash('sha256', $email);
+
     // Encode JSON fields since they can contain arrays
     $vices_json = json_encode($vices);
     $comorbidities_json = json_encode($comorbidities);
 
-    $sql = "UPDATE patients SET first_name=?, last_name=?, full_name=?, date_of_birth=?, contact=?, address=?, email=?, age=?, gender=?, bmi_height_cm=?, bmi_weight_kg=?, vices=?, comorbidities=?, parental_hypertension=?, lifestyle=? WHERE patient_id=?";
+    $sql = "UPDATE patients SET first_name=?, last_name=?, full_name=?, date_of_birth=?, contact=?, address=?, email=?, age=?, gender=?, bmi_height_cm=?, bmi_weight_kg=?, vices=?, comorbidities=?, parental_hypertension=?, lifestyle=?, email_hash=? WHERE patient_id=?";
 
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $date_of_birth, $contact, $address, $email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $patient_id]);
+    $executeQuery = $stmt->execute([$encrypted_first_name, $encrypted_last_name, $encrypted_full_name, $date_of_birth, $contact, $address, $encrypted_email, $age, $gender, $bmi_height_cm, $bmi_weight_kg, $vices_json, $comorbidities_json, $parental_hypertension, $lifestyle, $email_hash, $patient_id]);
     if ($executeQuery) {
         return [
             "success" => true,
@@ -411,9 +443,18 @@ function updatePatientProfile($pdo, $patient_id, $first_name, $last_name, $full_
 }
 
 function updateDoctorProfile($pdo, $doctor_id, $first_name, $last_name, $full_name, $email) {
-    $sql = "UPDATE doctors SET first_name=?, last_name=?, full_name=?, email=? WHERE doctor_id=?";
+    global $encryption_key;
+    
+    $encrypted_first_name = encryptData($first_name, $encryption_key);
+    $encrypted_last_name = encryptData($last_name, $encryption_key);
+    $encrypted_full_name = encryptData($full_name, $encryption_key);
+    $encrypted_email = encryptData($email, $encryption_key);
+
+    $email_hash = hash('sha256', $email);
+    
+    $sql = "UPDATE doctors SET first_name=?, last_name=?, full_name=?, email=?, email_hash=? WHERE doctor_id=?";
     $stmt = $pdo->prepare($sql);
-    $executeQuery = $stmt->execute([$first_name, $last_name, $full_name, $email, $doctor_id]);
+    $executeQuery = $stmt->execute([$encrypted_first_name, $encrypted_last_name, $encrypted_full_name, $encrypted_email, $email_hash, $doctor_id]);
 
     if ($executeQuery) {
         return [
@@ -511,6 +552,8 @@ function updateDoctorPassword($pdo, $doctor_id, $old_password, $new_password) {
 }
 
 function getAllPatients($pdo) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM patients";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -518,10 +561,10 @@ function getAllPatients($pdo) {
     if ($stmt->rowCount() > 0) {
         $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $patients = array_map(function($patient) {
+        $patients = array_map(function($patient) use ($encryption_key) {
             return [
                 "patientId" => $patient["patient_id"],
-                "fullName" => $patient["full_name"],
+                "fullName" => decryptData($patient["full_name"], $encryption_key),
             ];
         }, $patients);
         return [
@@ -817,14 +860,17 @@ function deleteMedicationById($pdo, $medication_id, $date_today) {
 
 // ADMIN FUNCTIONS
 function adminLogin($pdo, $email, $password) {
-    $sql = "SELECT * FROM admin WHERE email = ?";
+    global $encryption_key;
+    
+    $email_hash = hash('sha256', $email); 
+    
+    $sql = "SELECT * FROM admin WHERE email_hash = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$email]); 
+    $stmt->execute([$email_hash]); 
 
     if ($stmt->rowCount() == 1) {
         $adminInfoRow = $stmt->fetch(PDO::FETCH_ASSOC);
         $adminIDFromDB = $adminInfoRow['admin_id']; 
-        $emailFromDB = $adminInfoRow['email']; 
         $passwordFromDB = $adminInfoRow['password'];
 
         if (password_verify($password, $passwordFromDB)) {
@@ -850,6 +896,8 @@ function adminLogin($pdo, $email, $password) {
 }
 
 function getAllDoctors($pdo) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM doctors";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -857,13 +905,13 @@ function getAllDoctors($pdo) {
     if ($stmt->rowCount() > 0) {
         $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $doctors = array_map(function($doctor) {
+        $doctors = array_map(function($doctor) use ($encryption_key) {
             return [
                 "doctorId" => $doctor["doctor_id"],
-                "fullName" => $doctor["full_name"],
-                "firstName" => $doctor["first_name"],
-                "lastName" => $doctor["last_name"],
-                "email" => $doctor["email"],
+                "fullName" => decryptData($doctor["full_name"], $encryption_key),
+                "firstName" => decryptData($doctor["first_name"], $encryption_key),
+                "lastName" => decryptData($doctor["last_name"], $encryption_key),
+                "email" => decryptData($doctor["email"], $encryption_key),
             ];
         }, $doctors);
         return [
@@ -879,15 +927,23 @@ function getAllDoctors($pdo) {
 }
 
 function registerDoctor($pdo, $email, $password, $first_name, $last_name, $full_name) {
-    $checkUserSql = "SELECT * FROM doctors WHERE email = ?";
+    global $encryption_key;
+    
+    $encrypted_email = encryptData($email, $encryption_key);
+    $encrypted_first_name = encryptData($first_name, $encryption_key);
+    $encrypted_last_name = encryptData($last_name, $encryption_key);
+    $encrypted_full_name = encryptData($full_name, $encryption_key);
+    $email_hash = hash('sha256', $email); 
+    
+    $checkUserSql = "SELECT * FROM doctors WHERE email_hash = ?";
     $checkUserSqlStmt = $pdo->prepare($checkUserSql);
-    $checkUserSqlStmt->execute([$email]);
+    $checkUserSqlStmt->execute([$email_hash]);
 
     if ($checkUserSqlStmt->rowCount() == 0) {
-        $sql = "INSERT INTO doctors (email,password,first_name,last_name,full_name) VALUES(?,?,?,?,?)";
+        $sql = "INSERT INTO doctors (email,password,first_name,last_name,full_name,email_hash) VALUES(?,?,?,?,?,?)";
         $stmt = $pdo->prepare($sql);
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $executeQuery = $stmt->execute([$email, $password_hash, $first_name, $last_name, $full_name]);
+        $executeQuery = $stmt->execute([$encrypted_email, $password_hash, $encrypted_first_name, $encrypted_last_name, $encrypted_full_name,$email_hash]);
 
         if ($executeQuery) {
             return [
@@ -927,15 +983,21 @@ function deleteDoctorById($pdo, $doctor_id) {
 }
 
 function registerAdmin($pdo, $email, $password) {
-    $sql = "SELECT * FROM admin WHERE email = ?";
+    global $encryption_key;
+    
+    $email_hash = hash('sha256', $email); 
+    
+    $sql = "SELECT * FROM admin WHERE email_hash = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$email]);
-
+    $stmt->execute([$email_hash]);
+    
     if ($stmt->rowCount() == 0) {
-        $sql = "INSERT INTO admin (email,password) VALUES(?,?)";
+        $encrypted_email = encryptData($email, $encryption_key);
+
+        $sql = "INSERT INTO admin (email,password,email_hash) VALUES(?,?,?)";
         $stmt = $pdo->prepare($sql);
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $executeQuery = $stmt->execute([$email, $password_hash]);
+        $executeQuery = $stmt->execute([$encrypted_email, $password_hash,$email_hash]);
 
         if ($executeQuery) {
             return [
@@ -957,10 +1019,27 @@ function registerAdmin($pdo, $email, $password) {
 }
 
 function updateAdminAccount($pdo, $admin_id, $email, $password) {
-    $sql = "UPDATE admin SET email = ?, password = ? WHERE admin_id = ?";
-    $stmt = $pdo->prepare($sql);
+    global $encryption_key;
+
+    $email_hash = hash('sha256', $email);
+    
+    $checkSql = "SELECT admin_id FROM admin WHERE email_hash = ? AND admin_id = ?";
+    $checkStmt = $pdo->prepare($checkSql);
+    $checkStmt->execute([$email_hash, $admin_id]);
+    
+    if ($checkStmt->rowCount() > 0) {
+        return [
+            "success" => false,
+            "message" => "Email already in use by another admin"
+        ];
+    }
+
+    $encrypted_email = encryptData($email, $encryption_key);
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
-    $executeQuery = $stmt->execute([$email, $password_hash, $admin_id]);
+
+    $sql = "UPDATE admin SET email = ?, password = ?, email_hash = ? WHERE admin_id = ?";
+    $stmt = $pdo->prepare($sql);
+    $executeQuery = $stmt->execute([$encrypted_email, $password_hash, $email_hash, $admin_id]);
 
     if ($executeQuery) {
         return [
@@ -976,6 +1055,8 @@ function updateAdminAccount($pdo, $admin_id, $email, $password) {
 }
 
 function getAdminAccount($pdo, $admin_id) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM admin WHERE admin_id = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$admin_id]);
@@ -985,7 +1066,7 @@ function getAdminAccount($pdo, $admin_id) {
 
         return [
             "success" => true,
-            "email" => $admin["email"],
+            "email" => decryptData($admin["email"], $encryption_key),
             ];
     } else {
         return [
@@ -1014,6 +1095,8 @@ function deleteAdminById($pdo, $admin_id) {
 }
 
 function getAllAdmin($pdo) {
+    global $encryption_key;
+    
     $sql = "SELECT * FROM admin";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -1021,10 +1104,10 @@ function getAllAdmin($pdo) {
     if ($stmt->rowCount() > 0) {
         $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $admins = array_map(function($admin) {
+        $admins = array_map(function($admin) use ($encryption_key) {
             return [
                 "adminId" => $admin["admin_id"],
-                "email" => $admin["email"],
+                "email" => decryptData($admin["email"], $encryption_key),
             ];
         }, $admins);
         return [
