@@ -55,7 +55,7 @@ export default function SignIn() {
         }
       } else {
         Alert.alert('Error', res.message)
-        // reset({ email, password: '' })
+        reset({ email, password: '' })
       }
     } catch (error) {
       Alert.alert('Error', 'Login failed')

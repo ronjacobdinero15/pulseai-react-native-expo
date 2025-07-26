@@ -49,6 +49,7 @@ export default function SignIn() {
         router.replace('/doctor/(tabs)')
       } else {
         Alert.alert('Error', res.message)
+        reset({ email, password: '' })
       }
     } catch (error) {
       Alert.alert('Error', 'Login failed')
